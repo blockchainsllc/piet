@@ -1,0 +1,474 @@
+/**
+ * this file is part of bundesblock-voting
+ *
+ * it is subject to the terms and conditions defined in
+ * the 'LICENSE' file, which is part of the repository.
+ *
+ * @author Heiko Burkhardt
+ * @copyright 2018 by Slock.it GmbH
+ */
+
+import * as React from 'react'
+
+import * as Sol from '../../../solidity-handler/SolidityHandler'
+import Web3Type from '../../../types/web3'
+import { ResultBox } from '../../ResultBox'
+import { CodeBox } from '../../CodeBox'
+import { TabEntity, TabEntityType } from '../../View'
+import { getFunctionAbi } from '../../../utils/AbiGenerator';
+
+interface ContractFunctionViewProps {
+    selectedContract: Sol.Contract,
+    contracts: Sol.Contract[]
+    testMode: boolean,
+    web3: Web3Type,
+    showInheritedMembers: boolean,
+    toggleInheritance: Function,
+    markCode: Function,
+    addTabEntity: Function
+}
+
+interface ContractFunctionViewState {
+    resultBoxIsShown: boolean,
+    lastResult: string,
+    blockchainErrors: string[],
+    lastResultName: string,
+    parameterMapping: any[],
+    resultMapping: any[],
+    functionCollapsed: boolean[],
+    codeBoxIsShown: boolean,
+    selectedFunction: Sol.ContractFunction
+}
+
+export class ContractFunctionView extends React.Component<ContractFunctionViewProps, {}> {
+    state: ContractFunctionViewState
+
+    constructor(props) {
+        super(props)
+        this.state = {
+            resultBoxIsShown: false,
+            lastResult: '',
+            lastResultName: '',
+            parameterMapping: [],
+            resultMapping: [],
+            functionCollapsed: [],
+            selectedFunction: null,
+            codeBoxIsShown: false,
+            blockchainErrors: []
+  
+        }
+
+        this.showResultBox = this.showResultBox.bind(this)
+        this.parameterChange = this.parameterChange.bind(this)
+        this.callFunction = this.callFunction.bind(this)
+        this.send = this.send.bind(this)
+        this.toogleCollapse = this.toogleCollapse.bind(this)
+        this.showCodeBox = this.showCodeBox.bind(this)
+        this.onShowCode = this.onShowCode.bind(this)
+        this.initBlockchainOperation = this.initBlockchainOperation.bind(this)
+    }
+
+    showResultBox(show: boolean) {
+        this.setState({resultBoxIsShown: show})
+    }
+
+    showCodeBox(show: boolean) {
+        this.setState({codeBoxIsShown: show})
+    }
+
+    onShowCode(contractFunction: Sol.ContractFunction) {
+        this.showCodeBox(true);
+        this.setState({selectedFunction: contractFunction})
+        
+    }
+
+    componentDidMount() {
+        const numberOfFunctions = this.props.selectedContract.functions.length + this.props.selectedContract.inheritedFunctions.length
+        this.setState({
+            functionCollapsed: Array(numberOfFunctions).fill(false),
+            blockchainErrors: Array(numberOfFunctions).fill(null)
+        })
+    }
+
+    toogleCollapse(index: number) {
+        
+        this.setState((prevState: ContractFunctionViewState) => {
+            prevState.functionCollapsed[index] = !prevState.functionCollapsed[index]
+            return {functionCollapsed: prevState.functionCollapsed}
+        })
+    }
+
+    componentWillReceiveProps(nextProps: ContractFunctionViewProps) {
+
+        if (this.props.selectedContract.name !== nextProps.selectedContract.name) {
+            const numberOfFunctions = this.props.selectedContract.functions.length + this.props.selectedContract.inheritedFunctions.length
+            this.setState({
+                functionCollapsed: Array(numberOfFunctions).fill(false),
+                blockchainErrors: Array(numberOfFunctions).fill(null)
+            })
+        }
+    }
+
+    parameterChange(e, index: number, functionName: string) {
+       
+        e.persist()
+        this.setState((prevState: ContractFunctionViewState) => {
+            if (prevState.parameterMapping[functionName]) {
+                prevState.parameterMapping[functionName][index] = e.target.value
+            } else {
+                prevState.parameterMapping[functionName] = []
+                prevState.parameterMapping[functionName][index] = e.target.value
+            }
+            return {parameterMapping: prevState.parameterMapping}
+        })
+
+    }
+
+    getOperationButton(contract: Sol.Contract, contractFunction: Sol.ContractFunction) {
+        if (!this.props.testMode || !contract.deployedAt) {
+            return null
+        }
+
+        if (contractFunction.modifiers.find(modifier => (modifier === 'constant' || modifier === 'view' || modifier === 'pure'))) {
+            return <button type='button' className='function-operation-button btn btn-outline-primary btn-sm' 
+                        onClick={() => this.callFunction(contractFunction)}>
+                            Call
+                    </button>
+                 
+        } else {
+            return  <button type='button' className='function-operation-button btn btn-outline-primary btn-sm' 
+                        onClick={() => this.send(contractFunction)}>
+                            Send
+                    </button>
+                    
+        }
+        
+    }
+
+    isSameFunction(a: Sol.ContractFunction, b: Sol.ContractFunction) {
+        let isSame = a.name === b.name && a.params.length === b.params.length
+        if (isSame) {
+            a.params.forEach((param: Sol.ContractFunctionParam, index: number) => {
+                isSame = isSame ? 
+                    param.name === b.params[index].name && param.solidityType.name === b.params[index].solidityType.name : false
+            })
+        }
+        return isSame
+    }
+
+    getFunctionIndex(contractFunction: Sol.ContractFunction): number {
+        let functionIndex = this.props.selectedContract.functions
+            .findIndex((cF: Sol.ContractFunction) => this.isSameFunction(cF, contractFunction))
+   
+        if (functionIndex === -1) {
+            const tempFunctionIndex = this.props.selectedContract.inheritedFunctions
+                .findIndex((cF: Sol.ContractFunction) => this.isSameFunction(cF, contractFunction))
+            functionIndex = this.props.selectedContract.functions.length + tempFunctionIndex 
+            
+        } 
+
+        return functionIndex
+        
+    }
+
+    getFunctionForIndex(functionIndex: number): Sol.ContractFunction {
+
+        if (functionIndex >= this.props.selectedContract.functions.length) {
+            return this.props.selectedContract.inheritedFunctions[functionIndex - this.props.selectedContract.functions.length]
+        }
+
+        return this.props.selectedContract.functions[functionIndex]
+
+    } 
+
+    async callFunction(contractFunction: Sol.ContractFunction) {
+        const name = contractFunction.name
+       
+        const functionIndex = this.getFunctionIndex(contractFunction)
+        const theFunction = this.getFunctionForIndex(functionIndex)
+
+        this.initBlockchainOperation(name, theFunction, functionIndex)
+
+        const contract = new this.props.web3.eth.Contract(
+            getFunctionAbi(theFunction, this.props.web3, this.props.contracts),
+            this.props.selectedContract.deployedAt)
+
+        let result 
+        let error = null
+        try {
+            result = await (this.state.parameterMapping[name] ? 
+                contract.methods[name](...this.state.parameterMapping[name]).call() : contract.methods[name]().call())
+            
+            if (typeof result !== 'object') {
+                this.setState((prevState: ContractFunctionViewState) => {
+                    if (prevState.resultMapping[name]) {
+                        prevState.resultMapping[name][0] = result.toString()
+                    } else {
+                        prevState.resultMapping[name] = []
+                        prevState.resultMapping[name][0] = result.toString()
+                    }
+                    return {parameterMapping: prevState.parameterMapping}
+                })
+            } else {
+                for (const index of theFunction.returnParams.keys()) {
+                    this.setState((prevState: ContractFunctionViewState) => {
+                        if (prevState.resultMapping[name]) {
+                            prevState.resultMapping[name][index] = result[index].toString()
+                        } else {
+                            prevState.resultMapping[name] = []
+                            prevState.resultMapping[name][index] = result[index].toString()
+                        }
+                        return {parameterMapping: prevState.parameterMapping}
+                    })
+                }
+            }
+        
+            result = typeof result === 'object' ? JSON.stringify(result) : result.toString()
+
+        } catch (e) {
+            error = e.message
+  
+        }
+
+        this.setState((prevState: ContractFunctionViewState) => {
+            prevState.blockchainErrors[functionIndex] = error
+            return {
+                lastResultName: name,
+                lastResult: '',
+                blockchainErrors: prevState.blockchainErrors
+            }
+        })
+        
+    }
+
+    initBlockchainOperation(name: string, theFunction: Sol.ContractFunction, functionIndex: number) {
+        for (const index of theFunction.returnParams.keys()) {
+            this.setState((prevState: ContractFunctionViewState) => {
+                if (prevState.resultMapping[name]) {
+                    prevState.resultMapping[name][index] = ''
+                } else {
+                    prevState.resultMapping[name] = []
+                    prevState.resultMapping[name][index] = ''
+                }
+
+                return {parameterMapping: prevState.parameterMapping}
+            })
+        }
+
+        this.setState((prevState: ContractFunctionViewState) => {
+            prevState.blockchainErrors[functionIndex] = null
+            return {
+                lastResult: '',
+                blockchainErrors: prevState.blockchainErrors
+            }
+        })
+    }
+
+    async send(contractFunction: Sol.ContractFunction) {
+        const functionIndex = this.getFunctionIndex(contractFunction)
+        const theFunction = this.getFunctionForIndex(functionIndex)
+
+        this.initBlockchainOperation(name, theFunction, functionIndex)
+
+        const accounts = await this.props.web3.eth.getAccounts()
+        
+        if (accounts.length > 0) {
+            let error = null
+            const contract = new this.props.web3.eth.Contract(this.props.selectedContract.meta.abi, this.props.selectedContract.deployedAt)
+
+            let result 
+            try {
+                result = await (this.state.parameterMapping[name] ? 
+                    contract.methods[name](...this.state.parameterMapping[name]).send({from: accounts[0]}) :
+                    contract.methods[name]().send({from: accounts[0]})
+                )
+          
+            } catch (e) {
+                error = e
+            } finally {
+
+            if (typeof result === 'object') {
+                this.props.addTabEntity({
+                    active: true,
+                    contentType: TabEntityType.Json,
+                    name: name + ' Tx',
+                    content: result,
+                    icon: 'sign-out-alt'
+                
+                }, 1, true)
+
+            }
+
+            result = typeof result === 'object' ? JSON.stringify(result) : result.toString()
+            
+            this.setState((prevState: ContractFunctionViewState) => {
+                prevState.blockchainErrors[functionIndex] = error ? error.message : null
+                return {
+                    lastResultName: name,
+                    lastResult: result,
+                    blockchainErrors: prevState.blockchainErrors
+                }
+            })
+            }
+
+        }
+    }
+
+    getFunctionList(contract: Sol.Contract, inherited: boolean) {
+        
+        const functions = inherited ? contract.inheritedFunctions : contract.functions
+        const functionIndexOffset = inherited ? contract.functions.length : 0
+
+        if (!this.props.showInheritedMembers && inherited) {
+            if (contract.inheritedFunctions.length === 0) {
+                return null
+            }
+
+            return  <div className='selected-list-item list-group-item list-group-item-action flex-column align-items-start'
+                        key={'function' + contract.name + 'inheritedInfo'}>
+                        <small>
+                            <a href='#' onClick={() => {this.props.toggleInheritance()}} className={'text-muted'}>
+                                {contract.inheritedFunctions.length}
+                                &nbsp;inherited function{contract.inheritedFunctions.length === 1 ? '' : 's'}
+                            </a>
+                        </small>
+                    </div>
+        }
+        
+        return functions.map((contractFunction: Sol.ContractFunction, functionIndex: number) => {
+
+            const params = []
+            contractFunction.params.forEach((param: Sol.ContractFunctionParam, index: number) => {
+                params.push(
+                    <div key={'param' + contract.name + param.name} className='param'>
+                        <i className='fas fa-arrow-circle-right' aria-hidden='true'></i>&nbsp;
+                        <strong>{param.name}</strong><small>&nbsp;{param.solidityType.name}</small>
+                        {param.description !== '' ? <div className='param-content'>
+                            <i className='text-muted'>{param.description }</i></div> : null}
+                        {this.props.testMode && contract.deployedAt != null ?
+                        <div className='param-content'>
+                            <input  onChange={(e) => this.parameterChange(e, index, contractFunction.name)}
+                             className='form-control form-control-sm' type='text' />
+                        </div> : null }
+                    </div>
+                )
+            })
+            const returnParams = []
+            contractFunction.returnParams.forEach((param: Sol.ContractFunctionParam, index: number) => {
+                returnParams.push(
+                    <div className='param' key={'returnParam' + contract.name + contractFunction.name + param.name + index}>
+                        <i className='far fa-arrow-alt-circle-left' aria-hidden='true'></i>&nbsp;
+                        <strong>{param.name}</strong><small>&nbsp;{param.solidityType.name}</small>
+                        { this.props.testMode && contract.deployedAt != null ?
+                            <div className='param-content'>
+                                <input  className='form-control form-control-sm' type='text' disabled
+                                    value={this.state.resultMapping[contractFunction.name] 
+                                        && this.state.resultMapping[contractFunction.name][index] ? 
+                                    this.state.resultMapping[contractFunction.name][index] 
+                                    : '' } />
+                            </div> 
+                            : null 
+                        }
+                    </div>
+                )
+            })
+
+            const modifiers = []
+            let showEye = false
+            contractFunction.modifiers.forEach((modifier) => {
+                if(modifier === 'view' || modifier === 'pure' || modifier === 'constant') {
+                    showEye = true
+                }
+                modifiers.push(
+                    <span className='badge badge-secondary modifier-badge' key={'modifier' + contract.name + modifier}>{modifier}</span>
+                )
+            })
+
+            const functionKey = 'function' + contract.name + contractFunction.name + contractFunction.params
+                .map((param: Sol.ContractFunctionParam) => param.name + param.solidityType.name)
+                .reduce((previous, current) => previous + current, '')
+            
+            return  <div className='member-parent-container selected-list-item list-group-item list-group-item-action flex-column align-items-start with-detailed-view'
+                        key={functionKey}>
+                 
+                        <div className='member-container'>
+                            <div className='left-member'>
+                                <button data-target={'.functionContent' + functionKey} data-toggle='collapse'
+                                 type='button' onClick={() => this.toogleCollapse(functionIndexOffset + functionIndex)} className='btn btn-outline-dark detailed-button left-member'>
+                       
+
+                                    <div className={(this.state.functionCollapsed[functionIndexOffset + functionIndex] ? '' : ' dontShow')}>
+                                        <i className='fas fa-angle-down'></i>
+                                    </div> 
+                                    <div className={(this.state.functionCollapsed[functionIndexOffset + functionIndex] ? ' dontShow' : '')}>
+                                        <i className='fas fa-angle-right'></i>
+                                    </div>
+                                    
+                                </button>
+                            </div>
+                            <div className='right-member'>
+                                <div className='d-flex w-100 justify-content-between full-block'>
+                                    <div className='full-block'>
+                                        <strong>
+                                            <span className={'member-name' }>
+                                                {/* <a href='#' className={(inherited ? ' text-muted' : '')} onClick={() => this.props.markCode(contractFunction.start, contractFunction.end, contract)}>{contractFunction.name}()</a> */}
+                                                <span className={(inherited ? ' text-muted' : '')}>{contractFunction.name}()</span>
+                                            </span>
+                                        </strong>
+                                        <div className={'full-block collapse functionContent' + functionKey} >
+                                            {modifiers}
+                                            <div className='param param-doc'>   
+                                                {contractFunction.description ? 
+                                                    <small><i className='text-muted'>{contractFunction.description}</i><br /></small> : null}
+                                            </div>
+                                            {params.length > 0 ? <small>{params}</small> : null} 
+                                
+                                            {returnParams.length > 0 ? <small>{returnParams}</small> : null}
+                                            {this.state.blockchainErrors[functionIndexOffset + functionIndex] ? 
+                                                <div className='alert alert-danger param-content' role='alert'>
+                                                    <small>{this.state.blockchainErrors[functionIndexOffset + functionIndex]}</small>
+                                                </div>
+                                             : null}
+                                            
+                                            <div className='text-right functionOperations'>
+                                                <button type='button' className='function-operation-button btn btn-outline-primary btn-sm' data-toggle='modal' 
+                                                    data-target={'#codeModal' }
+                                                    onClick={() => this.onShowCode(contractFunction)}>
+                                                    Code
+                                                </button>
+                                                {this.getOperationButton(contract, contractFunction)}
+                                           
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div>
+                                        {showEye ? <i className='fas fa-eye'></i> : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+        })
+
+    }
+
+    render() {
+        if (this.props.selectedContract.functions.length === 0 && this.props.selectedContract.inheritedFunctions.length === 0) {
+            return null
+        }
+
+        return  <div>
+                    <ResultBox resultBoxIsShown={this.state.resultBoxIsShown} name={this.state.lastResultName}
+                    showResultBox={this.showResultBox} result={this.state.lastResult} id={'Function' + this.props.selectedContract.name} />
+                    <CodeBox codeBoxIsShown={this.state.codeBoxIsShown} showCodeBox={this.showCodeBox} selectedFunction={this.state.selectedFunction}/>
+                    <h5 className='member-headline'><i className='fas fa-align-justify'></i> Functions</h5>
+                    <div className='list-group'>
+                        {this.getFunctionList(this.props.selectedContract, false)}
+                        {this.getFunctionList(this.props.selectedContract, true)}
+                    </div>
+                    <br />
+                </div>
+    }
+    
+}
