@@ -1,0 +1,9 @@
+version: '2'
+services:
+  frontend:
+    image: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+    stdin_open: true
+    tty: true
+    labels:
+      io.rancher.container.pull_image: always
+      io.rancher.scheduler.affinity:host_label: role=application
