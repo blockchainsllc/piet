@@ -92,8 +92,8 @@ export class ContractView extends React.Component<ContractViewProps, ContractVie
                             </h6>
 
                             { !contract.source && <div className='text-muted-light' ><p>
-                                <strong>No sources found for this Contract.</strong> </p>
-                                <p>Child contracts don't show inhertited members from this contract. </p>                              
+                                <strong className='error-red'>No sources found for this Contract.</strong> </p>
+                                <p>Child contracts don't show members inhertited from this contract. </p>                              
                             </div> }
                             <div className='text-muted-light normal-line-height'>
                           

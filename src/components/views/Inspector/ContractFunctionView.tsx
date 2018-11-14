@@ -394,7 +394,8 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
                         <div className='member-container'>
                             <div className='left-member'>
                                 <button data-target={'.functionContent' + functionKey} data-toggle='collapse'
-                                 type='button' onClick={() => this.toogleCollapse(functionIndexOffset + functionIndex)} className='btn btn-outline-dark detailed-button left-member'>
+                                    type='button' onClick={() => this.toogleCollapse(functionIndexOffset + functionIndex)}
+                                    className='btn btn-outline-dark detailed-button left-member'>
                        
 
                                     <div className={(this.state.functionCollapsed[functionIndexOffset + functionIndex] ? '' : ' dontShow')}>

@@ -9,7 +9,7 @@
  */
 
 import * as joint from 'jointjs'
-import { Contract, NodeElement } from '../solidity-handler/SolidityHandler'
+import { Contract, NodeElement, SolidityAnnotation } from '../solidity-handler/SolidityHandler'
 
 export namespace JointElements {
     // const link = joint.dia.Link.extend({
@@ -53,11 +53,11 @@ export namespace JointElements {
 
     export const contractNodeHighlighted = (contract) => ({ 
         rect: { 
-            class: 'contract-node node-highlighted',
+            class: 'contract-node node-highlighted'
  
         },
         text: { 
-            class: 'node-text',
+            class: 'node-text' + (contract.source ? '' : ' node-text-error'),
             text: cutText(contract.name),
             // 'font-family': 'monospace',
             'font-size': 12
@@ -73,7 +73,7 @@ export namespace JointElements {
             class: 'contract-node'
         },
         text: { 
-            class: 'node-text',
+            class: 'node-text' + (contract.source ? '' : ' node-text-error'),
             text: cutText(contract.name),
             // 'font-family': 'monospace',
             'font-size': 12
