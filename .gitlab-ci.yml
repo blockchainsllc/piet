@@ -17,7 +17,7 @@ ui-build:
   artifacts:
     name: build-ui
     paths:
-      - dist/
+      - build/
 
 docker-package:
   stage: package
