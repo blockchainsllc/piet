@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "node_modules/webpack/bin/webpack.js  && cp index-production.html ./build/index.html && cp -rf ./javascript ./build && cp -rf ./style ./build",
+    "build": "node_modules/webpack/bin/webpack.js  && cp index-production.html ./build/index.html && cp -rf ./javascript ./build && cp -rf ./style ./build && cp -rf ./assets ./build  ",
     "start": "node_modules/webpack-dev-server/bin/webpack-dev-server.js --output-public-path=/dist/ -d --watch",
     "start-no-watch": "node --max_old_space_size=4096 node_modules/webpack-dev-server/bin/webpack-dev-server.js --output-public-path=/dist/",
     "start-no-dev": "node_modules/webpack/bin/webpack.js -w --output-public-path=/dist/ -d --watch"
