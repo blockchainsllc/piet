@@ -4,7 +4,7 @@
         "sourceMap": true,
         "noImplicitAny": false,
         "module": "CommonJS",
-        "target": "es6",
+        "target": "es5",
         "jsx": "react",
         "allowSyntheticDefaultImports": true,
         "lib": ["es2017", "dom"] 

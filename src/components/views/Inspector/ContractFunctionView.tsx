@@ -210,7 +210,7 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
                     return {parameterMapping: prevState.parameterMapping}
                 })
             } else {
-                for (const index of theFunction.returnParams.keys()) {
+                for (const index of Object.keys(theFunction.returnParams)) {
                     this.setState((prevState: ContractFunctionViewState) => {
                         if (prevState.resultMapping[name]) {
                             prevState.resultMapping[name][index] = result[index].toString()
@@ -242,7 +242,7 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
     }
 
     initBlockchainOperation(name: string, theFunction: Sol.ContractFunction, functionIndex: number) {
-        for (const index of theFunction.returnParams.keys()) {
+        for (const index of Object.keys(theFunction.returnParams.keys())) {
             this.setState((prevState: ContractFunctionViewState) => {
                 if (prevState.resultMapping[name]) {
                     prevState.resultMapping[name][index] = ''

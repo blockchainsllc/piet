@@ -497,9 +497,9 @@ export const parseContent = (fileContents): Contract[] => {
                     isAbstract: (node as any).subNodes
                         .filter(subNode => subNode.type && subNode.type === 'FunctionDefinition' && subNode.body === null).length > 0
                 }
-                console.log('################')
-                console.log(node)
-                console.log(contract)
+                // console.log('################')
+                // console.log(node)
+                // console.log(contract)
 
                 contracts.push(contract)
             }
