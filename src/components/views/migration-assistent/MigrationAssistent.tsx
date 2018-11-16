@@ -8,69 +8,68 @@
  * @copyright 2018 by Slock.it GmbH
  */
 
-import * as React from 'react'
-
-import * as Sol from '../../../solidity-handler/SolidityHandler'
-import { Conversion, Convert } from '../../../solidity-handler/TypeConversion'
-import Web3Type from '../../../types/web3'
-import JSONTree from 'react-json-tree'
-import * as CsvParse from 'csv-parse'
-import * as PromiseFileReader from 'promise-file-reader'
-import SplitPane from 'react-split-pane'
+import * as React from 'react';
+import * as Sol from '../../../solidity-handler/SolidityHandler';
+import { Conversion, Convert } from '../../../solidity-handler/TypeConversion';
+import Web3Type from '../../../types/web3';
+import * as CsvParse from 'csv-parse';
+import * as PromiseFileReader from 'promise-file-reader';
+import SplitPane from 'react-split-pane';
+import { Eth } from '../../../types/types';
 
 interface MigrationAssistentProps {
-    web3: Web3Type,
-    content: any,
-    viewId: number,
-    tabId: number,
-    contracts: Sol.Contract[]
+    web3: Web3Type;
+    content: any;
+    viewId: number;
+    tabId: number;
+    contracts: Sol.Contract[];
 
 }
 
 interface MigrationFunction {
-    selectedContract: Sol.Contract,
-    selectedFunction: Sol.ContractFunction,
-    parameterColumnMapping: MigrationFunctionMapping[]
+    selectedContract: Sol.Contract;
+    selectedFunction: Sol.ContractFunction;
+    parameterColumnMapping: MigrationFunctionMapping[];
 
 }
 
 interface MigrationFunctionMapping {
-    columnNumber: number,
-    parameterName: string,
-    conversion: Conversion
+    columnNumber: number;
+    parameterName: string;
+    conversion: Conversion;
 
 }
 
 interface MigrationAssistentState {
 
-    parsedCsv: any[][],
-    migrationFunctions: MigrationFunction[],
-    outputMessages: string[]
+    parsedCsv: any[][];
+    migrationFunctions: MigrationFunction[];
+    outputMessages: string[];
 
 }
 
 export class MigrationAssistent extends React.Component<MigrationAssistentProps, MigrationAssistentState> {
 
-    constructor(props) {
-        super(props)
+    constructor(props: MigrationAssistentProps) {
+        super(props);
 
         this.state = {
             parsedCsv: null,
             migrationFunctions: [],
             outputMessages: []
-        }
+        };
 
-        this.parseCsvFile = this.parseCsvFile.bind(this)
-        this.onSelectContract = this.onSelectContract.bind(this)
-        this.onSelectFunction = this.onSelectFunction.bind(this)
-        this.onSelectParameter = this.onSelectParameter.bind(this)
-        this.onClickPlay = this.onClickPlay.bind(this)
-        this.onSelectConversion = this.onSelectConversion.bind(this)
-        this.onAddFunction = this.onAddFunction.bind(this)
+        this.parseCsvFile = this.parseCsvFile.bind(this);
+        this.onSelectContract = this.onSelectContract.bind(this);
+        this.onSelectFunction = this.onSelectFunction.bind(this);
+        this.onSelectParameter = this.onSelectParameter.bind(this);
+        this.onClickPlay = this.onClickPlay.bind(this);
+        this.onSelectConversion = this.onSelectConversion.bind(this);
+        this.onAddFunction = this.onAddFunction.bind(this);
 
     }
 
-    componentDidMount() {
+    componentDidMount(): void {
         this.setState({
             migrationFunctions: [{
                 selectedContract: null,
@@ -78,10 +77,10 @@ export class MigrationAssistent extends React.Component<MigrationAssistentProps,
                 parameterColumnMapping: []
 
             }]
-        })
+        });
     }
 
-    onAddFunction() {
+    onAddFunction(): void {
         this.setState((prevState: MigrationAssistentState) => {
 
             return {
@@ -90,129 +89,130 @@ export class MigrationAssistent extends React.Component<MigrationAssistentProps,
                     selectedFunction: null,
                     parameterColumnMapping: []
                 }]
-            }
-        })
+            };
+        });
     }
 
-    onClickPlay() {
-        this.addOutputMessage('Starting Migration...')
+    onClickPlay(): void {
+        this.addOutputMessage('Starting Migration...');
         this.state.migrationFunctions.forEach((migrationFunction: MigrationFunction) => {
             
-            const convertedParams = Array(this.state.parsedCsv.length).fill(
+            const convertedParams: any[] = Array(this.state.parsedCsv.length).fill(
                 Array(migrationFunction.selectedFunction.params.length).fill(null)
-            )
+            );
             
-            this.state.parsedCsv.forEach((row, rowIndex: number) => {
+            this.state.parsedCsv.forEach((row: any, rowIndex: number) => {
                 
                 migrationFunction.parameterColumnMapping.forEach((migrationFunctionMapping: MigrationFunctionMapping, index: number) => {
                     if (migrationFunctionMapping) {
-                        const paramIndex = migrationFunction.selectedFunction.params.findIndex((param: Sol.ContractFunctionParam) => 
-                            param.name === migrationFunctionMapping.parameterName
-                        )
+                        const paramIndex: number = migrationFunction.selectedFunction.params
+                            .findIndex((param: Sol.ContractFunctionParam) => 
+                                param.name === migrationFunctionMapping.parameterName
+                            );
                         
                         convertedParams[rowIndex] = [
                             ...convertedParams[rowIndex].slice(0, paramIndex),
                             Convert(migrationFunctionMapping.conversion, row[migrationFunctionMapping.columnNumber], this.props.web3),
                             ...convertedParams[rowIndex].slice(paramIndex + 1)
-                        ] 
+                        ]; 
                             
                     }
-                })
-            })
+                });
+            });
 
-            convertedParams.forEach(async line => {
-                let log = migrationFunction.selectedContract.name + '.' + migrationFunction.selectedFunction.name + '('
+            convertedParams.forEach(async (line: any) => {
+                let log: string = migrationFunction.selectedContract.name + '.' + migrationFunction.selectedFunction.name + '(';
             
                 line.forEach((value: any, index: number) => {
-                    log += value + (index < migrationFunction.parameterColumnMapping.length - 1 ? ', ' : '')
-                })
-                log += ')'
-                this.addOutputMessage('Try to send Tx: ' + log)
-                await this.send(migrationFunction, line)
+                    log += value + (index < migrationFunction.parameterColumnMapping.length - 1 ? ', ' : '');
+                });
+                log += ')';
+                //this.addOutputMessage('Try to send Tx: ' + log);
+                await this.send(migrationFunction, line);
 
-            })
+            });
           
-        })
+        });
     }
 
-    async send(migrationFunction: MigrationFunction, params: any[]) {
+    async send(migrationFunction: MigrationFunction, params: any[]): Promise<void> {
 
-        const accounts = await this.props.web3.eth.getAccounts()
+        const accounts: string[] = await this.props.web3.eth.getAccounts();
         
         if (accounts.length > 0) {
             
-            const contract = new this.props.web3.eth.Contract(
+            const contract: any = new this.props.web3.eth.Contract(
                 migrationFunction.selectedContract.meta.abi, 
-                migrationFunction.selectedContract.deployedAt)
+                migrationFunction.selectedContract.deployedAt);
 
             try {
-                await contract.methods[migrationFunction.selectedFunction.name](...params).send({from: accounts[0]}) 
-                this.addOutputMessage('Tx successfully send')
+                await contract.methods[migrationFunction.selectedFunction.name](...params).send({from: accounts[0]}); 
+                this.addOutputMessage('Tx successfully send');
             } catch (e) {
-                this.addOutputMessage('ERROR: ' + e.message.toString())
+                this.addOutputMessage('ERROR: ' + e.message.toString());
             } 
 
         }
     }
 
-    async parseCsvFile(fileList: FileList) {
+    async parseCsvFile(fileList: FileList): Promise<void> {
       
-        const reader = new FileReader()
-        const fileContentPromises =  Array(fileList.length).fill(null)
-            .map(async (item, index) => ({
+        const reader: FileReader = new FileReader();
+        const fileContentPromises: any =  Array(fileList.length).fill(null)
+            .map(async (item: any, index: number) => ({
                 content: await PromiseFileReader.readAsText(fileList[index]),
                 fileName: fileList[index].name
-            }))
+            }));
         
-        const fileContents = await Promise.all(fileContentPromises)
+        const fileContents: any = await Promise.all(fileContentPromises);
         if (fileContents.length > 0) {
-            CsvParse(fileContents[0].content, {comment: '#'}, (err, output) => {
+            CsvParse(fileContents[0].content, {comment: '#'}, (err: any, output: any) => {
                 if (!err) {
                     this.setState({
                         parsedCsv: output
-                    })
+                    });
                 }
                 
-            })
+            });
         }
        
     }
 
-    onSelectContract(event, index) {
+    onSelectContract(event: any, index: number): void {
      
-        const selectedContract = this.props.contracts.find((contract: Sol.Contract) => contract.name === event.target.value)
+        const selectedContract: Sol.Contract = this.props.contracts.find((contract: Sol.Contract) => contract.name === event.target.value);
         
         this.setState((prevState: MigrationAssistentState) => {
-            prevState.migrationFunctions[index].selectedContract = selectedContract ? selectedContract : null
-            prevState.migrationFunctions[index].selectedFunction = null
-            prevState.migrationFunctions[index].parameterColumnMapping = []
+            prevState.migrationFunctions[index].selectedContract = selectedContract ? selectedContract : null;
+            prevState.migrationFunctions[index].selectedFunction = null;
+            prevState.migrationFunctions[index].parameterColumnMapping = [];
 
-            return { migrationFunctions: prevState.migrationFunctions}
-        })
+            return { migrationFunctions: prevState.migrationFunctions};
+        });
         
     }
 
-    onSelectFunction(event, selectedContract: Sol.Contract, index: number) {
+    onSelectFunction(event: any, selectedContract: Sol.Contract, index: number): void {
    
-        const selectedFunction = selectedContract.inheritedFunctions
+        const selectedFunction: Sol.ContractFunction = selectedContract.inheritedFunctions
             .concat(selectedContract.functions)
             .find((contractFunction: Sol.ContractFunction) =>
                 contractFunction.name === event.target.value
-        )
+        );
 
         this.setState((prevState: MigrationAssistentState) => {
-            prevState.migrationFunctions[index].selectedFunction = selectedFunction ? selectedFunction : null
+            prevState.migrationFunctions[index].selectedFunction = selectedFunction ? selectedFunction : null;
             prevState.migrationFunctions[index].parameterColumnMapping = selectedFunction ? 
-                Array(selectedFunction.params.length).fill(null) : []
-            return { migrationFunctions: prevState.migrationFunctions}
-        })
+                Array(selectedFunction.params.length).fill(null) : [];
+            return { migrationFunctions: prevState.migrationFunctions};
+        });
 
     }
 
-    onSelectParameter(event, selectedFunction: Sol.ContractFunction, lineIndex: number, colIndex: number) {
+    onSelectParameter(event: any, selectedFunction: Sol.ContractFunction, lineIndex: number, colIndex: number): void {
      
-        const selectedParameter = selectedFunction.params
-            .find((param: Sol.ContractFunctionParam) => param.name === event.target.value)
+        const selectedParameter: Sol.ContractFunctionParam = selectedFunction.params
+            .find((param: Sol.ContractFunctionParam) => param.name === event.target.value);
         
         this.setState((prevState: MigrationAssistentState) => {
             prevState.migrationFunctions[lineIndex].parameterColumnMapping[colIndex] = selectedParameter ? 
@@ -220,43 +220,43 @@ export class MigrationAssistent extends React.Component<MigrationAssistentProps,
                     columnNumber: colIndex,
                     parameterName: selectedParameter.name,
                     conversion: Conversion.NoConversion 
-                } : null
-            return { migrationFunctions: prevState.migrationFunctions}
-        })
+                } : null;
+            return { migrationFunctions: prevState.migrationFunctions};
+        });
         
     }
 
-    onSelectConversion(event, lineIndex: number, colIndex: number) {
+    onSelectConversion(event: any, lineIndex: number, colIndex: number): void {
         
-        const conversionIndex = parseInt(event.target.value, 10)
+        const conversionIndex: number = parseInt(event.target.value, 10);
        
         this.setState((prevState: MigrationAssistentState) => {
-            const selectedMapping = prevState.migrationFunctions[lineIndex].parameterColumnMapping[colIndex]
+            const selectedMapping: any = prevState.migrationFunctions[lineIndex].parameterColumnMapping[colIndex];
             prevState.migrationFunctions[lineIndex].parameterColumnMapping[colIndex] = selectedMapping ?
              
                 {
                     ...selectedMapping,
                     conversion: conversionIndex
-                } : null
+                } : null;
             
-            return { migrationFunctions: prevState.migrationFunctions}
-        })
+            return { migrationFunctions: prevState.migrationFunctions};
+        });
         
     }
 
-    functionSelector(migrationFunction: MigrationFunction, index: number) {
+    functionSelector(migrationFunction: MigrationFunction, index: number): JSX.Element {
 
         if (!migrationFunction.selectedContract) {
-            return null
+            return null;
         }
 
-        const functionOptions = migrationFunction.selectedContract.inheritedFunctions
+        const functionOptions: JSX.Element[] = migrationFunction.selectedContract.inheritedFunctions
             .concat(migrationFunction.selectedContract.functions)
             .map((contractFunction: Sol.ContractFunction) => 
                 <option key={migrationFunction.selectedContract.name + '-' + contractFunction.name} value={contractFunction.name}> 
                     {contractFunction.name}
                 </option>
-            )
+            );
 
         return (
             <select 
@@ -266,31 +266,33 @@ export class MigrationAssistent extends React.Component<MigrationAssistentProps,
                 <option key={'null'}>Select Function</option>
                 {functionOptions}
             </select>
-        )
+        );
     }
 
-    functionParameters(selectedFunction: Sol.ContractFunction, lineIndex: number, numberOfColumns: number) {
+    functionParameters(selectedFunction: Sol.ContractFunction, lineIndex: number, numberOfColumns: number): JSX.Element[] {
         if (!selectedFunction) {
             return Array(numberOfColumns)
                 .fill(null)
                 .map((item, index: number) => 
                     <td key={index}></td>
-                )
+                );
         }
-        const parameterOptions = (currentIndex: number) => selectedFunction.params
-            .filter((param: Sol.ContractFunctionParam) => -1 === this.state.migrationFunctions[lineIndex].parameterColumnMapping
+        const parameterOptions: (currentIndex: number) => JSX.Element[] = (currentIndex: number): JSX.Element[] => selectedFunction.params
+            .filter((param: Sol.ContractFunctionParam) => 
+                this.state.migrationFunctions[lineIndex].parameterColumnMapping
                     .findIndex((migrationFunctionMapping: MigrationFunctionMapping, findIndex: number) => 
-                        migrationFunctionMapping && migrationFunctionMapping.parameterName === param.name && currentIndex !== findIndex)
+                        migrationFunctionMapping && migrationFunctionMapping.parameterName === param.name && currentIndex !== findIndex) 
+                === -1
             )
             .map((param: Sol.ContractFunctionParam) =>
                 <option key={selectedFunction.name + '-' + param.name} value={param.name}> 
                     {param.name}
                 </option>
-            )
+            );
         
         return Array(numberOfColumns)
             .fill(null)
-            .map((item, index: number) => 
+            .map((item: any, index: number) => 
                 <td key={index}>
                     <select 
                         onChange={(event) => this.onSelectParameter(event, selectedFunction, lineIndex, index)} 
@@ -302,28 +304,28 @@ export class MigrationAssistent extends React.Component<MigrationAssistentProps,
                     {this.parameterConversions(this.state.migrationFunctions[lineIndex].parameterColumnMapping[index], lineIndex, index)}
                 </td>
                 
-            )
+            );
 
     }
 
-    addOutputMessage(message: string) {
-        message = '[' + new Date().toLocaleString() + '] ' + message
+    addOutputMessage(message: string): void {
+        const outputMessage: string = '[' + new Date().toLocaleString() + '] ' + message;
         this.setState((prevState: MigrationAssistentState) => {
-            prevState.outputMessages.push(message)
-            return {outputMessages: prevState.outputMessages}
-        })
+            prevState.outputMessages.push(message);
+            return {outputMessages: prevState.outputMessages};
+        });
     }
 
-    parameterConversions(migrationFunctionMapping: MigrationFunctionMapping, lineIndex: number, colIndex: number) {
+    parameterConversions(migrationFunctionMapping: MigrationFunctionMapping, lineIndex: number, colIndex: number): JSX.Element {
         if (!migrationFunctionMapping) {
-            return null
+            return null;
         }
 
-        const conversions = Object.entries(Conversion)
-            .filter(entry =>  typeof entry[1] === 'number')
-            .map((item, index: number) => 
+        const conversions: JSX.Element[] = Object.entries(Conversion)
+            .filter((entry: any) =>  typeof entry[1] === 'number')
+            .map((item: any, index: number) => 
                 <option key={item[1]} value={item[1]}>{item[0]}</option>
-            )
+            );
         
         return (
             <select 
@@ -332,15 +334,15 @@ export class MigrationAssistent extends React.Component<MigrationAssistentProps,
             >
                 {conversions}
             </select>
-        )
+        );
 
     }
 
-    migrationFunctions(migrationFunctions: MigrationFunction[], selectedContracts: Sol.Contract[], numberOfColumns: number) {
-        const contractSelect = selectedContracts.map((contract: Sol.Contract) => 
+    migrationFunctions(migrationFunctions: MigrationFunction[], selectedContracts: Sol.Contract[], numberOfColumns: number): JSX.Element[] {
+        const contractSelect: JSX.Element[] = selectedContracts.map((contract: Sol.Contract) => 
                 <option key={contract.name} value={contract.name}> 
                     {contract.name}
-                </option>)
+                </option>);
 
         return migrationFunctions.map((migrationFunction: MigrationFunction, index: number) => 
             <tr key={index}> 
@@ -358,38 +360,39 @@ export class MigrationAssistent extends React.Component<MigrationAssistentProps,
                 </td>
                 {this.functionParameters(migrationFunction.selectedFunction, index, numberOfColumns)}
             </tr>
-        )
+        );
     }
 
-    render() {
+    render(): JSX.Element {
 
-        let tableHeader
-        let tableBody
-        let maxLength = 0
+        let tableHeader: JSX.Element[];
+        let tableBody: JSX.Element[];
+        let maxLength: number = 0;
 
         if (this.state.parsedCsv) {
 
-            maxLength = Math.max(...this.state.parsedCsv.map((line: any[]) => line.length))
+            maxLength = Math.max(...this.state.parsedCsv.map((line: any[]) => line.length));
             
             tableHeader = Array(maxLength)
                 .fill(null)
-                .map((item, index) => <th key={'col' + index}>Column {index}</th>)
-            tableHeader = [<th key={'colFunction'}>Functions</th>].concat(tableHeader)
+                .map((item: any, index: number) => <th key={'col' + index}>Column {index}</th>);
+            tableHeader = [<th key={'colFunction'}>Functions</th>].concat(tableHeader);
 
-            const data = this.state.parsedCsv.length > 3 ? 
+            const data: any = this.state.parsedCsv.length > 3 ? 
                 this.state.parsedCsv.slice(0, 3).concat([Array(maxLength).fill('...')]) :
-                this.state.parsedCsv
+                this.state.parsedCsv;
 
             tableBody = data.map((line: any[], lineIndex: number) => 
                 <tr key={'line' + lineIndex}>
-                    {[<td key='valueFunction'></td>].concat(line.map((value, index) => <td key={'value' + index}>{value}</td>))}
-                </tr>)
+                    {[<td key='valueFunction'></td>]
+                        .concat(line.map((value: any, index: number) => <td key={'value' + index}>{value}</td>))}
+                </tr>);
                 
         }
 
-        const outputMessages = this.state.outputMessages.map((message: String, index: number) => 
+        const outputMessages: JSX.Element[] = this.state.outputMessages.map((message: String, index: number) => 
             <span key={index} className='output-message'>{message}<br /></span>
-        )
+        );
 
         return <SplitPane className='scrollable hide-resizer' split='horizontal'  defaultSize={40} allowResize={false} >
                     <div className='h-100 w-100 toolbar'>
@@ -414,7 +417,10 @@ export class MigrationAssistent extends React.Component<MigrationAssistentProps,
                                                 </thead>
                                                 <tbody>
                                                     {tableBody}
-                                                    {this.migrationFunctions(this.state.migrationFunctions, this.props.contracts, maxLength)}
+                                                    {this.migrationFunctions(
+                                                            this.state.migrationFunctions,
+                                                            this.props.contracts, maxLength)
+                                                    }
                                                     <tr>
                                                         <td colSpan={maxLength + 1}> 
                                                             <button className={'btn btn-sm btn-outline-info'}
@@ -439,7 +445,12 @@ export class MigrationAssistent extends React.Component<MigrationAssistentProps,
                                         </button>
                                     </div>
                                 </div>
-                                <SplitPane className='scrollable hide-resizer empty-first-pane' split='horizontal'  defaultSize={1} allowResize={false}>
+                                <SplitPane 
+                                    className='scrollable hide-resizer empty-first-pane'
+                                    split='horizontal'
+                                    defaultSize={1}
+                                    allowResize={false}
+                                >
                                     <div></div>
                                     <div className='output-message-container'>
                                         <small>
@@ -451,7 +462,7 @@ export class MigrationAssistent extends React.Component<MigrationAssistentProps,
                         </SplitPane>
                             
                     </SplitPane>
-                </SplitPane>
+                </SplitPane>;
                
     }
     

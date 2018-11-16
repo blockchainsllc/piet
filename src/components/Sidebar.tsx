@@ -8,43 +8,42 @@
  * @copyright 2018 by Slock.it GmbH
  */
 
-import * as React from 'react'
-import SVG  from 'react-inlinesvg'
-import { TabEntityType } from './View'
-
+import * as React from 'react';
+import SVG  from 'react-inlinesvg';
+import { TabEntityType } from './View';
 
 export interface SidebarProps { 
-    submitFiles: Function,
-    changeActiveTab: Function,
-    isLoading: boolean,
-    addTabEntity: Function,
+    submitFiles: Function;
+    changeActiveTab: Function;
+    isLoading: boolean;
+    addTabEntity: Function;
     
 }
 
 export interface SidebarState {
-    loadContractFilesBoxIsShown: boolean
+    loadContractFilesBoxIsShown: boolean;
 }
 
 export class Sidebar extends React.Component<SidebarProps, {}> {
-    state: SidebarState
+    state: SidebarState;
     
-    constructor(props) {
-        super(props)
+    constructor(props: SidebarProps) {
+        super(props);
         this.state = { 
             loadContractFilesBoxIsShown: false
-        }
+        };
 
-        this.showLoadContractFilesBox = this.showLoadContractFilesBox.bind(this)
-        this.showAbout = this.showAbout.bind(this)
-        this.showMigrationAssistent = this.showMigrationAssistent.bind(this)
+        this.showLoadContractFilesBox = this.showLoadContractFilesBox.bind(this);
+        this.showAbout = this.showAbout.bind(this);
+        this.showMigrationAssistent = this.showMigrationAssistent.bind(this);
 
     }
 
-    showLoadContractFilesBox(show: boolean) {
-        this.setState({loadContractFilesBoxIsShown: show})
+    showLoadContractFilesBox(show: boolean): void {
+        this.setState({loadContractFilesBoxIsShown: show});
     }
 
-    showAbout() {
+    showAbout(): void {
         this.props.addTabEntity({
                 active: true,
                 contentType: TabEntityType.About,
@@ -53,11 +52,11 @@ export class Sidebar extends React.Component<SidebarProps, {}> {
                 icon: 'question-circle',
                 removable: true
             }, 
-            1,
-            false)
+                                1,
+                                false);
     }
 
-    showMigrationAssistent() {
+    showMigrationAssistent(): void {
         this.props.addTabEntity({
                 active: true,
                 contentType: TabEntityType.MigrationAssistent,
@@ -65,11 +64,11 @@ export class Sidebar extends React.Component<SidebarProps, {}> {
                 content: null,
                 icon: 'random'
             }, 
-            1,
-            false)
+                                1,
+                                false);
     }
 
-    render() {
+    render(): JSX.Element {
 
         return  <div className='sidebar h-100'>
                     <div className='row'>
@@ -83,7 +82,7 @@ export class Sidebar extends React.Component<SidebarProps, {}> {
                         <div className='row'>
                             <div className='col-sm text-center'>
                                 <a href='#' className='btn btn-outline-secondary btn-lg' 
-                                    onClick={() => this.props.changeActiveTab(0,0)}><i className='fas fa-copy'></i></a>
+                                    onClick={() => this.props.changeActiveTab(0, 0)}><i className='fas fa-copy'></i></a>
                             </div>
                         </div>
                     </div>
@@ -128,7 +127,7 @@ export class Sidebar extends React.Component<SidebarProps, {}> {
                         </div>
                     </div>
 
-                    </div>
+                    </div>;
                                     
     }
 

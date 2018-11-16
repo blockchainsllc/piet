@@ -8,40 +8,35 @@
  * @copyright 2018 by Slock.it GmbH
  */
 
-import * as React from 'react'
-import * as SolidityHandler from '../solidity-handler/SolidityHandler'
-import * as queryString from 'query-string'
-import { Sidebar } from './Sidebar'
-import { View, TabEntity, TabEntityType } from './View'
-import * as $ from 'jquery'
-import Web3Type from '../types/web3'
-import SplitPane from 'react-split-pane'
-import { getContracts } from '../utils/GitHub'
-import { withRouter } from 'react-router-dom'
-import { ContractStateVaribaleView } from './views/Inspector/ContractStateVaribaleView';
-
-const Web3 = require('web3');
+import * as React from 'react';
+import * as Sol from '../solidity-handler/SolidityHandler';
+import * as queryString from 'query-string';
+import { Sidebar } from './Sidebar';
+import { View, TabEntity, TabEntityType } from './View';
+import * as $ from 'jquery';
+import Web3Type from '../types/web3';
+import SplitPane from 'react-split-pane';
+import { getContracts } from '../utils/GitHub';
+import { withRouter } from 'react-router-dom';
+import * as Web3 from 'web3';
 
 interface AppContainerState {
-    contracts: SolidityHandler.Contract[],
-    contractToSelect: string,
-    contractToSelectAddress: string,
-    selectedElement: SolidityHandler.NodeElement,
-    web3: Web3Type,
-    isLaoding: boolean,
-    tabEntities: TabEntity[][]
-    activeTab: number[]
+    contracts: Sol.Contract[];
+    contractToSelect: string;
+    contractToSelectAddress: string;
+    selectedElement: Sol.NodeElement;
+    web3: Web3Type;
+    isLaoding: boolean;
+    tabEntities: TabEntity[][];
+    activeTab: number[];
 }
 
 class AppContainer extends React.Component<{}, {}> {
-    state: AppContainerState
+    state: AppContainerState;
 
-    constructor(props) {
-        super(props)
+    constructor(props: any) {
+        super(props);
 
-
-
-        // const web3 = window['web3'] ? (window['web3'].currentProvider ? window['web3'].currentProvider : 'http://localhost:8545') : 'http://localhost:8545'
         this.state = {
             contracts: [],
             selectedElement: null,
@@ -51,214 +46,215 @@ class AppContainer extends React.Component<{}, {}> {
             
             isLaoding: false,
             
-            tabEntities: [[],[]],
-            activeTab: [null,null]
+            tabEntities: [[], []],
+            activeTab: [null, null]
 
-        }
-        this.updateContractNames = this.updateContractNames.bind(this)
-        this.changeSelectedElement = this.changeSelectedElement.bind(this)
-        this.setIsLoading = this.setIsLoading.bind(this)
-        this.addTabEntity = this.addTabEntity.bind(this)
-        this.changeActiveTab = this.changeActiveTab.bind(this)
-        this.markCode = this.markCode.bind(this)
-        this.changeContractAddress = this.changeContractAddress.bind(this)
-        this.getEvents = this.getEvents.bind(this)
-        this.contentChange = this.contentChange.bind(this)
-        this.removeTabEntity = this.removeTabEntity.bind(this)
-        this.gotContractsFromGithub = this.gotContractsFromGithub.bind(this)
-        this.removeContractToSelect = this.removeContractToSelect.bind(this)
+        };
+        
+        this.updateContractNames = this.updateContractNames.bind(this);
+        this.changeSelectedElement = this.changeSelectedElement.bind(this);
+        this.setIsLoading = this.setIsLoading.bind(this);
+        this.addTabEntity = this.addTabEntity.bind(this);
+        this.changeActiveTab = this.changeActiveTab.bind(this);
+        this.markCode = this.markCode.bind(this);
+        this.changeContractAddress = this.changeContractAddress.bind(this);
+        this.getEvents = this.getEvents.bind(this);
+        this.contentChange = this.contentChange.bind(this);
+        this.removeTabEntity = this.removeTabEntity.bind(this);
+        this.gotContractsFromGithub = this.gotContractsFromGithub.bind(this);
+        this.removeContractToSelect = this.removeContractToSelect.bind(this);
 
     }
 
-    removeContractToSelect() {
+    removeContractToSelect(): void {
         this.setState({
             contractToSelect: null
-        })
+        });
     }
 
-    contentChange(viewId: number, tabId: number, content: any) {
+    contentChange(viewId: number, tabId: number, content: any): void {
         this.setState((prevState: AppContainerState) => {
-            prevState.tabEntities[viewId][tabId].content = content
+            prevState.tabEntities[viewId][tabId].content = content;
             return {
                 tabEntities: prevState.tabEntities
-            }
-        })
+            };
+        });
     }
     
-    changeContractAddress(newContractAddress: string, contractName: string) {
+    changeContractAddress(newContractAddress: string, contractName: string): void {
       
         this.setState((prevState: AppContainerState) => {
-            const contractIndex = prevState.contracts.findIndex((c: SolidityHandler.Contract) => c.name === contractName)
+            const contractIndex: number = prevState.contracts.findIndex((c: Sol.Contract) => c.name === contractName);
             if (contractIndex !== -1) {
-                prevState.contracts[contractIndex].deployedAt = newContractAddress
+                prevState.contracts[contractIndex].deployedAt = newContractAddress;
             }
 
             return {
                 contracts: prevState.contracts
-            }
+            };
 
-        })
+        });
         
     }
 
-    changeActiveTab(viewId: number, tabId: number) {
+    changeActiveTab(viewId: number, tabId: number): void {
         this.setState((prevState: AppContainerState) => {
-            prevState.activeTab[viewId] = tabId
+            prevState.activeTab[viewId] = tabId;
 
             return {
                 activeTab: prevState.activeTab
-            }
+            };
 
-        })
+        });
     }
 
-    setIsLoading(isLoading: boolean) {
-        this.setState({isLaoding: isLoading})
+    setIsLoading(isLoading: boolean): void {
+        this.setState({isLaoding: isLoading});
     }
 
-    async componentDidMount() {
+    async componentDidMount(): Promise<void> {
 
-        this.initViews()
+        this.initViews();
 
-        let web3 = null
+        let web3: any = null;
 
         if ((window as any).ethereum) {
-            web3 = new Web3((window as any).ethereum)
+            web3 = new Web3((window as any).ethereum);
             try {
                 // Request account access if needed
-                await (window as any).ethereum.enable()
+                await (window as any).ethereum.enable();
             } catch (error) {
                 // User denied account access...
             }
         }
         // Legacy dapp browsers...
         else if ((window as any).web3) {
-            web3 = new Web3(web3.currentProvider)
+            web3 = new Web3(web3.currentProvider);
         }
         // Non-dapp browsers...
         else {
-            console.log('Non-Ethereum browser detected. You should consider trying MetaMask!')
+            console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
         }
 
-        const params = queryString.parse((this.props as any).location.search)
+        const params: any = queryString.parse((this.props as any).location.search);
         
         this.setState({
             web3: web3,
             contractToSelect: params.contract ? params.contract : null,
             contractToSelectAddress: params.contractAddress ? params.contractAddress : null
-        })
+        });
 
         if (params.gitHubRepo) {
             
-            this.setIsLoading(true)
+            this.setIsLoading(true);
             await getContracts(
                 'https://api.github.com/repos/' + (params.gitHubRepo as string),
-                this.gotContractsFromGithub, params.subDir as string)
+                this.gotContractsFromGithub, params.subDir as string);
             // await getContracts('https://api.github.com/repos/slockit/usn-mvp', this.gotContractsFromGithub, 'contracts')
         }
 
         setTimeout(() => { 
 
-            $('.animation-container').css('display', 'none')
-            $('.non-animation-container').css('display', 'block')
+            $('.animation-container').css('display', 'none');
+            $('.non-animation-container').css('display', 'block');
 
-        },         1)
+        },         1);
 
     }
 
-    gotContractsFromGithub(files) {
-        const contracts = SolidityHandler.parseContent(files)
-        const params = queryString.parse((this.props as any).location.search)
-        const contractName = params.contract ? params.contract.toString() : null
-        const selectedContract = contracts.find((contract: SolidityHandler.Contract) => contract.name === contractName)
+    gotContractsFromGithub(files: any): void {
+        const contracts: Sol.Contract[] = Sol.parseContent(files);
+        const params: any = queryString.parse((this.props as any).location.search);
+        const contractName: string = params.contract ? params.contract.toString() : null;
+        const selectedContract: Sol.Contract = contracts.find((contract: Sol.Contract) => contract.name === contractName);
         if (selectedContract) {
-            selectedContract.deployedAt = params.contractAddress ? params.contractAddress as string : selectedContract.deployedAt
+            selectedContract.deployedAt = params.contractAddress ? params.contractAddress as string : selectedContract.deployedAt;
         }
 
         this.setState({
             contractToSelect: selectedContract ? selectedContract.name : null,
             contracts: contracts
-        })
-        this.removeTabEntity('About')
-        this.setIsLoading(false)
+        });
+        this.removeTabEntity('About');
+        this.setIsLoading(false);
     }
 
-    async updateContractNames(selectorFiles: FileList) {
-        this.setState({selectedElement: null})
-        this.setIsLoading(true)
+    async updateContractNames(selectorFiles: FileList): Promise<void> {
+        this.setState({selectedElement: null});
+        this.setIsLoading(true);
 
         this.setState({
-            contracts: await SolidityHandler.pushFiles(selectorFiles)
-        })
-        this.setIsLoading(false)
-        this.removeTabEntity('About')
+            contracts: await Sol.pushFiles(selectorFiles)
+        });
+        this.setIsLoading(false);
+        this.removeTabEntity('About');
         
     }
 
-    removeTabEntity(tabName: string) {
+    removeTabEntity(tabName: string): void {
         
-        let tabIndex = -1
+        let tabIndex: number = -1;
 
-        const viewIndex = this.state.tabEntities.findIndex((tabEntities: TabEntity[]) => {
+        const viewIndex: number = this.state.tabEntities.findIndex((tabEntities: TabEntity[]) => {
             tabIndex = tabEntities.findIndex((tabEntity: TabEntity) =>     
                 tabEntity.name === tabName
-            )
-            return tabIndex !== -1
-        })
+            );
+            return tabIndex !== -1;
+        });
 
         if (tabIndex !== -1) {
             
-            this.changeActiveTab(viewIndex, 0)
+            this.changeActiveTab(viewIndex, 0);
             this.setState((prevState: AppContainerState) => {
                 
-                prevState.tabEntities[viewIndex].splice(tabIndex, 1)
+                prevState.tabEntities[viewIndex].splice(tabIndex, 1);
 
                 return {
                     activeTab: prevState.activeTab,
                     tabEntities: prevState.tabEntities
-                }
-            })
+                };
+            });
         }
     }
 
-    addTabEntity(tabEntity: TabEntity, viewId: number, replace: boolean) {
-        const index = this.state.tabEntities[viewId].findIndex((item: TabEntity) => item.name === tabEntity.name)
+    addTabEntity(tabEntity: TabEntity, viewId: number, replace: boolean): void {
+        const index: number = this.state.tabEntities[viewId].findIndex((item: TabEntity) => item.name === tabEntity.name);
 
         if (index === -1) {
             this.setState((prevState: AppContainerState) => {
-                const index = prevState.tabEntities[viewId].push(tabEntity) - 1
+                const newIndex: number = prevState.tabEntities[viewId].push(tabEntity) - 1;
                 if (tabEntity.active) {
-                    prevState.activeTab[viewId] = index
+                    prevState.activeTab[viewId] = newIndex;
                 }
 
                 return {
                     tabEntities: prevState.tabEntities,
                     activeTab: prevState.activeTab
-                }
-            })
+                };
+            });
         } else {
             this.setState((prevState: AppContainerState) => {
     
-                prevState.activeTab[viewId] = index
+                prevState.activeTab[viewId] = index;
 
                 if (replace) {            
-                    prevState.tabEntities[viewId][index] = tabEntity
+                    prevState.tabEntities[viewId][index] = tabEntity;
                     return {
                         tabEntities: prevState.tabEntities,
                         activeTab: prevState.activeTab
-                    }
+                    };
                 }
 
                 return {
    
                     activeTab: prevState.activeTab
-                }
-            })
+                };
+            });
         }
 
     }
 
-    getEvents(contract: SolidityHandler.Contract, event: SolidityHandler.ContractEvent, params: SolidityHandler.ContractFunctionParam[]) {
+    getEvents(contract: Sol.Contract, event: Sol.ContractEvent, params: Sol.ContractFunctionParam[]): void {
 
         this.addTabEntity({
             active: true,
@@ -272,10 +268,10 @@ class AppContainer extends React.Component<{}, {}> {
             icon: 'bell',
             removable: true
            
-        }, 1, true)
+        },                1, true);
     }
 
-    markCode(start: number, end: number, contract: SolidityHandler.Contract) {
+    markCode(start: number, end: number, contract: Sol.Contract): void {
         this.addTabEntity({
             active: true,
             contentType: TabEntityType.Code,
@@ -287,13 +283,13 @@ class AppContainer extends React.Component<{}, {}> {
             icon: 'code',
             removable: true
            
-        }, 1, false)
+        },                1, false);
 
-        const startLine = contract.source.substring(0,start).split('\n').length - 1
-        const endLine = startLine + contract.source.substring(start, end).split('\n').length
+        const startLine: number = contract.source.substring(0, start).split('\n').length - 1;
+        const endLine: number = startLine + contract.source.substring(start, end).split('\n').length;
 
         this.setState((prevState: AppContainerState) => {
-            const tabEntityIndex = prevState.tabEntities[1].findIndex((tabEntity: TabEntity) => tabEntity.name === contract.name)
+            const tabEntityIndex: number = prevState.tabEntities[1].findIndex((tabEntity: TabEntity) => tabEntity.name === contract.name);
             prevState.tabEntities[1][tabEntityIndex].content.markers = [{
                 startRow: startLine,
                 startCol: 0,
@@ -301,16 +297,16 @@ class AppContainer extends React.Component<{}, {}> {
                 endCol: 0,
                 className: 'ace_highlight-marker',
                 type: 'background'
-            }]
+            }];
             return {
                 tabEntities: prevState.tabEntities
-            }
+            };
 
-        })  
+        });  
 
     }
 
-    initViews() {
+    initViews(): void {
 
             const structureTab: TabEntity = {
                 active: false,
@@ -319,7 +315,7 @@ class AppContainer extends React.Component<{}, {}> {
                 content: null,
                 icon: 'stethoscope',
                 removable: false
-            }
+            };
 
             const fileTab: TabEntity = {
                 active: true,
@@ -328,7 +324,7 @@ class AppContainer extends React.Component<{}, {}> {
                 content: this.state.contracts,
                 icon: 'copy',
                 removable: false
-            }
+            };
 
             const graphTab: TabEntity = {
                 active: false,
@@ -337,7 +333,7 @@ class AppContainer extends React.Component<{}, {}> {
                 content: null,
                 icon: 'map',
                 removable: false
-            }
+            };
 
             const aboutTab: TabEntity = {
                 active: true,
@@ -346,31 +342,31 @@ class AppContainer extends React.Component<{}, {}> {
                 content: null,
                 icon: 'question-circle',
                 removable: true
-            }
+            };
 
             this.setState((prevState: AppContainerState) => {
-                prevState.tabEntities[0].push(fileTab)
-                prevState.tabEntities[0].push(structureTab)
-                prevState.tabEntities[1].push(aboutTab)
-                prevState.tabEntities[1].push(graphTab)
+                prevState.tabEntities[0].push(fileTab);
+                prevState.tabEntities[0].push(structureTab);
+                prevState.tabEntities[1].push(aboutTab);
+                prevState.tabEntities[1].push(graphTab);
                 
                 return {
                     tabEntities: prevState.tabEntities,
                     activeTab: [0, 0]
-                }
-            })
+                };
+            });
 
     }
 
-    changeSelectedElement(selectedElement: SolidityHandler.NodeElement) {
-        this.changeActiveTab(0, 1)
+    changeSelectedElement(selectedElement: Sol.NodeElement): void {
+        this.changeActiveTab(0, 1);
 
         this.setState({
             selectedElement: selectedElement
-        })
+        });
     }
 
-    render() {
+    render(): JSX.Element {
 
         return  <div>
                     <SplitPane split='vertical' minSize={300} defaultSize={500} >
@@ -429,10 +425,10 @@ class AppContainer extends React.Component<{}, {}> {
                 
                     </SplitPane> 
                        
-                </div>
+                </div>;
 
     }
 
 }
 
-export const App = withRouter(AppContainer)
+export const App: any = withRouter(AppContainer);

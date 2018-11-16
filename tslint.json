@@ -22,7 +22,18 @@
     "eofline": false,
     "import-spacing": false,
     "typedef": [
-      false
+      true,
+      "call-signature",
+      "arrow-call-signature",
+      "parameter",
+      "arrow-parameter",
+      "property-declaration",
+      "variable-declaration",
+      "member-variable-declaration",
+      "object-destructuring",
+      "array-destructuring"
+
+
     ],
     "react-unused-props-and-state": false,
     "interface-name": [
@@ -86,7 +97,7 @@
     "mocha-no-side-effect-code": false,
     "semicolon": [
       true,
-      "never"
+      "always"
     ],
     "triple-equals": [
       true,

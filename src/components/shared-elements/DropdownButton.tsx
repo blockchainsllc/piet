@@ -8,25 +8,21 @@
  * @copyright 2018 by Slock.it GmbH
  */
 
-import * as React from 'react'
-import SyntaxHighlighter from 'react-syntax-highlighter'
-import { docco } from 'react-syntax-highlighter/styles/hljs'
-import JSONTree from 'react-json-tree'
+import * as React from 'react';
 
-export interface DropdownButtonProps {
+export class DropdownButton extends React.Component<{}, {}> {
 
-
-
-}
-
-export class DropdownButton extends React.Component<DropdownButtonProps, {}> {
-
-
-
-    render() {
+    render(): JSX.Element {
        
         return  <div className='dropdown'>
-                    <button className='btn btn-secondary dropdown-toggle' type='button' id='dropdownMenuButton' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+                    <button 
+                        className='btn btn-secondary dropdown-toggle' 
+                        type='button' 
+                        id='dropdownMenuButton' 
+                        data-toggle='dropdown' 
+                        aria-haspopup='true' 
+                        aria-expanded='false'
+                    >
                         Dropdown button
                     </button>
                     <div className='dropdown-menu' aria-labelledby='dropdownMenuButton'>
@@ -34,7 +30,7 @@ export class DropdownButton extends React.Component<DropdownButtonProps, {}> {
                         <a className='dropdown-item' href='#'>Another action</a>
                         <a className='dropdown-item' href='#'>Something else here</a>
                     </div>
-                </div>
+                </div>;
 
     }
 

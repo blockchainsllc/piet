@@ -8,18 +8,18 @@
  * @copyright 2018 by Slock.it GmbH
  */
 
-import * as React from 'react'
-import * as Sol from '../../../solidity-handler/SolidityHandler'
+import * as React from 'react';
+import * as Sol from '../../../solidity-handler/SolidityHandler';
 
 interface EnumViewProps {
-    selectedEnum: Sol.ContractEnumeration
+    selectedEnum: Sol.ContractEnumeration;
 }
 
 export class EnumView extends React.Component<EnumViewProps, {}> {
 
-    render() {
+    render(): JSX.Element {
 
-        const enumFields = this.props.selectedEnum.entries.map((enumEntry: Sol.EnumEntry, index: number) => 
+        const enumFields: JSX.Element[] = this.props.selectedEnum.entries.map((enumEntry: Sol.EnumEntry, index: number) => 
             <div className='selected-list-item list-group-item list-group-item-action flex-column align-items-start'
                 key={this.props.selectedEnum.name + enumEntry.name}>
                     {index}:&nbsp;
@@ -30,7 +30,7 @@ export class EnumView extends React.Component<EnumViewProps, {}> {
                     </strong>
                     
             </div>
-        )
+        );
 
         return  <div className='card selected-card h-100'>
 
@@ -48,7 +48,7 @@ export class EnumView extends React.Component<EnumViewProps, {}> {
                         <div className='list-group'>{enumFields}</div>
                         
                     </div>
-                </div>   
+                </div>;   
   
     }
     

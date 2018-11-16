@@ -8,45 +8,41 @@
  * @copyright 2018 by Slock.it GmbH
  */
 
-import * as React from 'react'
-import * as Sol from '../solidity-handler/SolidityHandler'
-import * as Hljs from 'highlight.js'
+import * as React from 'react';
+import * as Sol from '../solidity-handler/SolidityHandler';
+import * as Hljs from 'highlight.js';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/styles/hljs';
 
-
-
 export interface CodeBoxProps {
 
-    selectedFunction: Sol.ContractFunction,
-    codeBoxIsShown: boolean,
-    showCodeBox: Function,
-
+    selectedFunction: Sol.ContractFunction;
+    codeBoxIsShown: boolean;
+    showCodeBox: Function;
 
 }
 
 export class CodeBox extends React.Component<CodeBoxProps, {}> {
 
-    constructor(props) {
-        super(props)
+    constructor(props: CodeBoxProps) {
+        super(props);
 
-        this.hideCodeBox = this.hideCodeBox.bind(this)
+        this.hideCodeBox = this.hideCodeBox.bind(this);
     }
 
-    componentDidMount() {
+    componentDidMount(): void {
 
-    
-        Hljs.initHighlightingOnLoad()
+        Hljs.initHighlightingOnLoad();
 
     }
 
-    hideCodeBox() {
-        this.props.showCodeBox(false)
+    hideCodeBox(): void {
+        this.props.showCodeBox(false);
     }
 
-    render() {
+    render(): JSX.Element {
         if (!this.props.selectedFunction) {
-            return null
+            return null;
         } 
 
         return  <div id={'codeModal' } 
@@ -65,7 +61,9 @@ export class CodeBox extends React.Component<CodeBoxProps, {}> {
                             </div>
                             <div className='modal-body code-modal-body '>
                                 <small>
-                                    <SyntaxHighlighter language='javascript' style={docco}>{'    ' + this.props.selectedFunction.source}</SyntaxHighlighter>
+                                    <SyntaxHighlighter language='javascript' style={docco}>
+                                        {'    ' + this.props.selectedFunction.source}
+                                    </SyntaxHighlighter>
                                 </small>
                             </div>
                             <div className='modal-footer'>
@@ -77,7 +75,7 @@ export class CodeBox extends React.Component<CodeBoxProps, {}> {
                             </div>
                         </div>
                     </div>
-                </div>
+                </div>;
 
     }
 

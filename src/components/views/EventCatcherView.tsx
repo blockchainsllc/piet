@@ -8,93 +8,93 @@
  * @copyright 2018 by Slock.it GmbH
  */
 
-import * as React from 'react'
-import * as Sol from '../../solidity-handler/SolidityHandler'
-import Web3Type from '../../types/web3'
-import JSONTree from 'react-json-tree'
-import SplitPane from 'react-split-pane'
+import * as React from 'react';
+import * as Sol from '../../solidity-handler/SolidityHandler';
+import Web3Type from '../../types/web3';
+import JSONTree from 'react-json-tree';
+import SplitPane from 'react-split-pane';
 import { getEventAbi } from '../../utils/AbiGenerator';
 
 interface EventCatcherViewProps {
-    web3: Web3Type,
-    content: EventViewContent,
-    contentChange: Function,
-    viewId: number,
-    tabId: number,
-    contracts: Sol.Contract[]
+    web3: Web3Type;
+    content: EventViewContent;
+    contentChange: Function;
+    viewId: number;
+    tabId: number;
+    contracts: Sol.Contract[];
 }
 
 export interface EventViewContent {
-    contract: Sol.Contract,
-    event: Sol.ContractEvent,
-    fromBlock: string,
-    toBlock: string,
-    result: any,
+    contract: Sol.Contract;
+    event: Sol.ContractEvent;
+    fromBlock: string;
+    toBlock: string;
+    result: any;
 }
 
 export interface EventCatcherViewState {
-    rawView: boolean
+    rawView: boolean;
 }
 
 export class EventCatcherView extends React.Component<EventCatcherViewProps, EventCatcherViewState> {
 
-    constructor(props) {
-        super(props)
+    constructor(props: EventCatcherViewProps) {
+        super(props);
 
         this.state = {
             rawView: false
-        }
+        };
 
-        this.onChangeFromBlock = this.onChangeFromBlock.bind(this)
-        this.onChangeToBlock = this.onChangeToBlock.bind(this)
-        this.onClickPlay = this.onClickPlay.bind(this)
-        this.onClickRaw = this.onClickRaw.bind(this)
+        this.onChangeFromBlock = this.onChangeFromBlock.bind(this);
+        this.onChangeToBlock = this.onChangeToBlock.bind(this);
+        this.onClickPlay = this.onClickPlay.bind(this);
+        this.onClickRaw = this.onClickRaw.bind(this);
 
     }
 
-    onChangeFromBlock(e) {
+    onChangeFromBlock(e: any): void {
         this.props.contentChange(this.props.viewId, this.props.tabId, {
             ...this.props.content,
             fromBlock: e.target.value
-        })
+        });
     }
 
-    onChangeToBlock(e) {
+    onChangeToBlock(e: any): void {
         this.props.contentChange(this.props.viewId, this.props.tabId, {
             ...this.props.content,
             toBlock: e.target.value
-        })
+        });
     }
 
-    async onClickPlay() {
+    async onClickPlay(): Promise<void> {
         this.props.contentChange(this.props.viewId, this.props.tabId, {
             ...this.props.content,
             result: null
-        })
-        const fromBlock = this.props.content.fromBlock ? this.props.content.fromBlock : '0'
-        const toBlock = this.props.content.toBlock ? this.props.content.toBlock : 'latest'
-        const contract = new this.props.web3.eth.Contract(
+        });
+        const fromBlock: string = this.props.content.fromBlock ? this.props.content.fromBlock : '0';
+        const toBlock: string = this.props.content.toBlock ? this.props.content.toBlock : 'latest';
+        const contract: any = new this.props.web3.eth.Contract(
             getEventAbi(this.props.content.event, this.props.web3, this.props.contracts),
-            this.props.content.contract.deployedAt)
+            this.props.content.contract.deployedAt);
         this.props.contentChange(this.props.viewId, this.props.tabId, {
             ...this.props.content,
             result: await (contract as any).getPastEvents(this.props.content.event.name, {fromBlock: fromBlock, toBlock: toBlock})
-        })
+        });
      
     }
 
-    onClickRaw() {
+    onClickRaw(): void {
         this.setState({
             rawView: !this.state.rawView
-        })
+        });
      
     }
 
-    render() {
-        const fromBlock = this.props.content.fromBlock ? this.props.content.fromBlock : '0'
-        const toBlock = this.props.content.toBlock ? this.props.content.toBlock : 'latest'
+    render(): JSX.Element {
+        const fromBlock: string = this.props.content.fromBlock ? this.props.content.fromBlock : '0';
+        const toBlock: string = this.props.content.toBlock ? this.props.content.toBlock : 'latest';
 
-        const theme = {
+        const theme: any = {
             scheme: 'monokai',
             author: 'wimer hazenberg (http://www.monokai.nl)',
             base00: '#232323',
@@ -113,20 +113,21 @@ export class EventCatcherView extends React.Component<EventCatcherViewProps, Eve
             base0D: '#66d9ef',
             base0E: '#ae81ff',
             base0F: '#cc6633'
-        }
+        };
 
-        let tableHeader  = null
-        let tableBody = null
+        let tableHeader: JSX.Element[]  = null;
+        let tableBody: JSX.Element[]  = null;
 
         if (this.props.content && this.props.content.result) {
-        tableHeader = [<th key={'headerBlockNo'}>block</th>,
-            ...(this.props.content as any).params.map((param: Sol.ContractFunctionParam) =>  <th key={'header' + param.name}>{param.name}</th>)]
+            tableHeader = [<th key={'headerBlockNo'}>block</th>,
+                ...(this.props.content as any).params
+                    .map((param: Sol.ContractFunctionParam) =>  <th key={'header' + param.name}>{param.name}</th>)];
 
-        tableBody = (this.props.content.result.map((event: any) => <tr key={event.transactionHash}>
-                <td>{event.blockNumber}</td>
-                {(this.props.content as any).params.map((param: Sol.ContractFunctionParam) => 
-                    <td key={param.name}>{event.returnValues[param.name]}</td>)}
-            </tr>))
+            tableBody = (this.props.content.result.map((event: any) => <tr key={event.transactionHash}>
+                    <td>{event.blockNumber}</td>
+                    {(this.props.content as any).params.map((param: Sol.ContractFunctionParam) => 
+                        <td key={param.name}>{event.returnValues[param.name]}</td>)}
+                </tr>));
 
         }
           
@@ -185,7 +186,7 @@ export class EventCatcherView extends React.Component<EventCatcherViewProps, Eve
                                     <div className='row'>
                                         <div className='col-12'>
                                             <small>
-                                                <JSONTree data={this.props.content.result} theme={theme} invertTheme={false}/> 
+                                                <JSONTree data={this.props.content.result} theme={theme} invertTheme={false}/> 
                                             </small>
                                         </div>
                                     </div>
@@ -194,7 +195,7 @@ export class EventCatcherView extends React.Component<EventCatcherViewProps, Eve
                         </div>
                             
                     </SplitPane>
-                </SplitPane>
+                </SplitPane>;
                
     }
     

@@ -8,36 +8,38 @@
  * @copyright 2018 by Slock.it GmbH
  */
 
-import * as React from 'react'
-
-import * as Sol from '../../solidity-handler/SolidityHandler'
-import Web3Type from '../../types/web3'
-import {Treebeard, decorators} from 'react-treebeard'
-import SplitPane from 'react-split-pane'
+import * as React from 'react';
+import * as Sol from '../../solidity-handler/SolidityHandler';
+import Web3Type from '../../types/web3';
+import {Treebeard, decorators} from 'react-treebeard';
+import SplitPane from 'react-split-pane';
 
 interface FileBrowserViewProps {
-    web3: Web3Type,
-    content: any,
-    viewId: number,
-    tabId: number,
-    submitFiles: Function,
-    contracts: Sol.Contract[],
-    loading: boolean
+    web3: Web3Type;
+    content: any;
+    viewId: number;
+    tabId: number;
+    submitFiles: Function;
+    contracts: Sol.Contract[];
+    loading: boolean;
 
 }
 
 interface FileBrowserViewState {
-    cursor: any,
-    data: any
+    cursor: any;
+    data: any;
 }
 
-decorators.Header = ({style, node}) => {
-    const iconStyle = {marginRight: '5px'}
+decorators.Header = ({style, node}): any => {
+    const iconStyle: any = {marginRight: '5px'};
 
     return (
         <div style={style.base}>
             <div style={style.title}>
-                <i className={node.icon ? node.icon + ' ' + (node.className ? node.className : '') : ''} style={node.icon ? iconStyle : {}}/>
+                <i
+                    className={node.icon ? node.icon + ' ' + (node.className ? node.className : '') : ''}
+                    style={node.icon ? iconStyle : {}}
+                />
 
                 {node.name}
             </div>
@@ -47,8 +49,8 @@ decorators.Header = ({style, node}) => {
 
 decorators.Toggle =  ({style}) => {
     const {height, width} = style;
-    const midHeight = height * 0.5;
-    const points = `0,0 0,${height} ${width},${midHeight}`;
+    const midHeight: number = height * 0.5;
+    const points: string = `0,0 0,${height} ${width},${midHeight}`;
 
     return (
         <div style={style.base}>
@@ -60,42 +62,40 @@ decorators.Toggle =  ({style}) => {
             </div>
         </div>
     );
-}
-
+};
 
 export class FileBrowserView extends React.Component<FileBrowserViewProps, FileBrowserViewState> {
 
-    constructor(props) {
-        super(props)
+    constructor(props: FileBrowserViewProps) {
+        super(props);
      
-
         this.state = {
             cursor: null,
             data: null
-        }
+        };
         
-        this.submitFiles = this.submitFiles.bind(this)
-        this.onToggle = this.onToggle.bind(this)
+        this.submitFiles = this.submitFiles.bind(this);
+        this.onToggle = this.onToggle.bind(this);
        
     }
 
-    componentDidMount() {
-        this.parseContracts(this.props.contracts)
+    componentDidMount(): void {
+        this.parseContracts(this.props.contracts);
 
     }
 
-    componentWillReceiveProps(newProps: FileBrowserViewProps) {
-        this.parseContracts(newProps.contracts)
+    componentWillReceiveProps(newProps: FileBrowserViewProps): void {
+        this.parseContracts(newProps.contracts);
 
     }
 
-    parseContracts(contracts: Sol.Contract[]) {
-        const files = []
+    parseContracts(contracts: Sol.Contract[]): void {
+        const files: any[] = [];
 
         contracts.forEach((contract: Sol.Contract) => {
-            const file = files.find(file => file.name === contract.inFile)
+            const file: any = files.find((file: any) => file.name === contract.inFile);
 
-            const contractChildren = [
+            const contractChildren: any = [
                 ...contract.enumerations.map((contractEnum: Sol.ContractEnumeration) => ({
                     name: contractEnum.shortName,
                     icon: 'fas fa-list-ol',
@@ -106,64 +106,64 @@ export class FileBrowserView extends React.Component<FileBrowserViewProps, FileB
                     icon: 'fas fa-archive',
                     className: 'struct-icon'
                 }))
-            ]
+            ];
 
-            const contractRepresentation = {
+            const contractRepresentation: any = {
                 name: contract.name,
                 icon: 'fas fa-file-alt',
                 className: 'contract-icon',
                 children: contractChildren.length > 0 ? contractChildren : undefined
 
-            }
+            };
 
             if (file) {
-                file.children.push(contractRepresentation)
+                file.children.push(contractRepresentation);
             } else {
                 files.push({
                     name: contract.inFile,
                     children: [
                         contractRepresentation
                     ]
-                })
+                });
             }
-        })
+        });
 
-        const data = {
+        const data: any = {
             name: 'Files',
             toggled: true,
             children: [
                 ...files
                    
             ]
-        }
+        };
 
         this.setState({
             data: data
-        })
+        });
      
     }
 
-    submitFiles(selectorFiles: FileList) {
+    submitFiles(selectorFiles: FileList): void {
         
-        this.props.submitFiles(selectorFiles)
+        this.props.submitFiles(selectorFiles);
         
     }
 
-    onToggle(node, toggled) {
+    onToggle(node: any, toggled: boolean): void {
 
         if (this.state.cursor) {
-            this.state.cursor.active = false
+            this.state.cursor.active = false;
         }
-        node.active = true
+        node.active = true;
         if (node.children) {
-            node.toggled = toggled
+            node.toggled = toggled;
         }
-        this.setState({ cursor: node })
+        this.setState({ cursor: node });
     }
 
-    render() {
+    render(): JSX.Element {
 
-        const theme = {
+        const theme: any = {
             scheme: 'monokai',
             author: 'wimer hazenberg (http://www.monokai.nl)',
             base00: '#272822',
@@ -182,7 +182,7 @@ export class FileBrowserView extends React.Component<FileBrowserViewProps, FileB
             base0D: '#66d9ef',
             base0E: '#ae81ff',
             base0F: '#cc6633'
-          }
+          };
 
         return <SplitPane className='scrollable hide-resizer' split='horizontal'  defaultSize={40} allowResize={false} >
                     <div className='h-100 w-100 toolbar'>
@@ -214,7 +214,7 @@ export class FileBrowserView extends React.Component<FileBrowserViewProps, FileB
                             }
                         </div>
                     </SplitPane>
-                </SplitPane>
+                </SplitPane>;
                
     }
     

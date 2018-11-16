@@ -8,21 +8,20 @@
  * @copyright 2018 by Slock.it GmbH
  */
 
-import * as React from 'react'
+import * as React from 'react';
 
-import * as Sol from '../solidity-handler/SolidityHandler'
-import Web3Type from '../types/web3'
-import { ResultBox } from './ResultBox'
-import { TabList } from './TabList'
-import { InspectorContainerView } from './views/Inspector/InspectorContainerView'
-import { GraphContainerView } from './views/Graph/GraphContainerView'
-import { CodeContainerView } from './views/CodeContainerView'
-import { EventCatcherView } from './views/EventCatcherView'
-import { JsonView } from './views/JsonView'
-import { FileBrowserView } from './views/FileBrowserView'
-import { About } from './views/About'
-import { MigrationAssistent } from './views/migration-assistent/MigrationAssistent'
-import SplitPane from 'react-split-pane'
+import * as Sol from '../solidity-handler/SolidityHandler';
+import Web3Type from '../types/web3';
+import { TabList } from './TabList';
+import { InspectorContainerView } from './views/Inspector/InspectorContainerView';
+import { GraphContainerView } from './views/Graph/GraphContainerView';
+import { CodeContainerView } from './views/CodeContainerView';
+import { EventCatcherView } from './views/EventCatcherView';
+import { JsonView } from './views/JsonView';
+import { FileBrowserView } from './views/FileBrowserView';
+import { About } from './views/About';
+import { MigrationAssistent } from './views/migration-assistent/MigrationAssistent';
+import SplitPane from 'react-split-pane';
 
 export enum TabEntityType {
     Structure,
@@ -36,56 +35,56 @@ export enum TabEntityType {
 }
 
 export interface TabEntity {
-    contentType: TabEntityType, 
-    name: string,
-    active: boolean,
-    content: any,
-    icon: string,
-    removable: boolean
+    contentType: TabEntityType; 
+    name: string;
+    active: boolean;
+    content: any;
+    icon: string;
+    removable: boolean;
 }
 
 interface ViewProps {
-    selectedElement: Sol.NodeElement,
-    changeActiveTab: Function,
-    web3: Web3Type,
-    contracts: Sol.Contract[],
-    changeSelectedElement: Function,
-    tabEntities: TabEntity[],
-    activeTab: number[],
-    addTabEntity: Function,
-    viewId: number,
-    markCode: Function,
-    changeContractAddress: Function,
-    getEvents: Function,
-    contentChange: Function,
-    submitFiles: Function,
-    loading: boolean,
-    removeTabEntity: Function,
-    selectedContractName: string,
-    removeContractToSelect: Function
+    selectedElement: Sol.NodeElement;
+    changeActiveTab: Function;
+    web3: Web3Type;
+    contracts: Sol.Contract[];
+    changeSelectedElement: Function;
+    tabEntities: TabEntity[];
+    activeTab: number[];
+    addTabEntity: Function;
+    viewId: number;
+    markCode: Function;
+    changeContractAddress: Function;
+    getEvents: Function;
+    contentChange: Function;
+    submitFiles: Function;
+    loading: boolean;
+    removeTabEntity: Function;
+    selectedContractName: string;
+    removeContractToSelect: Function;
     
 }
 
 export class View extends React.Component<ViewProps, {}> {
 
-    render() {
+    render(): JSX.Element {
         if (!this.props.tabEntities) {
-            return null
+            return null;
         }
 
-        const tabNames = this.props.tabEntities.map((tabEntity: TabEntity) => tabEntity.name)
-        const removable = this.props.tabEntities.map((tabEntity: TabEntity) => tabEntity.removable)
-        const tabIcons = this.props.tabEntities.map((tabEntity: TabEntity) => tabEntity.icon)
+        const tabNames: string[] = this.props.tabEntities.map((tabEntity: TabEntity) => tabEntity.name);
+        const removable: boolean[]  = this.props.tabEntities.map((tabEntity: TabEntity) => tabEntity.removable);
+        const tabIcons: string[]  = this.props.tabEntities.map((tabEntity: TabEntity) => tabEntity.icon);
 
-        const contentType = this.props.activeTab[this.props.viewId] !== null ?
-             this.props.tabEntities[this.props.activeTab[this.props.viewId]].contentType : null
-        let content
+        const contentType: TabEntityType = this.props.activeTab[this.props.viewId] !== null ?
+             this.props.tabEntities[this.props.activeTab[this.props.viewId]].contentType : null;
+        let content: JSX.Element;
 
         switch (contentType) {
 
             case TabEntityType.About:
-                content =   <About />
-                break
+                content =   <About />;
+                break;
 
             case TabEntityType.Graph:
                 content =   <GraphContainerView
@@ -95,8 +94,8 @@ export class View extends React.Component<ViewProps, {}> {
                                 web3={this.props.web3}
                                 contracts={this.props.contracts}
                                 changeSelectedElement={this.props.changeSelectedElement}
-                            />
-                break
+                            />;
+                break;
 
             case TabEntityType.Structure:
                 content =   <InspectorContainerView 
@@ -107,20 +106,20 @@ export class View extends React.Component<ViewProps, {}> {
                                 selectedElement={this.props.selectedElement}
                                 web3={this.props.web3}
                                 getEvents={this.props.getEvents}
-                            />
-                break
+                            />;
+                break;
 
             case TabEntityType.Code:
                 content =   <CodeContainerView 
                                 key={'codeView' + this.props.activeTab[this.props.viewId]} 
                                 activeTabId={this.props.activeTab[this.props.viewId]} 
                                 tabEntities={this.props.tabEntities} 
-                            />
-                break
+                            />;
+                break;
 
             case TabEntityType.EventCatcher:
-                const contract = this.props.tabEntities[this.props.activeTab[this.props.viewId]].content.contract
-                const event = this.props.tabEntities[this.props.activeTab[this.props.viewId]].content.event
+                const contract: Sol.Contract = this.props.tabEntities[this.props.activeTab[this.props.viewId]].content.contract;
+                const event: any = this.props.tabEntities[this.props.activeTab[this.props.viewId]].content.event;
                 content =   <EventCatcherView 
                                 contracts={this.props.contracts}
                                 key={'eventCatcher' + this.props.activeTab[this.props.viewId] }
@@ -129,8 +128,8 @@ export class View extends React.Component<ViewProps, {}> {
                                 content={this.props.tabEntities[this.props.activeTab[this.props.viewId]].content}
                                 contentChange={this.props.contentChange}
                                 web3={this.props.web3}
-                            />
-                break
+                            />;
+                break;
             
             case TabEntityType.Json:
             content =   <JsonView 
@@ -139,8 +138,8 @@ export class View extends React.Component<ViewProps, {}> {
                             tabId={this.props.activeTab[this.props.viewId]}
                             content={this.props.tabEntities[this.props.activeTab[this.props.viewId]].content}
                             web3={this.props.web3}
-                        />
-            break
+                        />;
+            break;
 
             case TabEntityType.FileBrowser:
             content =   <FileBrowserView 
@@ -152,8 +151,8 @@ export class View extends React.Component<ViewProps, {}> {
                             submitFiles={this.props.submitFiles}
                             contracts={this.props.contracts}
                             loading={this.props.loading}
-                        />
-            break
+                        />;
+            break;
 
             case TabEntityType.MigrationAssistent:
             content =   <MigrationAssistent 
@@ -163,15 +162,15 @@ export class View extends React.Component<ViewProps, {}> {
                             content={null}
                             web3={this.props.web3}
                             contracts={this.props.contracts}
-                        />
-            break
+                        />;
+            break;
                                 
             default:
-                content = null
+                content = null;
         }
         
         return  <div className='h-100'>
-                    <SplitPane split="horizontal" className='hide-resizer' defaultSize={50} allowResize={false} >
+                    <SplitPane split='horizontal' className='hide-resizer' defaultSize={50} allowResize={false} >
                         <div className='tabs-container h-100 w-100'>
                             <TabList 
                                 removable={removable} 
@@ -187,7 +186,7 @@ export class View extends React.Component<ViewProps, {}> {
                             {content}
                         </div>
                     </SplitPane>
-                </div>   
+                </div>;   
   
     }
     
