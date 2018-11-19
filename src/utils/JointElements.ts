@@ -8,18 +8,18 @@
  * @copyright 2018 by Slock.it GmbH
  */
 
-import * as joint from 'jointjs'
-import { Contract, NodeElement } from '../solidity-handler/SolidityHandler'
+import * as joint from 'jointjs';
+import { Contract, NodeElement, SolidityAnnotation } from '../solidity-handler/SolidityHandler';
 
 export namespace JointElements {
     // const link = joint.dia.Link.extend({
     //     markup: '<path class="connection"/><path class="marker-target"/><g class="labels" />'
     // })
 
-    const defaultConnector = 'normal' // normal, rounded, jumpo
-    const defaultRouterName = 'manhattan' // manhattan, metro, oneSide, orthogonal
+    const defaultConnector: string = 'normal'; // normal, rounded, jumpo
+    const defaultRouterName: string = 'manhattan'; // manhattan, metro, oneSide, orthogonal
 
-    const iconRect = joint.shapes.basic.Rect.extend({
+    const iconRect: any = joint.shapes.basic.Rect.extend({
 
         markup: '<g class="rotatable"><g class="scalable"><rect /></g><g class="scalable"><image></image></g><text/></g>',
         defaults: joint.util.deepSupplement({
@@ -29,35 +29,35 @@ export namespace JointElements {
             }
         },                                  joint.shapes.basic.Rect.prototype.defaults)
     
-    })
+    });
 
-    export const inheritanceLinkHighlighted = {
+    export const inheritanceLinkHighlighted: any = {
         '.marker-target': { stroke: '#fe8550', fill: '#fe8550', d: 'M 10 0 L 0 5 L 10 10 z' },
         '.connection': { 'stroke-width': 4, stroke: '#fe8550' }
-    }
+    };
 
-    export const inheritanceLinkNotHighlighted = {
+    export const inheritanceLinkNotHighlighted: any = {
         '.marker-target': { stroke: '#8e8e8e', fill: '#8e8e8e', d: 'M 10 0 L 0 5 L 10 10 z' },
         '.connection': { 'stroke-width': 2, stroke: '#8e8e8e' }
-    }
+    };
 
-    export const otherLinkHighlighted = {
+    export const otherLinkHighlighted: any = {
         '.marker-target': { stroke: '#fe8550', fill: '#fe8550', d: 'M 10 0 L 0 5 L 10 10 z' },
         '.connection': { 'stroke-width': 4, stroke: '#fe8550' }
-    }
+    };
 
-    export const otherLinkNotHighlighted = {
+    export const otherLinkNotHighlighted: any = {
         '.marker-target': { stroke: '#8e8e8e', fill: '#8e8e8e', d: 'M 10 0 L 0 5 L 10 10 z' },
         '.connection': { 'stroke-width': 2, stroke: '#8e8e8e' }
-    }
+    };
 
-    export const contractNodeHighlighted = (contract) => ({ 
+    export const contractNodeHighlighted: (contract: any) => any = (contract: any): any => ({ 
         rect: { 
-            class: 'contract-node node-highlighted',
+            class: 'contract-node node-highlighted'
  
         },
         text: { 
-            class: 'node-text',
+            class: 'node-text' + (contract.source ? '' : ' node-text-error'),
             text: cutText(contract.name),
             // 'font-family': 'monospace',
             'font-size': 12
@@ -66,14 +66,14 @@ export namespace JointElements {
             'xlink:href': contract.isAbstract || contract.isInterface ? 'assets/file.svg' : 'assets/file-alt.svg'
         }
 
-    })
+    });
 
-    export const contractNodeNotHighlighted = (contract) => ({ 
+    export const contractNodeNotHighlighted: (contract: any) => any = (contract: any): any => ({ 
         rect: { 
             class: 'contract-node'
         },
         text: { 
-            class: 'node-text',
+            class: 'node-text' + (contract.source ? '' : ' node-text-error'),
             text: cutText(contract.name),
             // 'font-family': 'monospace',
             'font-size': 12
@@ -82,9 +82,9 @@ export namespace JointElements {
         image: {
             'xlink:href': contract.isAbstract || contract.isInterface ? 'assets/file.svg' : 'assets/file-alt.svg'
         }
-    })
+    });
 
-    export const enumNotHighlighted = (enumName) => ({ 
+    export const enumNotHighlighted: (enumName: string) => any = (enumName: string): any => ({ 
         rect: { 
             class: 'enum-node'
         },
@@ -98,11 +98,11 @@ export namespace JointElements {
         image: {
             'xlink:href': 'assets/list-ol.svg'
         }
-    })
+    });
 
-    export const enumHighlighted = (enumName) => ({ 
+    export const enumHighlighted: (enumName: string) => any = (enumName: string): any => ({ 
         rect: { 
-            class: 'enum-node node-highlighted',
+            class: 'enum-node node-highlighted'
 
         },
         text: { 
@@ -115,9 +115,9 @@ export namespace JointElements {
         image: {
             'xlink:href': 'assets/list-ol.svg'
         } 
-    })
+    });
 
-    export const structNotHighlighted = (structName) => ({ 
+    export const structNotHighlighted: (structName: string) => any= (structName: string): any => ({ 
         rect: { 
             class: 'struct-node'
   
@@ -131,9 +131,9 @@ export namespace JointElements {
         image: {
             'xlink:href': 'assets/archive.svg'
         }
-    })
+    });
 
-    export const structHighlighted = (structName) => ({ 
+    export const structHighlighted: (structName: string) => any= (structName: string): any => ({  
         rect: { 
             class: 'struct-node node-highlighted'
         },
@@ -141,18 +141,18 @@ export namespace JointElements {
             text: cutText(structName),
             // 'font-family': 'monospace',
             'font-size': 12,
-            class: 'node-text',
+            class: 'node-text'
         }, 
         image: {
             'xlink:href': 'assets/archive.svg'
         }
-    })
+    });
 
     export interface NodeNameIdPair {
-        jointjsNode: joint.shapes.basic.Rect,
-        nodeElement: NodeElement,
-        inheritanceLinks: joint.dia.Link[],
-        otherLinks: joint.dia.Link[]
+        jointjsNode: joint.shapes.basic.Rect;
+        nodeElement: NodeElement;
+        inheritanceLinks: joint.dia.Link[];
+        otherLinks: joint.dia.Link[];
     }
   
     export function inheritanceLink(sourceId: string, targetId: string): joint.dia.Link {
@@ -162,7 +162,7 @@ export namespace JointElements {
             router: { name: defaultRouterName },
             connector: { name: defaultConnector },
             attrs: inheritanceLinkNotHighlighted
-        })
+        });
     }
 
     export function contractElementLink(sourceId: string, targetId: string): joint.dia.Link {
@@ -180,7 +180,7 @@ export namespace JointElements {
             },
             connector: { name: defaultConnector },
             attrs: otherLinkNotHighlighted
-        })
+        });
     }
 
     export function contractNode(contract: Contract):  joint.shapes.basic.Rect {
@@ -189,25 +189,25 @@ export namespace JointElements {
             size: { width: contract.name.length * 8 + 10, height: 40 },
            
             attrs: contractNodeNotHighlighted(contract)
-        })
+        });
     }
 
     export function enumerationNode(enumerationName: string):  joint.shapes.basic.Rect {
         return new iconRect({
             size: { width: enumerationName.length * 8 + 10, height: 40 },
             attrs: enumNotHighlighted(cutText(enumerationName))
-        })
+        });
     }
 
     export function structNode(structName: string):  joint.shapes.basic.Rect {
         return new iconRect({
             size: { width: structName.length * 8 + 10, height: 40 },
             attrs: structNotHighlighted(cutText(structName))
-        })
+        });
     }
 
     function cutText(text: string): string {
-        return text.length > 18 ? text.substr(0, 15) + '...' : text
+        return text.length > 18 ? text.substr(0, 15) + '...' : text;
     }
 
 }

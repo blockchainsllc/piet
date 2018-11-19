@@ -8,6 +8,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "node_modules/webpack/bin/webpack.js  && cp index-production.html ./build/index.html && cp -rf ./javascript ./build && cp -rf ./style ./build && cp -rf ./assets ./build  ",
     "start": "node_modules/webpack-dev-server/bin/webpack-dev-server.js --output-public-path=/dist/ -d --watch",
     "start-no-watch": "node --max_old_space_size=4096 node_modules/webpack-dev-server/bin/webpack-dev-server.js --output-public-path=/dist/",
     "start-no-dev": "node_modules/webpack/bin/webpack.js -w --output-public-path=/dist/ -d --watch"
@@ -32,6 +33,7 @@
     "tslint-microsoft-contrib": "^5.0.1",
     "typescript": "^2.6.1",
     "webpack": "^4.25.1",
+    "webpack-bundle-analyzer": "^3.0.3",
     "webpack-cli": "^3.1.2",
     "webpack-dev-server": "^3.1.10"
   },
@@ -73,11 +75,7 @@
     "remix-solidity": "^0.2.11",
     "require-from-string": "^2.0.2",
     "solc": "^0.4.25",
-    "solidity-inspector": "^0.2.4",
     "solidity-parser-antlr": "^0.2.15",
-    "solidity-parser-sc": "^0.4.4",
-    "solidity-structure": "git+https://github.com/hai-ko/solidity-structure.git",
-    "solparse": "^2.2.2",
     "ts-loader": "^5.3.0",
     "web3": "^1.0.0-beta.31"
   }

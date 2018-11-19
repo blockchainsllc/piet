@@ -8,58 +8,57 @@
  * @copyright 2018 by Slock.it GmbH
  */
 
-import * as React from 'react'
+import * as React from 'react';
 
-import * as Sol from '../../../solidity-handler/SolidityHandler'
-import Web3Type from '../../../types/web3'
-import { ResultBox } from '../../ResultBox'
-import { ContractStateVaribaleView } from './ContractStateVaribaleView'
-import { ContractEventView } from './ContractEventView'
-import { ContractModifierView } from './ContractModifierView'
-import { ContractFunctionView } from './ContractFunctionView'
-import { TabEntity, TabEntityType } from '../../View'
+import * as Sol from '../../../solidity-handler/SolidityHandler';
+import Web3Type from '../../../types/web3';
+import { ContractStateVaribaleView } from './ContractStateVaribaleView';
+import { ContractEventView } from './ContractEventView';
+import { ContractModifierView } from './ContractModifierView';
+import { ContractFunctionView } from './ContractFunctionView';
+import { TabEntity, TabEntityType } from '../../View';
 interface ContractViewProps {
-    selectedContract: Sol.Contract,
-    contracts: Sol.Contract[],
-    testMode: boolean,
-    web3: Web3Type,
-    showInheritedMembers: boolean,
-    addTabEntity: Function,
-    markCode: Function,
-    editContractAddress: boolean,
-    changeContractAddress: Function,
-    getEvents: Function,
-    toggleInheritance: Function
+    selectedContract: Sol.Contract;
+    contracts: Sol.Contract[];
+    testMode: boolean;
+    web3: Web3Type;
+    showInheritedMembers: boolean;
+    addTabEntity: Function;
+    markCode: Function;
+    editContractAddress: boolean;
+    changeContractAddress: Function;
+    getEvents: Function;
+    toggleInheritance: Function;
 
 }
 
 interface ContractViewState {
-    contractAddress: string
+    contractAddress: string;
 }
 
 export class ContractView extends React.Component<ContractViewProps, ContractViewState> {
 
-    constructor(props) {
-        super(props)
+    constructor(props: ContractViewProps) {
+        super(props);
         this.state = {
             contractAddress: ''
-        }
+        };
 
-        this.onChangeContractAddress = this.onChangeContractAddress.bind(this)
+        this.onChangeContractAddress = this.onChangeContractAddress.bind(this);
     }
 
-    onChangeContractAddress(e) {
+    onChangeContractAddress(e: any): void {
 
-        e.persist()
+        e.persist();
         this.setState({
             contractAddress: e.target.value
-        })
+        });
     }
 
-    render() {
+    render(): JSX.Element {
 
-        const contract = this.props.selectedContract as Sol.Contract
-        const subtitle = this.props.selectedContract.kind
+        const contract: Sol.Contract = this.props.selectedContract as Sol.Contract;
+        const subtitle: string = this.props.selectedContract.kind;
 
         const tabEntity: TabEntity = {
             active: true,
@@ -71,12 +70,12 @@ export class ContractView extends React.Component<ContractViewProps, ContractVie
             },
             icon: 'code',
             removable: true
-        }
+        };
 
-        const title = this.props.selectedContract.annotations
-            .find((annotation: Sol.SolidityAnnotation) => annotation.name === 'title')
-        const notice = this.props.selectedContract.annotations
-            .find((annotation: Sol.SolidityAnnotation) => annotation.name === 'notice')
+        const title: Sol.SolidityAnnotation = this.props.selectedContract.annotations
+            .find((annotation: Sol.SolidityAnnotation) => annotation.name === 'title');
+        const notice: Sol.SolidityAnnotation = this.props.selectedContract.annotations
+            .find((annotation: Sol.SolidityAnnotation) => annotation.name === 'notice');
         return  <div className='card selected-card h-100'>
                    
                     <div className='card-body selected-card contract-card'>
@@ -92,8 +91,8 @@ export class ContractView extends React.Component<ContractViewProps, ContractVie
                             </h6>
 
                             { !contract.source && <div className='text-muted-light' ><p>
-                                <strong>No sources found for this Contract.</strong> </p>
-                                <p>Child contracts don't show inhertited members from this contract. </p>                              
+                                <strong className='error-red'>No sources found for this Contract.</strong> </p>
+                                <p>Child contracts don't show members inhertited from this contract. </p>                              
                             </div> }
                             <div className='text-muted-light normal-line-height'>
                           
@@ -135,16 +134,23 @@ export class ContractView extends React.Component<ContractViewProps, ContractVie
                                 <h5 id='meta' className='member-headline'><i className='fas fa-info-circle'></i> Meta</h5>
                                 <div className='list-group'>
                                     <a  href='#' 
-                                    className='selected-list-item list-group-item list-group-item-action flex-column align-items-start'>
+                                        className='selected-list-item list-group-item list-group-item-action flex-column align-items-start'
+                                    >
                                         <strong>Deployed at</strong>
                                         <div>
                                             {this.props.editContractAddress ?
                                             <div>
-                                                <input  placeholder={contract.deployedAt} onChange={(e) => this.onChangeContractAddress(e)}
-                                                className='form-control form-control-sm' type='text' />
+                                                <input
+                                                    placeholder={contract.deployedAt}
+                                                    onChange={(e) => this.onChangeContractAddress(e)}
+                                                    className='form-control form-control-sm' type='text'
+                                                />
                                                 <div className='text-right functionOperations'>
-                                                <button type='button' className='function-operation-button btn btn-outline-primary btn-sm'
-                                                    onClick={() => {this.props.changeContractAddress(this.state.contractAddress, contract.name)}}>
+                                                <button 
+                                                    type='button'
+                                                    className='function-operation-button btn btn-outline-primary btn-sm'
+                                                    onClick={() => {this.props.changeContractAddress(this.state.contractAddress, contract.name); }}
+                                                >
                                                         Save
                                                 </button>
                                                 </div>
@@ -156,9 +162,11 @@ export class ContractView extends React.Component<ContractViewProps, ContractVie
                             </div>
                             : null
                         }
-                        <div className='text-muted-light normal-line-height'>{notice && <p><br /><i><small>{notice.value}</small></i></p>}</div>
+                        <div className='text-muted-light normal-line-height'>
+                            {notice && <p><br /><i><small>{notice.value}</small></i></p>}
+                        </div>
                     </div>
-                </div>   
+                </div>;   
   
     }
     

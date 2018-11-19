@@ -8,27 +8,24 @@
  * @copyright 2018 by Slock.it GmbH
  */
 
-import * as React from 'react'
-
-import * as Sol from '../../solidity-handler/SolidityHandler'
-import Web3Type from '../../types/web3'
-import JSONTree from 'react-json-tree'
-import SplitPane from 'react-split-pane'
+import * as React from 'react';
+import Web3Type from '../../types/web3';
+import JSONTree from 'react-json-tree';
+import SplitPane from 'react-split-pane';
 
 interface JsonViewProps {
-    web3: Web3Type,
-    content: any,
-    viewId: number,
-    tabId: number,
+    web3: Web3Type;
+    content: any;
+    viewId: number;
+    tabId: number;
 
 }
 
 export class JsonView extends React.Component<JsonViewProps, {}> {
 
-
-    render() {
+    render(): JSX.Element {
         
-        const theme = {
+        const theme: any = {
             scheme: 'monokai',
             author: 'wimer hazenberg (http://www.monokai.nl)',
             base00: '#272822',
@@ -49,24 +46,30 @@ export class JsonView extends React.Component<JsonViewProps, {}> {
             base0F: '#cc6633'
           };
 
-        return <SplitPane className='scrollable hide-resizer' split="horizontal"  defaultSize={40} allowResize={false} >
+        return <SplitPane className='scrollable hide-resizer' split='horizontal'  defaultSize={40} allowResize={false} >
                     <div className='h-100 w-100 toolbar'>
                      
-                        
                     </div>
-                    <SplitPane className='scrollable hide-resizer empty-first-pane' split="horizontal"  defaultSize={1} allowResize={false} >
+                    <SplitPane 
+                        className='scrollable hide-resizer empty-first-pane'
+                        split='horizontal'
+                        defaultSize={1}
+                        allowResize={false}
+                    >
                         <div></div>
                         <div className='container'>
                             <div className='row'>
                                 <div className='col-12'>
                                     <small className='events-json-container'>
-                                        {this.props.content ? <JSONTree data={this.props.content} theme={theme} invertTheme={false}/> : null }
+                                        {this.props.content ? 
+                                            <JSONTree data={this.props.content} theme={theme} invertTheme={false}/> : null
+                                        }
                                     </small>
                                 </div>
                             </div>
                         </div>
                     </SplitPane>
-                </SplitPane>
+                </SplitPane>;
                
     }
     

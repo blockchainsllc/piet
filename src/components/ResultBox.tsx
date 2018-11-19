@@ -8,36 +8,34 @@
  * @copyright 2018 by Slock.it GmbH
  */
 
-import * as React from 'react'
-import SyntaxHighlighter from 'react-syntax-highlighter'
-import { docco } from 'react-syntax-highlighter/styles/hljs'
-import JSONTree from 'react-json-tree'
+import * as React from 'react';
+import JSONTree from 'react-json-tree';
 
 export interface ResultBoxProps {
-    result: string,
-    id: string,
-    resultBoxIsShown: boolean,
-    showResultBox: Function,
-    name: string
+    result: string;
+    id: string;
+    resultBoxIsShown: boolean;
+    showResultBox: Function;
+    name: string;
 
 }
 
 export class ResultBox extends React.Component<ResultBoxProps, {}> {
 
-    constructor(props) {
-        super(props)
+    constructor(props: ResultBoxProps) {
+        super(props);
 
-        this.hideResultBox = this.hideResultBox.bind(this)
+        this.hideResultBox = this.hideResultBox.bind(this);
     }
 
-    hideResultBox() {
-        this.props.showResultBox(false)
+    hideResultBox(): void {
+        this.props.showResultBox(false);
     }
 
-    render() {
-        const data = this.props.result ? JSON.parse(this.props.result) :  null
+    render(): JSX.Element {
+        const data: any = this.props.result ? JSON.parse(this.props.result) :  null;
 
-        const theme = {
+        const theme: any = {
             scheme: 'monokai',
             author: 'wimer hazenberg (http://www.monokai.nl)',
             base00: '#272822',
@@ -77,7 +75,6 @@ export class ResultBox extends React.Component<ResultBoxProps, {}> {
                                 <small>
                                     {data ? <JSONTree data={data} theme={theme} invertTheme={true}/> : null }
                          
-                                    
                                 </small>
                             </div>
                             <div className='modal-footer'>
@@ -89,7 +86,7 @@ export class ResultBox extends React.Component<ResultBoxProps, {}> {
                             </div>
                         </div>
                     </div>
-                </div>
+                </div>;
 
     }
 

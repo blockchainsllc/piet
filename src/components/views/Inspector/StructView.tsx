@@ -8,21 +8,20 @@
  * @copyright 2018 by Slock.it GmbH
  */
 
-import * as React from 'react'
-import * as Sol from '../../../solidity-handler/SolidityHandler'
-
+import * as React from 'react';
+import * as Sol from '../../../solidity-handler/SolidityHandler';
 
 interface StructViewProps {
-    selectedStruct: Sol.ContractStruct,
+    selectedStruct: Sol.ContractStruct;
  
 }
 
 export class StructView extends React.Component<StructViewProps, {}> {
  
-    render() {
+    render(): JSX.Element {
 
-        const struct = this.props.selectedStruct
-        const structFields = struct.fields.map((stateVariable: Sol.ContractStateVariable) => 
+        const struct: Sol.ContractStruct = this.props.selectedStruct;
+        const structFields: JSX.Element[] = struct.fields.map((stateVariable: Sol.ContractStateVariable) => 
             <div className='selected-list-item list-group-item list-group-item-action flex-column align-items-start'
                 key={struct.name + stateVariable.name}>
            
@@ -34,7 +33,7 @@ export class StructView extends React.Component<StructViewProps, {}> {
                     <small>&nbsp;{stateVariable.solidityType.name}</small>
                 
             </div>
-        )
+        );
 
         return  <div className='card selected-card h-100'>
 
@@ -52,7 +51,7 @@ export class StructView extends React.Component<StructViewProps, {}> {
                         <div className='list-group'>{structFields}</div>
                         
                     </div>
-                </div>   
+                </div>;   
   
     }
     

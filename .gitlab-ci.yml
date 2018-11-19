@@ -1,0 +1,62 @@
+image: docker.slock.it/build-images/node:10-alpine
+
+stages:
+  - build
+  - package
+  - deploy
+
+# Job templates
+ui-build: 
+  stage: build
+  tags:
+    - short-jobs
+  script:
+    - sh /prepare.sh
+    - npm install
+    - CI="" npm run build
+  artifacts:
+    name: build-ui
+    paths:
+      - build/
+
+docker-package:
+  stage: package
+  tags:
+    - short-jobs
+  image: docker
+  only:
+    - master
+    - develop
+    - tags
+  services:
+    - docker:dind
+  script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME .
+    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME $CI_REGISTRY_IMAGE:latest
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+    - docker push $CI_REGISTRY_IMAGE:latest
+
+deploy-to-dev:
+    stage: deploy
+    tags:
+      - short-jobs
+    only:
+      - develop
+    image: markuskeil/docker-and-rancher
+    services:
+      - docker:dind
+    script:
+      - rancher-compose -p dev-${CI_PROJECT_PATH_SLUG} up -p -d -c --force-upgrade
+
+deploy-to-production:
+    stage: deploy
+    tags:
+      - short-jobs
+    only:
+      - '/^v[0-9]*\.[0-9]*\.[0-9]*-?.*$/'
+    image: markuskeil/docker-and-rancher
+    services:
+      - docker:dind
+    script:
+      - rancher-compose -p $CI_PROJECT_PATH_SLUG up -p -d -c --force-upgrade

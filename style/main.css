@@ -9,8 +9,13 @@
     --enum-color: #327746;
     --link-color: #ffffff;
     --muted-text-color: #adadad;
+    --error-red: #dc3545;
 
 
+}
+
+.error-red {
+    color: var(--error-red);
 }
 
 .migration-function-cell {
@@ -133,6 +138,11 @@
 
 .node-text {
     fill: var(--text-highlight-color);
+    
+}
+
+.node-text-error {
+    fill: var(--error-red);
     
 }
 
