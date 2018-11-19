@@ -5,6 +5,9 @@ module.exports = {
         filename: "bundle.js",
         path: __dirname + "/build"
     },
+    optimization: {
+        minimize: false
+      },
 
     // Enable sourcemaps for debugging webpack's output.
     devtool: "source-map",
