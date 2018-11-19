@@ -277,15 +277,17 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
     async send(contractFunction: Sol.ContractFunction): Promise<void> {
         const functionIndex: number = this.getFunctionIndex(contractFunction);
         const theFunction: Sol.ContractFunction = this.getFunctionForIndex(functionIndex);
+        const name: string = contractFunction.name;
 
         this.initBlockchainOperation(name, theFunction, functionIndex);
+        
 
         const accounts: any[] = await this.props.web3.eth.getAccounts();
         
         if (accounts.length > 0) {
             let error: any = null;
             const contract: any = new this.props.web3.eth
-                .Contract(this.props.selectedContract.meta.abi, this.props.selectedContract.deployedAt);
+                .Contract(getFunctionAbi(theFunction, this.props.web3, this.props.contracts), this.props.selectedContract.deployedAt);
 
             let result: any; 
             try {
@@ -310,7 +312,7 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
 
             }
 
-            result = typeof result === 'object' ? JSON.stringify(result) : result.toString();
+            result = result ? typeof result === 'object' ? JSON.stringify(result) : result.toString() : null;
             
             this.setState((prevState: ContractFunctionViewState) => {
                 prevState.blockchainErrors[functionIndex] = error ? error.message : null;
