@@ -62,6 +62,7 @@ interface ViewProps {
     removeTabEntity: Function;
     selectedContractName: string;
     removeContractToSelect: Function;
+    globalErrors: Error[];
     
 }
 
@@ -143,6 +144,7 @@ export class View extends React.Component<ViewProps, {}> {
 
             case TabEntityType.FileBrowser:
             content =   <FileBrowserView 
+                            globalErrors={this.props.globalErrors}
                             key={'eventCatcher' + this.props.activeTab[this.props.viewId] }
                             viewId={this.props.viewId}
                             tabId={this.props.activeTab[this.props.viewId]}
@@ -183,6 +185,7 @@ export class View extends React.Component<ViewProps, {}> {
                             />
                         </div>
                         <div>
+                            
                             {content}
                         </div>
                     </SplitPane>

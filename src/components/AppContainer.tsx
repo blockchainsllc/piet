@@ -29,6 +29,7 @@ interface AppContainerState {
     isLaoding: boolean;
     tabEntities: TabEntity[][];
     activeTab: number[];
+    globalErrors: Error[];
 }
 
 class AppContainer extends React.Component<{}, {}> {
@@ -45,7 +46,7 @@ class AppContainer extends React.Component<{}, {}> {
             web3: null, // new Web3(web3),
             
             isLaoding: false,
-            
+            globalErrors: [],
             tabEntities: [[], []],
             activeTab: [null, null]
 
@@ -162,21 +163,36 @@ class AppContainer extends React.Component<{}, {}> {
 
     }
 
-    gotContractsFromGithub(files: any): void {
-        const contracts: Sol.Contract[] = Sol.parseContent(files);
-        const params: any = queryString.parse((this.props as any).location.search);
-        const contractName: string = params.contract ? params.contract.toString() : null;
-        const selectedContract: Sol.Contract = contracts.find((contract: Sol.Contract) => contract.name === contractName);
-        if (selectedContract) {
-            selectedContract.deployedAt = params.contractAddress ? params.contractAddress as string : selectedContract.deployedAt;
+    gotContractsFromGithub(files: any, error?: Error): void {
+
+        if (error) {
+
+            this.setState((prevState: AppContainerState) => {
+                prevState.globalErrors.push(error);
+                return {
+                    globalErrors: prevState.globalErrors
+                }
+            });
+
+        } else {
+            const contracts: Sol.Contract[] = Sol.parseContent(files);
+            const params: any = queryString.parse((this.props as any).location.search);
+            const contractName: string = params.contract ? params.contract.toString() : null;
+            const selectedContract: Sol.Contract = contracts.find((contract: Sol.Contract) => contract.name === contractName);
+            if (selectedContract) {
+                selectedContract.deployedAt = params.contractAddress ? params.contractAddress as string : selectedContract.deployedAt;
+            }
+
+            this.setState({
+                contractToSelect: selectedContract ? selectedContract.name : null,
+                contracts: contracts
+            });
+            this.removeTabEntity('About');
+            
         }
 
-        this.setState({
-            contractToSelect: selectedContract ? selectedContract.name : null,
-            contracts: contracts
-        });
-        this.removeTabEntity('About');
         this.setIsLoading(false);
+
     }
 
     async updateContractNames(selectorFiles: FileList): Promise<void> {
@@ -380,6 +396,7 @@ class AppContainer extends React.Component<{}, {}> {
                                     changeActiveTab={this.changeActiveTab}
                                 />
                                 <View 
+                                    globalErrors={this.state.globalErrors}
                                     removeContractToSelect={this.removeContractToSelect}
                                     selectedContractName={this.state.contractToSelect}
                                     removeTabEntity={this.removeTabEntity}
@@ -403,6 +420,7 @@ class AppContainer extends React.Component<{}, {}> {
                         </SplitPane>
                     
                             <View
+                                globalErrors={this.state.globalErrors}
                                 removeContractToSelect={this.removeContractToSelect}
                                 selectedContractName={this.state.contractToSelect}
                                 removeTabEntity={this.removeTabEntity}

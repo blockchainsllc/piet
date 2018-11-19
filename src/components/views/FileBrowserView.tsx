@@ -22,6 +22,7 @@ interface FileBrowserViewProps {
     submitFiles: Function;
     contracts: Sol.Contract[];
     loading: boolean;
+    globalErrors: Error[];
 
 }
 
@@ -184,6 +185,12 @@ export class FileBrowserView extends React.Component<FileBrowserViewProps, FileB
             base0F: '#cc6633'
           };
 
+        const errorsToShow: JSX.Element[] = this.props.globalErrors.map((error: Error) =>  
+            <div key={error.message + error.name} className='file-browser-alert alert alert-danger' role='alert'>   
+                <small><i className='fas fa-exclamation-circle'></i> <strong>Error:</strong> {error.message}</small>
+             </div> 
+        );
+
         return <SplitPane className='scrollable hide-resizer' split='horizontal'  defaultSize={40} allowResize={false} >
                     <div className='h-100 w-100 toolbar'>
                     
@@ -194,7 +201,10 @@ export class FileBrowserView extends React.Component<FileBrowserViewProps, FileB
                     <SplitPane className='scrollable hide-resizer empty-first-pane' split='horizontal'  defaultSize={1} allowResize={false}>
                         <div></div>
                         <div>
-                            {this.props.loading ? 
+                            { this.props.globalErrors.length > 0 &&
+                                errorsToShow
+                            }   
+                            {this.props.globalErrors.length === 0  && this.props.loading ? 
                                 <div className='file-browser-alert alert alert-warning' role='alert'>
                                     <small><i className='fas fa-info-circle'></i> Parsing Code: This may take a while...</small>
                                 </div> :   

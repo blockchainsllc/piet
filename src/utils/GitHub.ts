@@ -10,17 +10,28 @@
 
 import * as axios from 'axios';
 
-export const getContracts: (githubUrl: string, cb, subDirPath: string) => Promise<void> =
-async (githubUrl: string, cb: (list: any[]) => void, subDirPath: string): Promise<void> => {
+export const getContracts: (githubUrl: string, cb: Function, subDirPath: string) => Promise<void> =
+async (githubUrl: string, cb: (list: any[], error?: Error) => void, subDirPath: string): Promise<void> => {
   
-    const fileList: any[] = await getFileList(githubUrl, [], subDirPath);
-    Promise.all(fileList.map((file: any) => (axios as any).get(file.url)))
+    let fileList: any[];
+
+    try {
+        fileList = await getFileList(githubUrl, [], subDirPath);
+        Promise.all(fileList.map((file: any) => (axios as any).get(file.url)))
         .then((list: any) => cb(
             list.map((content: any, index: number) => ({
                 fileName: fileList[index].name,
                 content: content.data
             }))
-        ));
+        )).catch((error: Error) => {
+            
+            cb([], new Error(`${error.message} while loading the GitHub repository.`));
+        });
+    } catch (e) {
+        cb([], new Error(`${e.message} while loading the GitHub repository. Are you trying to access a private repository?`));
+    }
+
+
     
 };
 
