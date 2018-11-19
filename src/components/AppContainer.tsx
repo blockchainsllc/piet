@@ -19,6 +19,7 @@ import SplitPane from 'react-split-pane';
 import { getContracts } from '../utils/GitHub';
 import { withRouter } from 'react-router-dom';
 import * as Web3 from 'web3';
+import * as axios from 'axios';
 
 interface AppContainerState {
     contracts: Sol.Contract[];
@@ -118,8 +119,11 @@ class AppContainer extends React.Component<{}, {}> {
         this.initViews();
 
         let web3: any = null;
+        const params: any = queryString.parse((this.props as any).location.search);
 
-        if ((window as any).ethereum) {
+        if (params.rpc) {
+            web3 = new Web3(params.rpc);
+        } else if ((window as any).ethereum) {
             web3 = new Web3((window as any).ethereum);
             try {
                 // Request account access if needed
@@ -128,16 +132,10 @@ class AppContainer extends React.Component<{}, {}> {
                 // User denied account access...
             }
         }
-        // Legacy dapp browsers...
+
         else if ((window as any).web3) {
             web3 = new Web3(web3.currentProvider);
         }
-        // Non-dapp browsers...
-        else {
-            console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
-        }
-
-        const params: any = queryString.parse((this.props as any).location.search);
         
         this.setState({
             web3: web3,
@@ -145,7 +143,20 @@ class AppContainer extends React.Component<{}, {}> {
             contractToSelectAddress: params.contractAddress ? params.contractAddress : null
         });
 
-        if (params.gitHubRepo) {
+        if (params.solFile) {
+            try {
+                const solFile: any = await (axios as any).get('https://eth.slock.it/api/file/' + params.solFile);
+
+                this.gotContractsFromGithub([{
+                    fileName: params.solFile + '.sol',
+                    content: solFile.data[0].content
+                }]);
+
+            } catch (e) {
+                this.addError(new Error('Can not get https://eth.slock.it/api/file/' + params.solFile));
+            }
+            
+        } else if (params.gitHubRepo) {
             
             this.setIsLoading(true);
             await getContracts(
@@ -163,17 +174,20 @@ class AppContainer extends React.Component<{}, {}> {
 
     }
 
+    addError(error: any): void {
+        this.setState((prevState: AppContainerState) => {
+            prevState.globalErrors.push(error);
+            return {
+                globalErrors: prevState.globalErrors
+            }
+        });
+    }
+
     gotContractsFromGithub(files: any, error?: Error): void {
 
         if (error) {
-
-            this.setState((prevState: AppContainerState) => {
-                prevState.globalErrors.push(error);
-                return {
-                    globalErrors: prevState.globalErrors
-                }
-            });
-
+            this.addError(error);
+    
         } else {
             const contracts: Sol.Contract[] = Sol.parseContent(files);
             const params: any = queryString.parse((this.props as any).location.search);

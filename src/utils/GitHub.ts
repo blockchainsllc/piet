@@ -30,8 +30,6 @@ async (githubUrl: string, cb: (list: any[], error?: Error) => void, subDirPath: 
     } catch (e) {
         cb([], new Error(`${e.message} while loading the GitHub repository. Are you trying to access a private repository?`));
     }
-
-
     
 };
 

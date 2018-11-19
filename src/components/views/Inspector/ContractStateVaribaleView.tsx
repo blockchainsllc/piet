@@ -126,9 +126,18 @@ export class ContractStateVaribaleView extends React.Component<ContractStateVari
                 const arrayOrMappingKey: any = stateVariable.solidityType.mapping || stateVariable.solidityType.isArray 
                     ? this.state.stateVariableInput[stateVariable.name] : [];
 
-                result = await (this.state.parameterMapping[stateVariable.name] ? 
-                    contract.methods[stateVariable.name](...this.state.parameterMapping[stateVariable.name], ...arrayOrMappingKey).call() :
-                    contract.methods[stateVariable.name](...arrayOrMappingKey).call());
+                if (stateVariable.solidityType.mapping) {
+                    result = await (this.state.parameterMapping[stateVariable.name] ? 
+                        contract.methods[stateVariable.name](...this.state.parameterMapping[stateVariable.name], arrayOrMappingKey).call() :
+                        contract.methods[stateVariable.name](arrayOrMappingKey).call());
+                } else {
+                    result = await (this.state.parameterMapping[stateVariable.name] ? 
+                        contract.methods[stateVariable.name](
+                            ...this.state.parameterMapping[stateVariable.name], 
+                            ...arrayOrMappingKey).call() :
+                            contract.methods[stateVariable.name](...arrayOrMappingKey).call());
+                }
+
                 result = typeof result === 'object' ? JSON.stringify(result) : result.toString();
             } catch (e) {
                 result = e.toString();
