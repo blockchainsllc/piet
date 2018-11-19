@@ -6,7 +6,7 @@ module.exports = {
         path: __dirname + "/build"
     },
     optimization: {
-        minimize: false
+        minimize: true
       },
 
     // Enable sourcemaps for debugging webpack's output.
