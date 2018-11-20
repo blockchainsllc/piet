@@ -66,6 +66,7 @@ export class GraphContainerView extends React.Component<GraphContainerViewProps,
         return  <SplitPane className='scrollable hide-resizer' split='horizontal'  defaultSize={40} allowResize={false} >
                     <div className='h-100 w-100 toolbar'>
                         <button 
+                            title='Zoom Out'
                             className='btn btn-sm btn-outline-info'
                             onClick={() => this.zoomOut()}
                         >
@@ -73,6 +74,7 @@ export class GraphContainerView extends React.Component<GraphContainerViewProps,
                         </button>
                         &nbsp;
                         <button 
+                            title='Zoom In'
                             className='btn btn-sm btn-outline-info' 
                             onClick={() => this.zoomIn()}
                         >

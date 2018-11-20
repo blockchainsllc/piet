@@ -79,18 +79,28 @@ export class InspectorContainerView extends React.Component<InspectorContainerVi
     render(): JSX.Element {
         return   <SplitPane className='scrollable hide-resizer' split='horizontal'  defaultSize={40} allowResize={false} >
                     <div className='h-100 w-100 toolbar'>
-                        <button className={'btn btn-sm btn' + (this.state.showInheritedMembers ? '' : '-outline') + '-info'}
-                            onClick={() => this.toogleShowInheritedMembers()}>
+                        <button 
+                            title={this.state.showInheritedMembers ? 'Hide Inherited Members' : 'Show Inherited Members' } 
+                            className={'btn btn-sm btn' + (this.state.showInheritedMembers ? '' : '-outline') + '-info'}
+                            onClick={() => this.toogleShowInheritedMembers()}
+                        >
                             <i className='fas fa-sitemap'></i>
                         </button>
                         &nbsp;
-                        <button className={'btn btn-sm btn' + (this.state.testMode ? '' : '-outline') + '-info'}
-                            onClick={() => this.toogleTestMode()}>
+                        <button 
+                            title={this.state.testMode ? 'Deactivate Ineractive Mode' : 'Activate Ineractive Mode' } 
+                            className={'btn btn-sm btn' + (this.state.testMode ? '' : '-outline') + '-info'}
+                            onClick={() => this.toogleTestMode()}
+                        >
                             <i className='fas fa-handshake'></i>
                         </button>
                         &nbsp;
-                        <a href='#meta' className={'btn btn-sm btn' + (this.state.editContractAddress ? '' : '-outline') + '-info'}
-                            onClick={() => this.toogleEditContractAddress()}>
+                        <a 
+                            title={this.state.editContractAddress ? 'Submit New Contract Address' : 'Edit Contract Address' } 
+                            href='#meta'
+                            className={'btn btn-sm btn' + (this.state.editContractAddress ? '' : '-outline') + '-info'}
+                            onClick={() => this.toogleEditContractAddress()}
+                        >
                             <i className='fas fa-edit'></i>
                         </a>
                     </div>
