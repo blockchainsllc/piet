@@ -13,6 +13,8 @@ import * as Sol from '../../../solidity-handler/SolidityHandler';
 import Web3Type from '../../../types/web3';
 import { SelectedView } from './SelectedView';
 import SplitPane from 'react-split-pane';
+import { TabEntity, TabEntityType } from '../../View';
+import { UICreationHandling } from '../ui-creation/UIStructure';
 
 interface InspectorContainerViewProps {
     web3: Web3Type;
@@ -22,6 +24,8 @@ interface InspectorContainerViewProps {
     selectedElement: Sol.NodeElement;
     contracts: Sol.Contract[];
     getEvents: Function;
+    selectedTabTypeForView: TabEntityType[];
+    uiCreationHandling: UICreationHandling;
 }
 
 interface InspectorContainerViewState {
@@ -112,6 +116,8 @@ export class InspectorContainerView extends React.Component<InspectorContainerVi
                     >
                         <div></div>
                         <SelectedView 
+                            uiCreationHandling={this.props.uiCreationHandling}
+                            selectedTabTypeForView={this.props.selectedTabTypeForView}
                             toggleInheritance={this.toogleShowInheritedMembers}
                             contracts={this.props.contracts}
                             testMode={this.state.testMode} 

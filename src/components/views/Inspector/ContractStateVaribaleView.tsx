@@ -12,6 +12,9 @@ import * as React from 'react';
 import * as Sol from '../../../solidity-handler/SolidityHandler';
 import Web3Type from '../../../types/web3';
 import { getStateVariableAbi } from '../../../utils/AbiGenerator';
+import { TabEntity, TabEntityType } from '../../View';
+import { StateVariableUITools } from '../ui-creation/InspectorTools/StateVariableUITools';
+import { UICreationHandling } from '../ui-creation/UIStructure';
 
 interface ContractStateVaribaleViewProps {
     selectedContract: Sol.Contract;
@@ -20,7 +23,8 @@ interface ContractStateVaribaleViewProps {
     showInheritedMembers: boolean;
     contracts: Sol.Contract[];
     toggleInheritance: Function;
-
+    selectedTabTypeForView: TabEntityType[];
+    uiCreationHandling: UICreationHandling;
 }
 
 interface ContractStateVaribaleViewState {
@@ -218,6 +222,9 @@ export class ContractStateVaribaleView extends React.Component<ContractStateVari
                             </div>
                         
                             : null 
+                        }
+                        {
+                            this.props.selectedTabTypeForView[1] === TabEntityType.UICreationView && <StateVariableUITools />
                         }
         
                     </div>;

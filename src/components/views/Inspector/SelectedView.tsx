@@ -14,6 +14,8 @@ import { ContractView } from './ContractView';
 import { EnumView } from './EnumView';
 import { StructView } from './StructView';
 import Web3Type from '../../../types/web3';
+import { TabEntity, TabEntityType } from '../../View';
+import { UICreationHandling } from '../ui-creation/UIStructure';
 
 interface SelectedViewProps {
     selectedElement: Sol.NodeElement;
@@ -27,6 +29,8 @@ interface SelectedViewProps {
     changeContractAddress: Function;
     getEvents: Function;
     contracts: Sol.Contract[];
+    selectedTabTypeForView: TabEntityType[];
+    uiCreationHandling: UICreationHandling;
 }
 
 export class SelectedView extends React.Component<SelectedViewProps, {}> {
@@ -41,6 +45,8 @@ export class SelectedView extends React.Component<SelectedViewProps, {}> {
         switch (this.props.selectedElement.elementType) {
             case Sol.ElementType.Contract:
                 view = <ContractView 
+                            uiCreationHandling={this.props.uiCreationHandling}
+                            selectedTabTypeForView={this.props.selectedTabTypeForView}
                             toggleInheritance={this.props.toggleInheritance}
                             contracts={this.props.contracts}
                             addTabEntity={this.props.addTabEntity}

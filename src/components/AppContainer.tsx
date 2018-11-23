@@ -20,6 +20,7 @@ import { getContracts } from '../utils/GitHub';
 import { withRouter } from 'react-router-dom';
 import * as Web3 from 'web3';
 import * as axios from 'axios';
+import { UIStructure, UICreationHandling } from './views/ui-creation/UIStructure';
 
 interface AppContainerState {
     contracts: Sol.Contract[];
@@ -31,6 +32,7 @@ interface AppContainerState {
     tabEntities: TabEntity[][];
     activeTab: number[];
     globalErrors: Error[];
+    createdUIStructure: UIStructure;
 }
 
 class AppContainer extends React.Component<{}, {}> {
@@ -45,11 +47,14 @@ class AppContainer extends React.Component<{}, {}> {
             contractToSelect: null,
             contractToSelectAddress: null,
             web3: null, // new Web3(web3),
-            
             isLaoding: false,
             globalErrors: [],
             tabEntities: [[], []],
-            activeTab: [null, null]
+            activeTab: [null, null],
+            createdUIStructure: {
+                contracts: [],
+                containers: []
+            }
 
         };
         
@@ -65,6 +70,7 @@ class AppContainer extends React.Component<{}, {}> {
         this.removeTabEntity = this.removeTabEntity.bind(this);
         this.gotContractsFromGithub = this.gotContractsFromGithub.bind(this);
         this.removeContractToSelect = this.removeContractToSelect.bind(this);
+        this.setUIStructure = this.setUIStructure.bind(this);
 
     }
 
@@ -80,6 +86,12 @@ class AppContainer extends React.Component<{}, {}> {
             return {
                 tabEntities: prevState.tabEntities
             };
+        });
+    }
+
+    setUIStructure(uiStructure: UIStructure): void {
+        this.setState({
+            createdUIStructure: uiStructure
         });
     }
     
@@ -397,6 +409,16 @@ class AppContainer extends React.Component<{}, {}> {
     }
 
     render(): JSX.Element {
+        const selectedTabTypeForView: TabEntityType[] = this.state.tabEntities.map((tabs: TabEntity[], index: number) =>
+             (this.state.tabEntities[index][this.state.activeTab[index]] ? 
+                this.state.tabEntities[index][this.state.activeTab[index]].contentType : 
+                null)
+        );
+
+        const uiCreationHandling: UICreationHandling = {
+            setUIStructure: this.setUIStructure,
+            uiStructure: this.state.createdUIStructure
+        };
 
         return  <div>
                     <SplitPane split='vertical' minSize={300} defaultSize={500} >
@@ -410,6 +432,8 @@ class AppContainer extends React.Component<{}, {}> {
                                     changeActiveTab={this.changeActiveTab}
                                 />
                                 <View 
+                                    uiCreationHandling={uiCreationHandling}
+                                    selectedTabTypeForView={selectedTabTypeForView}
                                     globalErrors={this.state.globalErrors}
                                     removeContractToSelect={this.removeContractToSelect}
                                     selectedContractName={this.state.contractToSelect}
@@ -434,6 +458,8 @@ class AppContainer extends React.Component<{}, {}> {
                         </SplitPane>
                     
                             <View
+                                uiCreationHandling={uiCreationHandling}
+                                selectedTabTypeForView={selectedTabTypeForView}
                                 globalErrors={this.state.globalErrors}
                                 removeContractToSelect={this.removeContractToSelect}
                                 selectedContractName={this.state.contractToSelect}

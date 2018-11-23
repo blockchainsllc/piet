@@ -22,6 +22,8 @@ import { FileBrowserView } from './views/FileBrowserView';
 import { About } from './views/About';
 import { MigrationAssistent } from './views/migration-assistent/MigrationAssistent';
 import SplitPane from 'react-split-pane';
+import { UICreationView } from './views/ui-creation/UICreationView';
+import { UICreationHandling } from './views/ui-creation/UIStructure';
 
 export enum TabEntityType {
     Structure,
@@ -31,7 +33,8 @@ export enum TabEntityType {
     Json,
     FileBrowser,
     About,
-    MigrationAssistent
+    MigrationAssistent,
+    UICreationView
 }
 
 export interface TabEntity {
@@ -63,6 +66,8 @@ interface ViewProps {
     selectedContractName: string;
     removeContractToSelect: Function;
     globalErrors: Error[];
+    selectedTabTypeForView: TabEntityType[];
+    uiCreationHandling: UICreationHandling;
     
 }
 
@@ -99,7 +104,9 @@ export class View extends React.Component<ViewProps, {}> {
                 break;
 
             case TabEntityType.Structure:
-                content =   <InspectorContainerView 
+                content =   <InspectorContainerView
+                                uiCreationHandling={this.props.uiCreationHandling}
+                                selectedTabTypeForView={this.props.selectedTabTypeForView}
                                 contracts={this.props.contracts}
                                 changeContractAddress={this.props.changeContractAddress}
                                 addTabEntity={this.props.addTabEntity}
@@ -143,29 +150,41 @@ export class View extends React.Component<ViewProps, {}> {
             break;
 
             case TabEntityType.FileBrowser:
-            content =   <FileBrowserView 
-                            globalErrors={this.props.globalErrors}
-                            key={'eventCatcher' + this.props.activeTab[this.props.viewId] }
-                            viewId={this.props.viewId}
-                            tabId={this.props.activeTab[this.props.viewId]}
-                            content={this.props.tabEntities[this.props.activeTab[this.props.viewId]].content}
-                            web3={this.props.web3}
-                            submitFiles={this.props.submitFiles}
-                            contracts={this.props.contracts}
-                            loading={this.props.loading}
-                        />;
-            break;
+                content =   <FileBrowserView 
+                                globalErrors={this.props.globalErrors}
+                                key={'eventCatcher' + this.props.activeTab[this.props.viewId] }
+                                viewId={this.props.viewId}
+                                tabId={this.props.activeTab[this.props.viewId]}
+                                content={this.props.tabEntities[this.props.activeTab[this.props.viewId]].content}
+                                web3={this.props.web3}
+                                submitFiles={this.props.submitFiles}
+                                contracts={this.props.contracts}
+                                loading={this.props.loading}
+                            />;
+                break;
 
             case TabEntityType.MigrationAssistent:
-            content =   <MigrationAssistent 
-                            key={'Migration Assistent'}
-                            viewId={this.props.viewId}
-                            tabId={this.props.activeTab[this.props.viewId]}
-                            content={null}
-                            web3={this.props.web3}
-                            contracts={this.props.contracts}
-                        />;
-            break;
+                content =   <MigrationAssistent 
+                                key={'Migration Assistent'}
+                                viewId={this.props.viewId}
+                                tabId={this.props.activeTab[this.props.viewId]}
+                                content={null}
+                                web3={this.props.web3}
+                                contracts={this.props.contracts}
+                            />;
+                break;
+            
+            case TabEntityType.UICreationView:
+                content =   <UICreationView 
+                                uiCreationHandling={this.props.uiCreationHandling}
+                                key={'Migration Assistent'}
+                                viewId={this.props.viewId}
+                                tabId={this.props.activeTab[this.props.viewId]}
+                                content={null}
+                                web3={this.props.web3}
+                           
+                            />;
+                break;
                                 
             default:
                 content = null;

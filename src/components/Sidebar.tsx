@@ -36,6 +36,7 @@ export class Sidebar extends React.Component<SidebarProps, {}> {
         this.showLoadContractFilesBox = this.showLoadContractFilesBox.bind(this);
         this.showAbout = this.showAbout.bind(this);
         this.showMigrationAssistent = this.showMigrationAssistent.bind(this);
+        this.showUICreationView = this.showUICreationView.bind(this);
 
     }
 
@@ -52,6 +53,19 @@ export class Sidebar extends React.Component<SidebarProps, {}> {
                 icon: 'question-circle',
                 removable: true
             }, 
+                                1,
+                                false);
+    }
+
+    showUICreationView(): void {
+        this.props.addTabEntity({
+            active: true,
+            contentType: TabEntityType.UICreationView,
+            name: 'UI Creation',
+            content: null,
+            icon: 'columns',
+            removable: true
+        }, 
                                 1,
                                 false);
     }
@@ -86,6 +100,19 @@ export class Sidebar extends React.Component<SidebarProps, {}> {
                             </div>
                         </div>
                     </div>
+                    <div className='sidebar-buttons-container'>
+                        <div className='row'>
+                            <div className='col-sm text-center'>
+                                <a  href='#' 
+                                    className='btn btn-outline-secondary btn-lg' 
+                                    onClick={this.showUICreationView}
+                                >
+                                    <i className='fas fa-columns'></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
                     {/*<div className='sidebar-buttons-container'>
                         <div className='row'>
                             <div className='col-sm text-center'>
