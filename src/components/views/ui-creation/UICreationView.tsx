@@ -56,7 +56,7 @@ export class UICreationView extends React.Component<UICreationViewProps, UICreat
         }  
 
         this.setState((prev: UICreationViewState) => {
-            prev.results[functionName] = result.toString();
+            prev.results[contractAddress + functionName] = result.toString();
             return {
                 reuslts: prev.results
             } as any;
@@ -67,7 +67,7 @@ export class UICreationView extends React.Component<UICreationViewProps, UICreat
         this.props.uiCreationHandling.uiStructure.rows
             .forEach((row: Row) => 
                 row.elements.forEach((element: Element) => 
-                    this.call(element.abi, element.contractAddress, element.data)
+                    this.call(element.abi, element.contractAddress, element.functionName)
                 )
             );
     }
@@ -89,7 +89,10 @@ export class UICreationView extends React.Component<UICreationViewProps, UICreat
                         <div className='card'>
                             <div className='card-body'>
                                 <span className='text-muted'><small>{element.data}</small></span>
-                                <p className='card-text'>{this.state.results[element.data] && this.state.results[element.data] }</p>
+                                <p className='card-text'>
+                                    {this.state.results[element.contractAddress + element.functionName] 
+                                        && this.state.results[element.contractAddress + element.functionName] }
+                                </p>
                             </div>
                         </div>
                     </div>

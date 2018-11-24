@@ -15,6 +15,7 @@ interface StateVariableUIToolsProps {
     placeHolderName: string;
     contractAddress: string;
     abi: any;
+    stateVariableName: string;
 }
 
 interface StateVariableUIToolsState {
@@ -49,7 +50,8 @@ export class StateVariableUITools extends React.Component<StateVariableUIToolsPr
             elementType: ElementType.ValueBox,
             data: this.state.label,
             contractAddress: this.props.contractAddress,
-            abi: this.props.abi
+            abi: this.props.abi,
+            functionName: this.props.stateVariableName
         });
  
     }

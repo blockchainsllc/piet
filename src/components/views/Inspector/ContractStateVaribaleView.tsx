@@ -230,6 +230,7 @@ export class ContractStateVaribaleView extends React.Component<ContractStateVari
                                 uiCreationHandling={this.props.uiCreationHandling}
                                 contractAddress={contract.deployedAt}
                                 abi={getStateVariableAbi(stateVariable, this.props.web3, this.props.contracts)}
+                                stateVariableName={stateVariable.name}
                             />
                         }
         

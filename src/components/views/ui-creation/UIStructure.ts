@@ -36,6 +36,7 @@ export interface Element {
     data: any;
     contractAddress: string;
     abi: any;
+    functionName: string;
     
 }
 
