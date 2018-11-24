@@ -3,27 +3,26 @@
  */
 
 export type SetUIStructure = (uiStructure: UIStructure) => void;
+export type AddRow = () => void;
+export type AddElementToRow = (rowIndex: number, element: Element) => void;
 
 export interface UICreationHandling {
     uiStructure: UIStructure;
+    addRow: AddRow;
+    addElementToRow: AddElementToRow;
     setUIStructure: SetUIStructure;
 }
 
 export interface UIStructure {
     contracts: Contract[];
-    containers: Container[];
+    rows: Row[];
 }
 
 export interface Contract {
     address: string;
     abi: any[];
 }
-
-export enum ContainerType {
-    ValueContainer
-}
-
-export interface Container {
+export interface Row {
     elements: Element[];
     
 }
@@ -35,5 +34,8 @@ export enum ElementType {
 export interface Element {
     elementType: ElementType;
     data: any;
+    contractAddress: string;
+    abi: any;
     
 }
+

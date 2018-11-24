@@ -20,7 +20,7 @@ import { getContracts } from '../utils/GitHub';
 import { withRouter } from 'react-router-dom';
 import * as Web3 from 'web3';
 import * as axios from 'axios';
-import { UIStructure, UICreationHandling } from './views/ui-creation/UIStructure';
+import { UIStructure, UICreationHandling, Element } from './views/ui-creation/UIStructure';
 
 interface AppContainerState {
     contracts: Sol.Contract[];
@@ -53,7 +53,7 @@ class AppContainer extends React.Component<{}, {}> {
             activeTab: [null, null],
             createdUIStructure: {
                 contracts: [],
-                containers: []
+                rows: []
             }
 
         };
@@ -71,7 +71,31 @@ class AppContainer extends React.Component<{}, {}> {
         this.gotContractsFromGithub = this.gotContractsFromGithub.bind(this);
         this.removeContractToSelect = this.removeContractToSelect.bind(this);
         this.setUIStructure = this.setUIStructure.bind(this);
+        this.addRow = this.addRow.bind(this);
+        this.addElementToRow = this.addElementToRow.bind(this);
 
+    }
+
+    addRow(): void {
+        this.setState((prev: AppContainerState) => {
+            prev.createdUIStructure.rows.push({
+                elements: []
+            });
+
+            return {
+                createdUIStructure: prev.createdUIStructure
+            };
+        });
+    }
+
+    addElementToRow(rowIndex: number, element: Element): void {
+        this.setState((prev: AppContainerState) => {
+            prev.createdUIStructure.rows[rowIndex].elements.push(element);
+
+            return {
+                createdUIStructure: prev.createdUIStructure
+            };
+        });
     }
 
     removeContractToSelect(): void {
@@ -416,8 +440,11 @@ class AppContainer extends React.Component<{}, {}> {
         );
 
         const uiCreationHandling: UICreationHandling = {
+            addRow: this.addRow,
             setUIStructure: this.setUIStructure,
-            uiStructure: this.state.createdUIStructure
+            uiStructure: this.state.createdUIStructure,
+            addElementToRow: this.addElementToRow
+
         };
 
         return  <div>

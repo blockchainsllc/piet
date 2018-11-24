@@ -224,7 +224,13 @@ export class ContractStateVaribaleView extends React.Component<ContractStateVari
                             : null 
                         }
                         {
-                            this.props.selectedTabTypeForView[1] === TabEntityType.UICreationView && <StateVariableUITools />
+                            this.props.selectedTabTypeForView[1] === TabEntityType.UICreationView &&
+                            <StateVariableUITools 
+                                placeHolderName={stateVariable.name}
+                                uiCreationHandling={this.props.uiCreationHandling}
+                                contractAddress={contract.deployedAt}
+                                abi={getStateVariableAbi(stateVariable, this.props.web3, this.props.contracts)}
+                            />
                         }
         
                     </div>;

@@ -16,7 +16,7 @@ import * as CsvParse from 'csv-parse';
 import * as PromiseFileReader from 'promise-file-reader';
 import SplitPane from 'react-split-pane';
 import { Eth } from '../../../types/types';
-import { UICreationHandling } from './UIStructure';
+import { UICreationHandling, Row, Element } from './UIStructure';
 
 interface UICreationViewProps {
     web3: Web3Type;
@@ -27,7 +27,8 @@ interface UICreationViewProps {
 }
 
 interface UICreationViewState {
-
+    showMetaInformation: boolean;
+    results: string[];
 }
 
 export class UICreationView extends React.Component<UICreationViewProps, UICreationViewState> {
@@ -36,54 +37,100 @@ export class UICreationView extends React.Component<UICreationViewProps, UICreat
         super(props);
 
         this.state = {
-
+            showMetaInformation: true,
+            results: []
         };
 
     }
 
+    async call(abi: any, contractAddress: string, functionName: string): Promise<void> {
+
+        const contract: any = new this.props.web3.eth.Contract(abi, contractAddress);
+
+        let result: any; 
+        try {
+            result = await contract.methods[functionName]().call();
+            result = typeof result === 'object' ? JSON.stringify(result) : result.toString();
+        } catch (e) {
+            result = e;
+        }  
+
+        this.setState((prev: UICreationViewState) => {
+            prev.results[functionName] = result.toString();
+            return {
+                reuslts: prev.results
+            } as any;
+        });
+    }
+
+    updateAll(): void {
+        this.props.uiCreationHandling.uiStructure.rows
+            .forEach((row: Row) => 
+                row.elements.forEach((element: Element) => 
+                    this.call(element.abi, element.contractAddress, element.data)
+                )
+            );
+    }
+
+    componentDidMount(): void {
+        this.updateAll();
+    }
+
+    componentWillReceiveProps(): void {
+        this.updateAll();
+    }
+
     render(): JSX.Element {
 
+        const rows: JSX.Element[] = this.props.uiCreationHandling.uiStructure.rows
+            .map((row: Row, index: number) => {
+                const elements: JSX.Element[] = row.elements.map((element: Element) => 
+                    <div className='col-sm'>
+                        <div className='card'>
+                            <div className='card-body'>
+                                <span className='text-muted'><small>{element.data}</small></span>
+                                <p className='card-text'>{this.state.results[element.data] && this.state.results[element.data] }</p>
+                            </div>
+                        </div>
+                    </div>
+                );
+                return <div>
+                    {this.state.showMetaInformation &&
+                     <div key={'row' + index} className='row'>
+                        <div className='col-sm'>
+                            <span className='badge badge-secondary'>Row {index}</span>
+                        </div>
+      
+                    </div>
+                    }
+                    <div key={'row' + index} className='row'>
+           
+                        {elements}
+                    </div>
+                </div>;
+ 
+            }); 
+            
         return <SplitPane className='scrollable hide-resizer' split='horizontal'  defaultSize={40} allowResize={false} >
         <div className='h-100 w-100 toolbar'>
-            {/* <button 
-                title='Zoom Out'
+             <button 
+                title='Create Value Box Container'
                 className='btn btn-sm btn-outline-info'
-                onClick={() => this.zoomOut()}
+                onClick={this.props.uiCreationHandling.addRow}
             >
-                <i className='fa fa-minus' aria-hidden='true'></i>
+                New Row
             </button>
-            &nbsp;
-            <button 
-                title='Zoom In'
-                className='btn btn-sm btn-outline-info' 
-                onClick={() => this.zoomIn()}
-            >
-                <i className='fa fa-plus' aria-hidden='true'></i>
-            </button>
-            &nbsp;
-            &nbsp;
-            &nbsp;
-            <button 
-                className={'btn btn-sm' + (this.state.viewType === ViewType.Inheritance ? ' btn-info' : ' btn-outline-info')}
-                onClick={() => this.changeSubView(ViewType.Inheritance)}
-            >
-                Inheritance
-            </button>
-            &nbsp;
-            <button 
-                className={'btn btn-sm' + (this.state.viewType === ViewType.TypeResolution ? ' btn-info' : ' btn-outline-info')}
-                onClick={() => this.changeSubView(ViewType.TypeResolution)}
-            >
-                References
-            </button> */}
+
         </div>
         <SplitPane 
-            className='scrollable hide-resizer empty-first-pane' 
+            className='scrollable hide-resizer empty-first-pane  ui-creation-main' 
             split='horizontal'
             defaultSize={1}
             allowResize={false}
         >
-            <div>test</div>
+        <div className='container'>
+            {rows}
+        </div>
             
         </SplitPane>
     </SplitPane>;
