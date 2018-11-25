@@ -113,6 +113,8 @@ export class ContractView extends React.Component<ContractViewProps, ContractVie
                             testMode={this.props.testMode} 
                             web3={this.props.web3} />
                         <ContractFunctionView 
+                        uiCreationHandling={this.props.uiCreationHandling}
+                        selectedTabTypeForView={this.props.selectedTabTypeForView}
                             toggleInheritance={this.props.toggleInheritance}
                             contracts={this.props.contracts}
                             markCode={this.props.markCode}

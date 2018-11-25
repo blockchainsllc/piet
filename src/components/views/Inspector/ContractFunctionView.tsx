@@ -14,7 +14,9 @@ import Web3Type from '../../../types/web3';
 import { ResultBox } from '../../ResultBox';
 import { CodeBox } from '../../CodeBox';
 import { TabEntity, TabEntityType } from '../../View';
-import { getFunctionAbi } from '../../../utils/AbiGenerator';
+import { getFunctionAbi, getStateVariableAbi } from '../../../utils/AbiGenerator';
+import { UICreationHandling } from '../ui-creation/UIStructure';
+import { ValueBox } from '../ui-creation/InspectorTools/ValueBox';
 
 interface ContractFunctionViewProps {
     selectedContract: Sol.Contract;
@@ -25,6 +27,8 @@ interface ContractFunctionViewProps {
     toggleInheritance: Function;
     markCode: Function;
     addTabEntity: Function;
+    uiCreationHandling: UICreationHandling;
+    selectedTabTypeForView: TabEntityType[];
 }
 
 interface ContractFunctionViewState {
@@ -37,6 +41,7 @@ interface ContractFunctionViewState {
     functionCollapsed: boolean[];
     codeBoxIsShown: boolean;
     selectedFunction: Sol.ContractFunction;
+    
 }
 
 export class ContractFunctionView extends React.Component<ContractFunctionViewProps, {}> {
@@ -280,8 +285,6 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
         const name: string = contractFunction.name;
 
         this.initBlockchainOperation(name, theFunction, functionIndex);
-        
-
         const accounts: any[] = await this.props.web3.eth.getAccounts();
         
         if (accounts.length > 0) {
@@ -442,11 +445,27 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
                                                 <span className={(inherited ? ' text-muted' : '')}>{contractFunction.name}()</span>
                                             </span>
                                         </strong>
+                                        {
+                                            contractFunction.params.length === 0 
+                                            && contractFunction.returnParams.length === 1 
+                                            && contractFunction.returnParams[0].solidityType.userDefined === false
+                                            &&  this.props.selectedTabTypeForView[1] === TabEntityType.UICreationView &&
+                                            <ValueBox 
+                                                placeHolderName={contractFunction.name}
+                                                uiCreationHandling={this.props.uiCreationHandling}
+                                                contractAddress={contract.deployedAt}
+                                                abi={getFunctionAbi(contractFunction, this.props.web3, this.props.contracts)}
+                                                stateVariableName={contractFunction.name}
+                                            />
+                                        }
                                         <div className={'full-block collapse functionContent' + functionKey} >
                                             {modifiers}
                                             <div className='param param-doc'>   
                                                 {contractFunction.description ? 
-                                                    <small><i className='text-muted'>{contractFunction.description}</i><br /></small> : null}
+                                                    <small>
+                                                        <i className='text-muted'>{contractFunction.description}</i><br />
+                                                    </small> 
+                                                : null}
                                             </div>
                                             {params.length > 0 ? <small>{params}</small> : null} 
                                 

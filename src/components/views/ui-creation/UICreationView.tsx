@@ -17,6 +17,7 @@ import * as PromiseFileReader from 'promise-file-reader';
 import SplitPane from 'react-split-pane';
 import { Eth } from '../../../types/types';
 import { UICreationHandling, Row, Element } from './UIStructure';
+import { SingleValueBox } from './ui-elements/SingleValueBox';
 
 interface UICreationViewProps {
     web3: Web3Type;
@@ -85,17 +86,12 @@ export class UICreationView extends React.Component<UICreationViewProps, UICreat
         const rows: JSX.Element[] = this.props.uiCreationHandling.uiStructure.rows
             .map((row: Row, index: number) => {
                 const elements: JSX.Element[] = row.elements.map((element: Element) => 
-                    <div className='col-sm'>
-                        <div className='card'>
-                            <div className='card-body'>
-                                <span className='text-muted'><small>{element.data}</small></span>
-                                <p className='card-text'>
-                                    {this.state.results[element.contractAddress + element.functionName] 
-                                        && this.state.results[element.contractAddress + element.functionName] }
-                                </p>
-                            </div>
-                        </div>
-                    </div>
+                    <SingleValueBox 
+                        lable={element.data} 
+                        result={this.state.results[element.contractAddress + element.functionName] 
+                            && this.state.results[element.contractAddress + element.functionName] } 
+                    />
+                
                 );
                 return <div>
                     {this.state.showMetaInformation &&

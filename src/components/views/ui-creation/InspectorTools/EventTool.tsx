@@ -10,7 +10,7 @@
 
 import * as React from 'react';
 import { UICreationHandling, Row, ElementType } from '../UIStructure';
-interface StateVariableUIToolsProps {
+interface ValueBoxProps {
     uiCreationHandling: UICreationHandling;
     placeHolderName: string;
     contractAddress: string;
@@ -18,14 +18,14 @@ interface StateVariableUIToolsProps {
     stateVariableName: string;
 }
 
-interface StateVariableUIToolsState {
+interface ValueBoxState {
 
     label: string;
 }
 
-export class StateVariableUITools extends React.Component<StateVariableUIToolsProps, StateVariableUIToolsState> {
+export class ValueBox extends React.Component<ValueBoxProps, ValueBoxState> {
 
-    constructor(props: StateVariableUIToolsProps) {
+    constructor(props: ValueBoxProps) {
         super(props);
 
         this.state = {

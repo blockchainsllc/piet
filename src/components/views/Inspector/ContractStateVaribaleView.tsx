@@ -13,7 +13,7 @@ import * as Sol from '../../../solidity-handler/SolidityHandler';
 import Web3Type from '../../../types/web3';
 import { getStateVariableAbi } from '../../../utils/AbiGenerator';
 import { TabEntity, TabEntityType } from '../../View';
-import { StateVariableUITools } from '../ui-creation/InspectorTools/StateVariableUITools';
+import { ValueBox } from '../ui-creation/InspectorTools/ValueBox';
 import { UICreationHandling } from '../ui-creation/UIStructure';
 
 interface ContractStateVaribaleViewProps {
@@ -225,7 +225,7 @@ export class ContractStateVaribaleView extends React.Component<ContractStateVari
                         }
                         {
                             this.props.selectedTabTypeForView[1] === TabEntityType.UICreationView &&
-                            <StateVariableUITools 
+                            <ValueBox 
                                 placeHolderName={stateVariable.name}
                                 uiCreationHandling={this.props.uiCreationHandling}
                                 contractAddress={contract.deployedAt}
