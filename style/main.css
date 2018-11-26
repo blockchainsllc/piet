@@ -494,6 +494,10 @@ body {
     margin-top: 12px;
 } 
 
+.ui-creation-value {
+    margin-bottom: 0rem !important;
+}
+
 .sidebar-buttons-container {
     margin-top: 1rem;
     margin-bottom: 1rem;

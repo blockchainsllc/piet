@@ -15,6 +15,7 @@ import { UICreationHandling, Row, Element, ElementType } from './UIStructure';
 import { SingleValueBox } from './ui-elements/SingleValueBox';
 import { url } from 'inspector';
 import { EventTable } from './ui-elements/EventTable';
+import { NavBar } from './ui-elements/NavBar';
 
 interface UICreationViewProps {
     web3: Web3Type;
@@ -150,8 +151,12 @@ export class UICreationView extends React.Component<UICreationViewProps, UICreat
             defaultSize={1}
             allowResize={false}
         >
-        <div className='container'>
-            {rows}
+        <div style={{width: '100%'}}>
+            <NavBar />
+            <div className='container'>
+                
+                {rows}
+            </div>
         </div>
             
         </SplitPane>

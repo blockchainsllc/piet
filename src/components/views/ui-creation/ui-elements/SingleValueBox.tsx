@@ -24,10 +24,11 @@ export class SingleValueBox extends React.Component<SingleValueBoxProps, {} > {
             <div className='card'>
                 <div className='card-body'>
                 {this.props.showMetaInformation && <span><span className='badge badge-secondary'>ValueBox</span>&nbsp;</span>}
-                <span className='text-muted'><small>{this.props.lable}</small></span>
-                    <p className='card-text'>
+                <p className='card-text ui-creation-value'>
                         <strong>{this.props.result}</strong>
-                    </p>
+                </p>
+                <span className='text-muted'><small>{this.props.lable}</small></span>
+                    
                     
                 </div>
             </div>

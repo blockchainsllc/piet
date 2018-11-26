@@ -16,6 +16,7 @@ export interface UICreationHandling {
 export interface UIStructure {
     contracts: Contract[];
     rows: Row[];
+    
 }
 
 export interface Contract {
@@ -40,4 +41,3 @@ export interface Element {
     functionName: string;
     
 }
-
