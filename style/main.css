@@ -499,6 +499,10 @@ body {
     margin-bottom: 1rem;
 }
 
+.ui-creation-row {
+    margin-top: 1rem;
+}
+
 .btn:not(.sv-call) {
     border-radius: 0rem;
     border-width: 0rem;

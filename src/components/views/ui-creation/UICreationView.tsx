@@ -38,7 +38,12 @@ export class UICreationView extends React.Component<UICreationViewProps, UICreat
             showMetaInformation: true,
             results: []
         };
+        this.toogleshowMetaInformation = this.toogleshowMetaInformation.bind(this);
 
+    }
+
+    toogleshowMetaInformation (): void {
+        this.setState((prevState: UICreationViewState) => ({showMetaInformation: !prevState.showMetaInformation}));
     }
 
     async call(abi: any, contractAddress: string, functionName: string): Promise<void> {
@@ -102,16 +107,16 @@ export class UICreationView extends React.Component<UICreationViewProps, UICreat
                     }
                 });
 
-                return <div>
+                return <div key={'row' + index} className='ui-creation-row'>
                     {this.state.showMetaInformation &&
-                     <div key={'row' + index} className='row'>
+                     <div className='row'>
                         <div className='col-sm'>
                             <span className='badge badge-info'>Row {index}</span>
                         </div>
       
                     </div>
                     }
-                    <div key={'row' + index} className='row'>
+                    <div className='row'>
            
                         {elements}
                     </div>
@@ -121,14 +126,23 @@ export class UICreationView extends React.Component<UICreationViewProps, UICreat
             
         return <SplitPane className='scrollable hide-resizer' split='horizontal'  defaultSize={40} allowResize={false} >
         <div className='h-100 w-100 toolbar'>
-             <button 
+            
+            <button
+                title='Edit Mode' 
+                
+                className={'btn btn-sm btn' + (this.state.showMetaInformation ? '' : '-outline') + '-info'}
+                onClick={this.toogleshowMetaInformation}
+            >
+                <i className='fas fa-edit'></i>
+            </button>
+            &nbsp;
+            <button 
                 title='Create Value Box Container'
                 className='btn btn-sm btn-outline-info'
                 onClick={this.props.uiCreationHandling.addRow}
             >
                 New Row
             </button>
-
         </div>
         <SplitPane 
             className='scrollable hide-resizer empty-first-pane  ui-creation-main' 
