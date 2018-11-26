@@ -90,8 +90,15 @@ class AppContainer extends React.Component<{}, {}> {
 
     addElementToRow(rowIndex: number, element: Element): void {
         this.setState((prev: AppContainerState) => {
-            prev.createdUIStructure.rows[rowIndex].elements.push(element);
 
+            if (rowIndex >= 0) {
+                prev.createdUIStructure.rows[rowIndex].elements.push(element);
+            } else {
+                prev.createdUIStructure.rows.push({
+                    elements: [element]
+                });
+            }
+            
             return {
                 createdUIStructure: prev.createdUIStructure
             };

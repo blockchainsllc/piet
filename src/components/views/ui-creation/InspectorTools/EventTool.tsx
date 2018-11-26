@@ -10,22 +10,23 @@
 
 import * as React from 'react';
 import { UICreationHandling, Row, ElementType } from '../UIStructure';
-interface ValueBoxProps {
+import { ContractEvent } from '../../../../solidity-handler/SolidityHandler';
+interface EventToolProps {
     uiCreationHandling: UICreationHandling;
     placeHolderName: string;
     contractAddress: string;
     abi: any;
-    stateVariableName: string;
+    event: ContractEvent;
 }
 
-interface ValueBoxState {
+interface EventToolState {
 
     label: string;
 }
 
-export class ValueBox extends React.Component<ValueBoxProps, ValueBoxState> {
+export class EventTool extends React.Component<EventToolProps, EventToolState> {
 
-    constructor(props: ValueBoxProps) {
+    constructor(props: EventToolProps) {
         super(props);
 
         this.state = {
@@ -47,11 +48,16 @@ export class ValueBox extends React.Component<ValueBoxProps, ValueBoxState> {
 
     selectRow(rowIndex: number): void {
         this.props.uiCreationHandling.addElementToRow(rowIndex, {
-            elementType: ElementType.ValueBox,
-            data: this.state.label,
+            elementType: ElementType.EventTable,
+            data: {
+                fromBlock: '0',
+                toBlock: 'latest',
+                params: this.props.event.params,
+                label: this.state.label
+            },
             contractAddress: this.props.contractAddress,
             abi: this.props.abi,
-            functionName: this.props.stateVariableName
+            functionName: this.props.event.name
         });
  
     }
@@ -71,6 +77,10 @@ export class ValueBox extends React.Component<ValueBoxProps, ValueBoxState> {
                     Row {index}
                 </a>
             );
+
+        rows.push(<a key={'newRow'} className='dropdown-item' href='#' onClick={() => this.selectRow(-1)}>
+            New Row
+        </a>);
         
         return <div className='input-group mb-3 state-varibale-result-container'>
                                 
@@ -92,12 +102,7 @@ export class ValueBox extends React.Component<ValueBoxProps, ValueBoxState> {
             </button>
             <div className='dropdown-menu'>{rows}</div>
         </div>
-        {/* <div className='input-group-append'>
-            <button type='button' className='btn btn-outline-primary btn-sm sv-call' 
-                onClick={null}>
-                Add
-            </button>
-        </div> */}
+
     </div>;
                
     }

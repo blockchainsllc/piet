@@ -9,15 +9,12 @@
  */
 
 import * as React from 'react';
-import * as Sol from '../../../solidity-handler/SolidityHandler';
-import { Conversion, Convert } from '../../../solidity-handler/TypeConversion';
 import Web3Type from '../../../types/web3';
-import * as CsvParse from 'csv-parse';
-import * as PromiseFileReader from 'promise-file-reader';
 import SplitPane from 'react-split-pane';
-import { Eth } from '../../../types/types';
-import { UICreationHandling, Row, Element } from './UIStructure';
+import { UICreationHandling, Row, Element, ElementType } from './UIStructure';
 import { SingleValueBox } from './ui-elements/SingleValueBox';
+import { url } from 'inspector';
+import { EventTable } from './ui-elements/EventTable';
 
 interface UICreationViewProps {
     web3: Web3Type;
@@ -85,19 +82,31 @@ export class UICreationView extends React.Component<UICreationViewProps, UICreat
 
         const rows: JSX.Element[] = this.props.uiCreationHandling.uiStructure.rows
             .map((row: Row, index: number) => {
-                const elements: JSX.Element[] = row.elements.map((element: Element) => 
-                    <SingleValueBox 
-                        lable={element.data} 
-                        result={this.state.results[element.contractAddress + element.functionName] 
-                            && this.state.results[element.contractAddress + element.functionName] } 
-                    />
-                
-                );
+                const elements: JSX.Element[] = row.elements.map((element: Element) => {
+                    switch (element.elementType) {
+                        case ElementType.ValueBox:
+                            return <SingleValueBox 
+                                showMetaInformation={this.state.showMetaInformation}
+                                lable={element.data} 
+                                result={this.state.results[element.contractAddress + element.functionName] 
+                                    && this.state.results[element.contractAddress + element.functionName] } 
+                            />;
+                        case ElementType.EventTable:
+                            return <EventTable 
+                                showMetaInformation={this.state.showMetaInformation}
+                                element={element}
+                                web3={this.props.web3}
+                            />;
+                        default:
+                            return null;
+                    }
+                });
+
                 return <div>
                     {this.state.showMetaInformation &&
                      <div key={'row' + index} className='row'>
                         <div className='col-sm'>
-                            <span className='badge badge-secondary'>Row {index}</span>
+                            <span className='badge badge-info'>Row {index}</span>
                         </div>
       
                     </div>

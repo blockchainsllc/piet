@@ -71,6 +71,10 @@ export class ValueBox extends React.Component<ValueBoxProps, ValueBoxState> {
                     Row {index}
                 </a>
             );
+
+        rows.push(<a key={'newRow'} className='dropdown-item' href='#' onClick={() => this.selectRow(-1)}>
+                New Row
+            </a>);
         
         return <div className='input-group mb-3 state-varibale-result-container'>
                                 

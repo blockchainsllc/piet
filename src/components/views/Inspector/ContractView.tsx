@@ -113,8 +113,8 @@ export class ContractView extends React.Component<ContractViewProps, ContractVie
                             testMode={this.props.testMode} 
                             web3={this.props.web3} />
                         <ContractFunctionView 
-                        uiCreationHandling={this.props.uiCreationHandling}
-                        selectedTabTypeForView={this.props.selectedTabTypeForView}
+                            uiCreationHandling={this.props.uiCreationHandling}
+                            selectedTabTypeForView={this.props.selectedTabTypeForView}
                             toggleInheritance={this.props.toggleInheritance}
                             contracts={this.props.contracts}
                             markCode={this.props.markCode}
@@ -129,6 +129,10 @@ export class ContractView extends React.Component<ContractViewProps, ContractVie
                             selectedContract={this.props.selectedContract} 
                             showInheritedMembers={this.props.showInheritedMembers} />
                         <ContractEventView 
+                            contracts={this.props.contracts}
+                            uiCreationHandling={this.props.uiCreationHandling}
+                            selectedTabTypeForView={this.props.selectedTabTypeForView}
+                            web3={this.props.web3} 
                             toggleInheritance={this.props.toggleInheritance}
                             testMode={this.props.testMode}
                             selectedContract={this.props.selectedContract} 

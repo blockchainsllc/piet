@@ -28,7 +28,8 @@ export interface Row {
 }
 
 export enum ElementType {
-    ValueBox
+    ValueBox,
+    EventTable
 }
 
 export interface Element {

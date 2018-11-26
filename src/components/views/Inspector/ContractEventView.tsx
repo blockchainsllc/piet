@@ -10,8 +10,17 @@
 
 import * as React from 'react';
 import * as Sol from '../../../solidity-handler/SolidityHandler';
+import { EventTool } from '../ui-creation/InspectorTools/EventTool';
+import { getEventAbi } from '../../../utils/AbiGenerator';
+import { UICreationHandling } from '../ui-creation/UIStructure';
+import { TabEntityType } from '../../View';
+import Web3Type from '../../../types/web3';
 
 interface ContractEventViewProps {
+    contracts: Sol.Contract[];
+    web3: Web3Type;
+    selectedTabTypeForView: TabEntityType[];
+    uiCreationHandling: UICreationHandling;
     toggleInheritance: Function;
     selectedContract: Sol.Contract;
     showInheritedMembers: boolean; 
@@ -130,12 +139,22 @@ export class ContractEventView extends React.Component<ContractEventViewProps, {
                                     </strong>
                                     <div>
                                     {this.props.testMode  && contract.deployedAt ? 
-                                        <button type='button' className='btn btn-outline-primary btn-sm sv-call' 
+                                        <button type='button' className='btn btn-outline-secondary btn-sm sv-call' 
                                             onClick={() => {this.props.getEvents(contract, event, event.params); }}>Get</button>
                                         : null
                                     }
                                     </div>
                                 </div>
+                                {
+                            this.props.selectedTabTypeForView[1] === TabEntityType.UICreationView &&
+                            <EventTool 
+                                placeHolderName={event.name}
+                                uiCreationHandling={this.props.uiCreationHandling}
+                                contractAddress={contract.deployedAt}
+                                abi={getEventAbi(event, this.props.web3, this.props.contracts)}
+                                event={event}
+                            />
+                        }
                                 <div className='collapse' id={'event' + contract.name + event.name}>
                                     {params.length > 0 ? <small>{params}</small> : null} 
                                 </div>

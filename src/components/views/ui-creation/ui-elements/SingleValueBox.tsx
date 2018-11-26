@@ -10,10 +10,10 @@
 
 import * as React from 'react';
 
-
 interface SingleValueBoxProps {
     lable: string;
     result: string;
+    showMetaInformation: boolean;
 }
 
 export class SingleValueBox extends React.Component<SingleValueBoxProps, {} > {
@@ -23,6 +23,7 @@ export class SingleValueBox extends React.Component<SingleValueBoxProps, {} > {
         return <div className='col-sm'>
             <div className='card'>
                 <div className='card-body'>
+                {this.props.showMetaInformation && <span><span className='badge badge-secondary'>ValueBox</span>&nbsp;</span>}
                 <span className='text-muted'><small>{this.props.lable}</small></span>
                     <p className='card-text'>
                         <strong>{this.props.result}</strong>
