@@ -11,12 +11,19 @@
 
 import * as React from 'react';
 
-export class NavBar extends React.Component<{}, {} > {
+interface NavBarProps {
+
+    showMetaInformation: boolean;
+}
+export class NavBar extends React.Component<NavBarProps, {} > {
 
     render(): JSX.Element {
 
         return <nav className='navbar sticky-top navbar-dark bg-primary ui-creation-'>
-            <a className='navbar-brand' href='#'>New UI</a>
+            <a className='navbar-brand' href='#'>
+                {this.props.showMetaInformation && <span><span className='badge badge-light'>NavBar</span>&nbsp;</span>}
+                New UI
+            </a>
         </nav>;
     }
     

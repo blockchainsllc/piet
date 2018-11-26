@@ -119,32 +119,39 @@ export class ContractStateVaribaleView extends React.Component<ContractStateVari
                                 ...this.state.resultMapping.slice(index + 1)]
             });
             this.setState({lastResult: ''});
-            const abi: any = getStateVariableAbi(stateVariable, this.props.web3, this.props.contracts);
-
-            const contract: any = new this.props.web3.eth.Contract(
-                abi,
-                this.props.selectedContract.deployedAt);
-
             let result: any; 
+            let abi: any = null;
             try {
-                const arrayOrMappingKey: any = stateVariable.solidityType.mapping || stateVariable.solidityType.isArray 
-                    ? this.state.stateVariableInput[stateVariable.name] : [];
-
-                if (stateVariable.solidityType.mapping) {
-                    result = await (this.state.parameterMapping[stateVariable.name] ? 
-                        contract.methods[stateVariable.name](...this.state.parameterMapping[stateVariable.name], arrayOrMappingKey).call() :
-                        contract.methods[stateVariable.name](arrayOrMappingKey).call());
-                } else {
-                    result = await (this.state.parameterMapping[stateVariable.name] ? 
-                        contract.methods[stateVariable.name](
-                            ...this.state.parameterMapping[stateVariable.name], 
-                            ...arrayOrMappingKey).call() :
-                            contract.methods[stateVariable.name](...arrayOrMappingKey).call());
-                }
-
-                result = typeof result === 'object' ? JSON.stringify(result) : result.toString();
+                abi = getStateVariableAbi(stateVariable, this.props.web3, this.props.contracts);
             } catch (e) {
-                result = e.toString();
+                result = 'could not create abi for ' + stateVariable.name;
+            }
+
+            if (abi) {
+                const contract: any = new this.props.web3.eth.Contract(
+                    abi,
+                    this.props.selectedContract.deployedAt);
+    
+                try {
+                    const arrayOrMappingKey: any = stateVariable.solidityType.mapping || stateVariable.solidityType.isArray 
+                        ? this.state.stateVariableInput[stateVariable.name] : [];
+    
+                    if (stateVariable.solidityType.mapping) {
+                        result = await (this.state.parameterMapping[stateVariable.name] ? 
+                            contract.methods[stateVariable.name](...this.state.parameterMapping[stateVariable.name], arrayOrMappingKey).call() :
+                            contract.methods[stateVariable.name](arrayOrMappingKey).call());
+                    } else {
+                        result = await (this.state.parameterMapping[stateVariable.name] ? 
+                            contract.methods[stateVariable.name](
+                                ...this.state.parameterMapping[stateVariable.name], 
+                                ...arrayOrMappingKey).call() :
+                                contract.methods[stateVariable.name](...arrayOrMappingKey).call());
+                    }
+    
+                    result = typeof result === 'object' ? JSON.stringify(result) : result.toString();
+                } catch (e) {
+                    result = e.toString();
+                }
             }
             
             this.setState({
@@ -179,6 +186,12 @@ export class ContractStateVaribaleView extends React.Component<ContractStateVari
 
         return stateVariables.map((stateVariable: Sol.ContractStateVariable, index: number) => {
             const svIndexOffset: number = inherited ? contract.stateVariables.length : 0;
+            let abi: any = null;
+            try {
+                abi = getStateVariableAbi(stateVariable, this.props.web3, this.props.contracts);
+            } catch (e) {
+                console.log('could not create abi for ' + stateVariable.name);
+            }
 
             return  <div className='selected-list-item list-group-item list-group-item-action flex-column align-items-start'
                         key={'stateVariable' + contract.name + stateVariable.name}>
@@ -229,7 +242,7 @@ export class ContractStateVaribaleView extends React.Component<ContractStateVari
                                 placeHolderName={stateVariable.name}
                                 uiCreationHandling={this.props.uiCreationHandling}
                                 contractAddress={contract.deployedAt}
-                                abi={getStateVariableAbi(stateVariable, this.props.web3, this.props.contracts)}
+                                abi={abi}
                                 stateVariableName={stateVariable.name}
                             />
                         }

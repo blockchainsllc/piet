@@ -5,18 +5,20 @@
 export type SetUIStructure = (uiStructure: UIStructure) => void;
 export type AddRow = () => void;
 export type AddElementToRow = (rowIndex: number, element: Element) => void;
+export type AddElementToAction = (element: Element) => void;
 
 export interface UICreationHandling {
     uiStructure: UIStructure;
     addRow: AddRow;
     addElementToRow: AddElementToRow;
     setUIStructure: SetUIStructure;
+    addElementToAction: AddElementToAction;
 }
 
 export interface UIStructure {
     contracts: Contract[];
     rows: Row[];
-    
+    actionElements: Element[]; 
 }
 
 export interface Contract {
@@ -30,7 +32,8 @@ export interface Row {
 
 export enum ElementType {
     ValueBox,
-    EventTable
+    EventTable,
+    ActionModal
 }
 
 export interface Element {

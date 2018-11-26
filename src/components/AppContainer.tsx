@@ -53,7 +53,8 @@ class AppContainer extends React.Component<{}, {}> {
             activeTab: [null, null],
             createdUIStructure: {
                 contracts: [],
-                rows: []
+                rows: [],
+                actionElements: []
             }
 
         };
@@ -73,6 +74,7 @@ class AppContainer extends React.Component<{}, {}> {
         this.setUIStructure = this.setUIStructure.bind(this);
         this.addRow = this.addRow.bind(this);
         this.addElementToRow = this.addElementToRow.bind(this);
+        this.addElementToAction = this.addElementToAction.bind(this);
 
     }
 
@@ -98,6 +100,17 @@ class AppContainer extends React.Component<{}, {}> {
                     elements: [element]
                 });
             }
+            
+            return {
+                createdUIStructure: prev.createdUIStructure
+            };
+        });
+    }
+
+    addElementToAction(element: Element): void {
+        this.setState((prev: AppContainerState) => {
+
+            prev.createdUIStructure.actionElements.push(element);
             
             return {
                 createdUIStructure: prev.createdUIStructure
@@ -450,7 +463,8 @@ class AppContainer extends React.Component<{}, {}> {
             addRow: this.addRow,
             setUIStructure: this.setUIStructure,
             uiStructure: this.state.createdUIStructure,
-            addElementToRow: this.addElementToRow
+            addElementToRow: this.addElementToRow,
+            addElementToAction: this.addElementToAction
 
         };
 

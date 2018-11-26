@@ -23,12 +23,11 @@ export class SingleValueBox extends React.Component<SingleValueBoxProps, {} > {
         return <div className='col-sm'>
             <div className='card'>
                 <div className='card-body'>
-                {this.props.showMetaInformation && <span><span className='badge badge-secondary'>ValueBox</span>&nbsp;</span>}
-                <p className='card-text ui-creation-value'>
-                        <strong>{this.props.result}</strong>
-                </p>
-                <span className='text-muted'><small>{this.props.lable}</small></span>
-                    
+                    {this.props.showMetaInformation && <span><span className='badge badge-secondary'>ValueBox</span>&nbsp;</span>}
+                    <p className='card-text ui-creation-value'>
+                            <strong>{this.props.result}</strong>
+                    </p>
+                    <span className='text-muted'><small>{this.props.lable}</small></span>
                     
                 </div>
             </div>

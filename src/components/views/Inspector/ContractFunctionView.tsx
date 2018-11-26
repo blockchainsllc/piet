@@ -17,6 +17,7 @@ import { TabEntity, TabEntityType } from '../../View';
 import { getFunctionAbi, getStateVariableAbi } from '../../../utils/AbiGenerator';
 import { UICreationHandling } from '../ui-creation/UIStructure';
 import { ValueBox } from '../ui-creation/InspectorTools/ValueBox';
+import { ActionTool } from '../ui-creation/InspectorTools/ActionTool';
 
 interface ContractFunctionViewProps {
     selectedContract: Sol.Contract;
@@ -130,13 +131,18 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
 
     }
 
+   isCallAble(contractFunction: Sol.ContractFunction): boolean {
+        return contractFunction.modifiers.find((modifier: string) =>
+            (modifier === 'constant' || modifier === 'view' || modifier === 'pure')
+        ) !== undefined;
+   }
+
     getOperationButton(contract: Sol.Contract, contractFunction: Sol.ContractFunction): JSX.Element {
         if (!this.props.testMode || !contract.deployedAt) {
             return null;
         }
 
-        const showEye: boolean = contractFunction.modifiers
-            .find((modifier: string) => (modifier === 'constant' || modifier === 'view' || modifier === 'pure')) !== undefined;
+        const showEye: boolean = this.isCallAble(contractFunction);
 
         if (showEye) {
             return <button
@@ -402,6 +408,13 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
                 );
             });
 
+            let abi: any = null;
+            try {
+                abi = getFunctionAbi(contractFunction, this.props.web3, this.props.contracts);
+            } catch (e) {
+                console.log('could not create abi for ' + contractFunction.name);
+            }
+
             const functionKey: string = 'function' + contract.name + contractFunction.name + contractFunction.params
                 .map((param: Sol.ContractFunctionParam) => param.name + param.solidityType.name)
                 .reduce((previous, current) => previous + current, '');
@@ -441,12 +454,19 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
                                     <div className='full-block'>
                                         <strong>
                                             <span className={'member-name' }>
-                                                {/* <a href='#' className={(inherited ? ' text-muted' : '')} onClick={() => this.props.markCode(contractFunction.start, contractFunction.end, contract)}>{contractFunction.name}()</a> */}
+                                                {/* <a 
+                                                    href='#' 
+                                                    className={(inherited ? ' text-muted' : '')} 
+                                                    onClick={() => 
+                                                        this.props.markCode(contractFunction.start, contractFunction.end, contract)}
+                                                >
+                                                    {contractFunction.name}()
+                                                </a> */}
                                                 <span className={(inherited ? ' text-muted' : '')}>{contractFunction.name}()</span>
                                             </span>
                                         </strong>
-                                        {
-                                            contractFunction.params.length === 0 
+                                        {   abi 
+                                            && contractFunction.params.length === 0 
                                             && contractFunction.returnParams.length === 1 
                                             && contractFunction.returnParams[0].solidityType.userDefined === false
                                             &&  this.props.selectedTabTypeForView[1] === TabEntityType.UICreationView &&
@@ -454,8 +474,23 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
                                                 placeHolderName={contractFunction.name}
                                                 uiCreationHandling={this.props.uiCreationHandling}
                                                 contractAddress={contract.deployedAt}
-                                                abi={getFunctionAbi(contractFunction, this.props.web3, this.props.contracts)}
+                                                abi={abi}
                                                 stateVariableName={contractFunction.name}
+                                            />
+                                        }
+                                        {
+                                            (contractFunction.params.length !== 0 
+                                            || contractFunction.returnParams.length !== 1) 
+                                            && abi
+                                            &&  this.props.selectedTabTypeForView[1] === TabEntityType.UICreationView &&
+                                            <ActionTool 
+                                                callAble={this.isCallAble(contractFunction)}
+                                                contractFunction={contractFunction}
+                                                placeHolderName={contractFunction.name}
+                                                uiCreationHandling={this.props.uiCreationHandling}
+                                                contractAddress={contract.deployedAt}
+                                                abi={abi}
+                                              
                                             />
                                         }
                                         <div className={'full-block collapse functionContent' + functionKey} >
@@ -493,7 +528,8 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
                                         </div>
                                     </div>
                                     <div>
-                                        {showEye ? <i className='fas fa-eye'></i> : ''}
+                                        {showEye ? <i className='fas fa-eye' title='Can not change the state'></i> 
+                                        : <i className='fas fa-eye-slash text-muted' title='Can change the state'></i>}
                                     </div>
                                 </div>
                             </div>
