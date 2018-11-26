@@ -18,6 +18,8 @@ import { getFunctionAbi, getStateVariableAbi } from '../../../utils/AbiGenerator
 import { UICreationHandling } from '../ui-creation/UIStructure';
 import { ValueBox } from '../ui-creation/InspectorTools/ValueBox';
 import { ActionTool } from '../ui-creation/InspectorTools/ActionTool';
+import { InputFunctionParams } from '../../shared-elements/InputFunctionParams';
+import { OutputFunctionParams } from '../../shared-elements/OutputFunctionParams';
 
 interface ContractFunctionViewProps {
     selectedContract: Sol.Contract;
@@ -362,36 +364,27 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
             const params: JSX.Element[] = [];
             contractFunction.params.forEach((param: Sol.ContractFunctionParam, index: number) => {
                 params.push(
-                    <div key={'param' + contract.name + param.name} className='param'>
-                        <i className='fas fa-arrow-circle-right' aria-hidden='true'></i>&nbsp;
-                        <strong>{param.name}</strong><small>&nbsp;{param.solidityType.name}</small>
-                        {param.description !== '' ? <div className='param-content'>
-                            <i className='text-muted'>{param.description }</i></div> : null}
-                        {this.props.testMode && contract.deployedAt != null ?
-                        <div className='param-content'>
-                            <input  onChange={(e) => this.parameterChange(e, index, contractFunction.name)}
-                             className='form-control form-control-sm' type='text' />
-                        </div> : null }
-                    </div>
+                    <InputFunctionParams 
+                        index={index}
+                        contractFunctionName={contractFunction.name}
+                        contract={contract}
+                        inputParameterChange={this.parameterChange}
+                        interactiveMode={this.props.testMode}
+                        parameter={param}
+                    />
                 );
             });
             const returnParams: JSX.Element[] = [];
             contractFunction.returnParams.forEach((param: Sol.ContractFunctionParam, index: number) => {
                 returnParams.push(
-                    <div className='param' key={'returnParam' + contract.name + contractFunction.name + param.name + index}>
-                        <i className='far fa-arrow-alt-circle-left' aria-hidden='true'></i>&nbsp;
-                        <strong>{param.name}</strong><small>&nbsp;{param.solidityType.name}</small>
-                        { this.props.testMode && contract.deployedAt != null ?
-                            <div className='param-content'>
-                                <input  className='form-control form-control-sm' type='text' disabled
-                                    value={this.state.resultMapping[contractFunction.name] 
-                                        && this.state.resultMapping[contractFunction.name][index] ? 
-                                    this.state.resultMapping[contractFunction.name][index] 
-                                    : '' } />
-                            </div> 
-                            : null 
-                        }
-                    </div>
+                    <OutputFunctionParams 
+                        resultMapping={this.state.resultMapping}
+                        index={index}
+                        contractFunctionName={contractFunction.name}
+                        contract={contract}
+                        interactiveMode={this.props.testMode}
+                        parameter={param}
+                    />
                 );
             });
 

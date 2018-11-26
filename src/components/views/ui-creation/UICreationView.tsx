@@ -152,7 +152,11 @@ export class UICreationView extends React.Component<UICreationViewProps, UICreat
             allowResize={false}
         >
         <div style={{width: '100%'}}>
-            <NavBar showMetaInformation={this.state.showMetaInformation} />
+            <NavBar 
+                web3={this.props.web3}
+                showMetaInformation={this.state.showMetaInformation}
+                actions={this.props.uiCreationHandling.uiStructure.actionElements}
+            />
             <div className='container'>
                 {rows}
             </div>

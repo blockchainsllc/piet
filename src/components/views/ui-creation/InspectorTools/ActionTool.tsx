@@ -36,8 +36,8 @@ export class ActionTool extends React.Component<ActionToolProps, ActionToolState
             label: null
         };
 
-        this.selectRow = this.selectRow.bind(this);
         this.onLableChange = this.onLableChange.bind(this);
+        this.addAction = this.addAction.bind(this);
 
     }
 
@@ -48,7 +48,7 @@ export class ActionTool extends React.Component<ActionToolProps, ActionToolState
 
     }
 
-    selectRow(rowIndex: number): void {
+    addAction(): void {
         this.props.uiCreationHandling.addElementToAction({
             elementType: ElementType.EventTable,
             data: {
@@ -72,16 +72,6 @@ export class ActionTool extends React.Component<ActionToolProps, ActionToolState
 
     render(): JSX.Element {
 
-        const rows: JSX.Element[] = this.props.uiCreationHandling.uiStructure.rows
-            .map((row: Row, index: number) => 
-                <a key={'row' + index} className='dropdown-item' href='#' onClick={() => this.selectRow(index)}>
-                    Row {index}
-                </a>
-            );
-
-        rows.push(<a key={'newRow'} className='dropdown-item' href='#' onClick={() => this.selectRow(-1)}>
-            New Row
-        </a>);
         
         return <div className='input-group mb-3 state-varibale-result-container'>
                                 
@@ -97,10 +87,11 @@ export class ActionTool extends React.Component<ActionToolProps, ActionToolState
                 type='button' 
                 aria-haspopup='true' 
                 aria-expanded='false'
+                onClick={this.addAction}
             >
                 Add to Actions
             </button>
-            <div className='dropdown-menu'>{rows}</div>
+           
         </div>
 
     </div>;

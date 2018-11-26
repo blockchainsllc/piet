@@ -108,6 +108,7 @@ class AppContainer extends React.Component<{}, {}> {
     }
 
     addElementToAction(element: Element): void {
+  
         this.setState((prev: AppContainerState) => {
 
             prev.createdUIStructure.actionElements.push(element);

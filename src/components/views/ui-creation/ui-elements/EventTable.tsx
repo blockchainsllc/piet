@@ -80,14 +80,18 @@ export class EventTable extends React.Component<EventTableProps, EventTableState
             <small>
             
             <span className='text-muted'>{this.props.element.data.label}</span>
-                <table className='table'>
-                    <thead>
-                        <tr>{tableHeader}</tr>
-                    </thead>
-                    <tbody>
-                        {tableBody}
-                    </tbody>
-                </table>
+                { this.state.result ? 
+                    <table className='table'>
+                        <thead>
+                            <tr>{tableHeader}</tr>
+                        </thead>
+                        <tbody>
+                            {tableBody}
+                        </tbody>
+                    </table>
+                    : <p><i>Loading...</i></p>
+                }
+                
             </small>
         </div>;
     }
