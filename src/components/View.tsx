@@ -182,6 +182,7 @@ export class View extends React.Component<ViewProps, {}> {
                                 tabId={this.props.activeTab[this.props.viewId]}
                                 content={null}
                                 web3={this.props.web3}
+                                productiveMode={false}
                            
                             />;
                 break;

@@ -133,18 +133,12 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
 
     }
 
-   isCallAble(contractFunction: Sol.ContractFunction): boolean {
-        return contractFunction.modifiers.find((modifier: string) =>
-            (modifier === 'constant' || modifier === 'view' || modifier === 'pure')
-        ) !== undefined;
-   }
-
     getOperationButton(contract: Sol.Contract, contractFunction: Sol.ContractFunction): JSX.Element {
         if (!this.props.testMode || !contract.deployedAt) {
             return null;
         }
 
-        const showEye: boolean = this.isCallAble(contractFunction);
+        const showEye: boolean = Sol.isCallAble(contractFunction);
 
         if (showEye) {
             return <button
@@ -365,9 +359,10 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
             contractFunction.params.forEach((param: Sol.ContractFunctionParam, index: number) => {
                 params.push(
                     <InputFunctionParams 
+                        key={'param' + contract.name + param.name}
                         index={index}
                         contractFunctionName={contractFunction.name}
-                        contract={contract}
+                        contractAddress={contract.deployedAt}
                         inputParameterChange={this.parameterChange}
                         interactiveMode={this.props.testMode}
                         parameter={param}
@@ -378,10 +373,17 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
             contractFunction.returnParams.forEach((param: Sol.ContractFunctionParam, index: number) => {
                 returnParams.push(
                     <OutputFunctionParams 
+                        contractAddress={contract.deployedAt}
+                        key={'returnParam' 
+                            + contract.name 
+                            + contractFunction.name 
+                            + param.name 
+                            + index
+                        }
                         resultMapping={this.state.resultMapping}
                         index={index}
                         contractFunctionName={contractFunction.name}
-                        contract={contract}
+               
                         interactiveMode={this.props.testMode}
                         parameter={param}
                     />
@@ -477,7 +479,7 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
                                             && abi
                                             &&  this.props.selectedTabTypeForView[1] === TabEntityType.UICreationView &&
                                             <ActionTool 
-                                                callAble={this.isCallAble(contractFunction)}
+                                                callAble={Sol.isCallAble(contractFunction)}
                                                 contractFunction={contractFunction}
                                                 placeHolderName={contractFunction.name}
                                                 uiCreationHandling={this.props.uiCreationHandling}
@@ -509,7 +511,7 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
                                                     type='button'
                                                     className='function-operation-button btn btn-outline-primary btn-sm'
                                                     data-toggle='modal' 
-                                                    data-target={'#codeModal' }
+                                                    data-target={'#codeModal'}
                                                     onClick={() => this.onShowCode(contractFunction)}
                                                 >
                                                     Code

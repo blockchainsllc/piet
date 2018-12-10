@@ -48,6 +48,7 @@
     "@types/react-dom": "^16.0.2",
     "@types/solidity-parser-antlr": "^0.2.1",
     "@types/underscore": "^1.8.5",
+    "@types/write-json-file": "^2.2.1",
     "axios": "^0.18.0",
     "bootstrap": "^4.0.0-beta.3",
     "csv-parse": "^2.2.0",

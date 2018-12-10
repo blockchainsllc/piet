@@ -12,11 +12,13 @@ import * as React from 'react';
 import Web3Type from '../../../../types/web3';
 import { Element } from '../UIStructure';
 import * as Sol from '../../../../solidity-handler/SolidityHandler';
+import { SelectElement } from './FunctionModal';
 
 interface ActionElementProps {
     web3: Web3Type;
     element: Element;
     showMetaInformation: boolean;
+    selectFunctionElement: SelectElement;
 }
 
 interface ActionElementState {
@@ -35,31 +37,14 @@ export class ActionElement extends React.Component<ActionElementProps, ActionEle
 
     }
 
-    componentDidMount(): void {
-        this.updateEvents();
-    }
-
-    componentWillReceiveProps(): void {
-        this.updateEvents();
-    }
-
-    async updateEvents(): Promise<void> {
-
-        const contract: any = new this.props.web3.eth.Contract(
-            this.props.element.abi,
-            this.props.element.contractAddress);
-        this.setState({
-            result: await (contract as any).getPastEvents(
-                this.props.element.functionName, 
-                {fromBlock: this.props.element.data.fromBlock, toBlock: this.props.element.data.toBlock}
-            )
-        });
-     
-    }
-
     render(): JSX.Element {
 
-        return <a key={this.props.element.contractAddress + this.props.element.functionName} className='dropdown-item' href='#'>
+        return <a 
+            key={this.props.element.contractAddress + this.props.element.functionName}
+            className='dropdown-item' 
+            onClick={() => this.props.selectFunctionElement(this.props.element)}
+            href='#'
+        >
             {this.props.showMetaInformation && <span><span className='badge badge-secondary'>Action</span>&nbsp;</span>}
             {this.props.element.data.label}
         </a>;

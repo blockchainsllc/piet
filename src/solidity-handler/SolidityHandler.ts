@@ -135,6 +135,12 @@ export interface SolidityAnnotation {
     subAnnotation: SolidityAnnotation;
 }
 
+export const isCallAble: (contractFunction: ContractFunction) => boolean = (contractFunction: ContractFunction): boolean => {
+    return contractFunction.modifiers.find((modifier: string) =>
+        (modifier === 'constant' || modifier === 'view' || modifier === 'pure')
+    ) !== undefined;
+};
+
 const getType: (node: any, references: string[]) => SolidityType = (node: any, references: string[]): SolidityType  => {
     switch (node.type) {
         case 'ElementaryTypeName': 

@@ -91,6 +91,7 @@ class AppContainer extends React.Component<{}, {}> {
     }
 
     addElementToRow(rowIndex: number, element: Element): void {
+
         this.setState((prev: AppContainerState) => {
 
             if (rowIndex >= 0) {
@@ -104,7 +105,7 @@ class AppContainer extends React.Component<{}, {}> {
             return {
                 createdUIStructure: prev.createdUIStructure
             };
-        });
+        }, () => console.log(JSON.stringify(this.state.createdUIStructure)));
     }
 
     addElementToAction(element: Element): void {
@@ -236,7 +237,7 @@ class AppContainer extends React.Component<{}, {}> {
             prevState.globalErrors.push(error);
             return {
                 globalErrors: prevState.globalErrors
-            }
+            };
         });
     }
 
@@ -468,6 +469,12 @@ class AppContainer extends React.Component<{}, {}> {
             addElementToAction: this.addElementToAction
 
         };
+
+        const params: any = queryString.parse((this.props as any).location.search);
+
+        if (params.ui) {
+            return 
+        }
 
         return  <div>
                     <SplitPane split='vertical' minSize={300} defaultSize={500} >

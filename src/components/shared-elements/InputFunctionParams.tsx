@@ -14,7 +14,7 @@ import { ContractFunctionParam, Contract } from '../../solidity-handler/Solidity
 export type InputParameterChange = (event: any, index: number, contractFunctionName: string) => void;
 
 export interface InputFunctionParamsProps {
-    contract: Contract;
+    contractAddress: string;
     contractFunctionName: string;
     parameter: ContractFunctionParam;
     interactiveMode: boolean;
@@ -26,7 +26,7 @@ export class InputFunctionParams extends React.Component<InputFunctionParamsProp
 
    render(): JSX.Element {
       
-       return  <div key={'param' + this.props.contract.name + this.props.parameter.name} className='param'>
+       return  <div className='param'>
             <i className='fas fa-arrow-circle-right' aria-hidden='true'></i>&nbsp;
             <strong>{this.props.parameter.name}</strong> <small>&nbsp;{this.props.parameter.solidityType.name}</small>
             {this.props.parameter.description !== '' ? 
@@ -34,7 +34,7 @@ export class InputFunctionParams extends React.Component<InputFunctionParamsProp
                     <i className='text-muted'>{this.props.parameter.description }</i>
                 </div> 
             : null}
-            {this.props.interactiveMode && this.props.contract.deployedAt != null ?
+            {this.props.interactiveMode && this.props.contractAddress != null ?
             <div className='param-content'>
                 <input  onChange={(e) => this.props.inputParameterChange(e, this.props.index, this.props.contractFunctionName)}
                     className='form-control form-control-sm' type='text' />

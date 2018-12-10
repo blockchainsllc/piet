@@ -367,15 +367,20 @@ body {
 
 }
 
+.load-ui {
+    margin-bottom: 0rem;
+}
+
 .struct-card {
     background-color: var(--struct-color);
-    
-
 }
 
 .enum-card {
     background-color: var(--enum-color);
+}
 
+.ui-function {
+    background-color: var(--element-color);
 }
 
 

@@ -13,18 +13,26 @@ import * as React from 'react';
 import { Element } from '../UIStructure';
 import { ActionElement } from './ActionElement';
 import Web3Type from '../../../../types/web3';
+import { SelectElement } from './FunctionModal';
 
 interface NavBarProps {
     actions: Element[];
     showMetaInformation: boolean;
     web3: Web3Type;
+    selectFunctionElement: SelectElement;
 }
 export class NavBar extends React.Component<NavBarProps, {} > {
 
     render(): JSX.Element {
 
         const actions: JSX.Element[] = this.props.actions.map((element: Element) => 
-            <ActionElement element={element} showMetaInformation={this.props.showMetaInformation} web3={this.props.web3} />
+            <ActionElement 
+                key={element.contractAddress + element.functionName}
+                element={element} 
+                showMetaInformation={this.props.showMetaInformation} 
+                web3={this.props.web3}
+                selectFunctionElement={this.props.selectFunctionElement}
+            />
             );
 
         return <nav className='navbar sticky-top navbar-dark bg-primary navbar-expand-lg'>

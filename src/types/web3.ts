@@ -27,7 +27,10 @@ export default class Web3 {
   BatchRequest: new () => t.BatchRequest;
 
   // tslint:disable-next-line:no-empty
-  constructor(provider: t.Provider) { }
+  constructor(provider: t.Provider) { 
+    
+  }
+
 
   // tslint:disable-next-line:no-empty
   extend(methods: any): any { }

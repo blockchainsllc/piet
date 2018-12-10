@@ -14,7 +14,8 @@ import { ContractFunctionParam, Contract } from '../../solidity-handler/Solidity
 export type OutputParameterChange = (event: any, index: number, contractFunctionName: string) => void;
 
 export interface OutputFunctionParamsProps {
-    contract: Contract;
+    contractAddress: string;
+
     contractFunctionName: string;
     parameter: ContractFunctionParam;
     interactiveMode: boolean;
@@ -29,14 +30,14 @@ export class OutputFunctionParams extends React.Component<OutputFunctionParamsPr
        return  <div 
                 className='param' 
                 key={'returnParam' 
-                    + this.props.contract.name 
+                    + this.props.contractAddress 
                     + this.props.contractFunctionName 
                     + this.props.parameter.name 
                     + this.props.index}
             >
             <i className='far fa-arrow-alt-circle-left' aria-hidden='true'></i>&nbsp;
             <strong>{this.props.parameter.name}</strong><small>&nbsp;{this.props.parameter.solidityType.name}</small>
-            { this.props.interactiveMode && this.props.contract.deployedAt != null ?
+            { this.props.interactiveMode && this.props.contractAddress != null ?
                 <div className='param-content'>
                     <input
                         className='form-control form-control-sm'
