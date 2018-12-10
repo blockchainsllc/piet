@@ -358,6 +358,11 @@ body {
     margin-right: 0.25rem;
 }
 
+.ui-creation-container {
+    width: 100%;
+    background-color: white;
+}
+
 .no-padding {
     padding: 0rem
 }

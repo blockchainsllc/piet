@@ -121,6 +121,8 @@ export class UICreationView extends React.Component<UICreationViewProps, UICreat
 
     render(): JSX.Element {
 
+        const devMode: boolean = this.state.showMetaInformation && !this.props.productiveMode;
+
         const rows: JSX.Element[] = this.props.uiCreationHandling.uiStructure.rows
             .map((row: Row, index: number) => {
                 const elements: JSX.Element[] = row.elements.map((element: Element) => {
@@ -128,7 +130,7 @@ export class UICreationView extends React.Component<UICreationViewProps, UICreat
                         case ElementType.ValueBox:
                             return <SingleValueBox 
                                 key={element.contractAddress + element.functionName}
-                                showMetaInformation={this.state.showMetaInformation}
+                                showMetaInformation={devMode}
                                 lable={element.data} 
                                 result={this.state.results[element.contractAddress + element.functionName] 
                                     && this.state.results[element.contractAddress + element.functionName] } 
@@ -136,7 +138,7 @@ export class UICreationView extends React.Component<UICreationViewProps, UICreat
                         case ElementType.EventTable:
                             return <EventTable 
                                 key={element.contractAddress + element.functionName}
-                                showMetaInformation={this.state.showMetaInformation}
+                                showMetaInformation={devMode}
                                 element={element}
                                 web3={this.props.web3}
                             />;
@@ -146,7 +148,7 @@ export class UICreationView extends React.Component<UICreationViewProps, UICreat
                 });
 
                 return <div key={'row' + index} className='ui-creation-row'>
-                    {this.state.showMetaInformation &&
+                    {devMode &&
                      <div className='row'>
                         <div className='col-sm'>
                             <span className='badge badge-info'>Row {index}</span>
@@ -162,10 +164,10 @@ export class UICreationView extends React.Component<UICreationViewProps, UICreat
  
             }); 
 
-        const createdUI: JSX.Element = <div style={{width: '100%'}}>
+        const createdUI: JSX.Element = <div className='ui-creation-container'>
             <NavBar 
                 web3={this.props.web3}
-                showMetaInformation={this.state.showMetaInformation}
+                showMetaInformation={devMode}
                 actions={this.props.uiCreationHandling.uiStructure.actionElements}
                 selectFunctionElement={this.selectFunctionElement}
             />
@@ -181,7 +183,19 @@ export class UICreationView extends React.Component<UICreationViewProps, UICreat
         </div>;
 
         if (this.props.productiveMode) {
-            return createdUI;
+     
+            if (this.props.uiCreationHandling.uiStructure.actionElements.length !== 0
+                || this.props.uiCreationHandling.uiStructure.rows.length !== 0
+                || this.props.uiCreationHandling.uiStructure.contracts.length !== 0
+            ) {
+                return createdUI;
+            } else {
+                return <div>
+                    <label className={'btn btn-sm btn-outline-info load-ui'} title='Load UI File' htmlFor='ui-file'>Load</label>
+                    <input id='ui-file' className='files-input' type='file' onChange={(e) => this.loadUIFile(e.target.files)} />
+                </div>;
+            }
+            
         }
             
         return <SplitPane className='scrollable hide-resizer ui-creation-main' split='horizontal'  defaultSize={40} allowResize={false} >
@@ -189,7 +203,7 @@ export class UICreationView extends React.Component<UICreationViewProps, UICreat
                 
                 <button
                     title='Edit Mode' 
-                    className={'btn btn-sm btn' + (this.state.showMetaInformation ? '' : '-outline') + '-info'}
+                    className={'btn btn-sm btn' + (devMode ? '' : '-outline') + '-info'}
                     onClick={this.toogleshowMetaInformation}
                 >
                     <i className='fas fa-edit'></i>

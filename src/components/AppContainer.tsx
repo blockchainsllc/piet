@@ -21,6 +21,7 @@ import { withRouter } from 'react-router-dom';
 import * as Web3 from 'web3';
 import * as axios from 'axios';
 import { UIStructure, UICreationHandling, Element } from './views/ui-creation/UIStructure';
+import { UICreationView } from './views/ui-creation/UICreationView';
 
 interface AppContainerState {
     contracts: Sol.Contract[];
@@ -472,8 +473,17 @@ class AppContainer extends React.Component<{}, {}> {
 
         const params: any = queryString.parse((this.props as any).location.search);
 
-        if (params.ui) {
-            return 
+        if (params.ui === 'true') {
+            return <UICreationView 
+                uiCreationHandling={uiCreationHandling}
+                key={'Migration Assistent'}
+                viewId={0}
+                tabId={0}
+                content={null}
+                web3={this.state.web3}
+                productiveMode={true}
+        
+            />;
         }
 
         return  <div>
