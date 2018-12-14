@@ -30,11 +30,14 @@ export const callFunction: (
 
         const name: string = contractFunction.name;
         const contract: any = new web3.eth.Contract(abi, contractAddress);
+        const changedParamMapping: any[] = parameterMapping.map((param: any, index: number) => 
+            contractFunction.params[index].solidityType.isArray ? JSON.parse(param) : param
+        );
 
         let result: any; 
 
         try {
-            result = await contract.methods[name](...parameterMapping).call();
+            result = await contract.methods[name](...changedParamMapping).call();
             
             if (typeof result !== 'object') {
                 return result.toString();
@@ -76,11 +79,13 @@ export const sendFunction: (
     const name: string = contractFunction.name;
     const contract: any = new web3.eth.Contract(abi, contractAddress);
 
-    let result: any; 
+    let result: any;
+    
+    const changedParamMapping: any[] = parameterMapping.map((param: any, index: number) => 
+        contractFunction.params[index].solidityType.isArray ? JSON.parse(param) : param
+    );
 
-
-
-    const gas: number = result = await contract.methods[name](...parameterMapping).estimateGas({from: ethAccount });
+    const gas: number = result = await contract.methods[name](...changedParamMapping).estimateGas({from: ethAccount });
     result = await contract.methods[name](...parameterMapping).send({
         from: ethAccount,
         gas: Math.floor(gas * 1.5)
