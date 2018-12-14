@@ -14,6 +14,10 @@
 
 }
 
+.ui-creation-main {
+    background-color: #ffffff !important;
+}
+
 .error-red {
     color: var(--error-red);
 }
@@ -354,6 +358,11 @@ body {
     margin-right: 0.25rem;
 }
 
+.ui-creation-container {
+    width: 100%;
+    background-color: white;
+}
+
 .no-padding {
     padding: 0rem
 }
@@ -363,15 +372,28 @@ body {
 
 }
 
+.load-ui-file-container {
+    margin-top: 5rem;
+}
+
+.load-ui {
+    margin-bottom: 0rem;
+}
+
 .struct-card {
     background-color: var(--struct-color);
-    
-
 }
 
 .enum-card {
     background-color: var(--enum-color);
+}
 
+.ui-function {
+    background-color: var(--element-color);
+}
+
+.function-exec-msg {
+    margin-top: 1rem;
 }
 
 
@@ -490,9 +512,17 @@ body {
     margin-top: 12px;
 } 
 
+.ui-creation-value {
+    margin-bottom: 0rem !important;
+}
+
 .sidebar-buttons-container {
     margin-top: 1rem;
     margin-bottom: 1rem;
+}
+
+.ui-creation-row {
+    margin-top: 1rem;
 }
 
 .btn:not(.sv-call) {

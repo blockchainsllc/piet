@@ -17,6 +17,7 @@ import { ContractEventView } from './ContractEventView';
 import { ContractModifierView } from './ContractModifierView';
 import { ContractFunctionView } from './ContractFunctionView';
 import { TabEntity, TabEntityType } from '../../View';
+import { UICreationHandling } from '../ui-creation/UIStructure';
 interface ContractViewProps {
     selectedContract: Sol.Contract;
     contracts: Sol.Contract[];
@@ -29,7 +30,8 @@ interface ContractViewProps {
     changeContractAddress: Function;
     getEvents: Function;
     toggleInheritance: Function;
-
+    selectedTabTypeForView: TabEntityType[];
+    uiCreationHandling: UICreationHandling;
 }
 
 interface ContractViewState {
@@ -101,7 +103,9 @@ export class ContractView extends React.Component<ContractViewProps, ContractVie
                             </div>
                         </div>
                         <br />
-                        <ContractStateVaribaleView 
+                        <ContractStateVaribaleView
+                            uiCreationHandling={this.props.uiCreationHandling}
+                            selectedTabTypeForView={this.props.selectedTabTypeForView}  
                             toggleInheritance={this.props.toggleInheritance}
                             contracts={this.props.contracts}
                             selectedContract={this.props.selectedContract} 
@@ -109,6 +113,8 @@ export class ContractView extends React.Component<ContractViewProps, ContractVie
                             testMode={this.props.testMode} 
                             web3={this.props.web3} />
                         <ContractFunctionView 
+                            uiCreationHandling={this.props.uiCreationHandling}
+                            selectedTabTypeForView={this.props.selectedTabTypeForView}
                             toggleInheritance={this.props.toggleInheritance}
                             contracts={this.props.contracts}
                             markCode={this.props.markCode}
@@ -123,6 +129,10 @@ export class ContractView extends React.Component<ContractViewProps, ContractVie
                             selectedContract={this.props.selectedContract} 
                             showInheritedMembers={this.props.showInheritedMembers} />
                         <ContractEventView 
+                            contracts={this.props.contracts}
+                            uiCreationHandling={this.props.uiCreationHandling}
+                            selectedTabTypeForView={this.props.selectedTabTypeForView}
+                            web3={this.props.web3} 
                             toggleInheritance={this.props.toggleInheritance}
                             testMode={this.props.testMode}
                             selectedContract={this.props.selectedContract} 
