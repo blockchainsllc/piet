@@ -10,6 +10,7 @@
 
 import * as Sol from '../solidity-handler/SolidityHandler';
 import Web3Type from '../types/web3';
+import { ContractEnumeration } from '../solidity-handler/SolidityHandler';
 
 export const getFunctionAbi: (theFunction: Sol.ContractFunction, web3: Web3Type, contracts: Sol.Contract[]) => any  = 
     (theFunction: Sol.ContractFunction, web3: Web3Type, contracts: Sol.Contract[]): any => {
@@ -104,7 +105,15 @@ const checkType: (solidityType: Sol.SolidityType, contracts: Sol.Contract[]) => 
         if (solidityType.userDefined) {
             if (contracts.find((contract: Sol.Contract) => contract.name === solidityType.name)) {
                 return 'address';
+            } else if (contracts.find((contract: Sol.Contract) => 
+                contract.enumerations.find((enumeration: ContractEnumeration) => 
+                    enumeration.name === solidityType.name || enumeration.name === contract.name + '.' + solidityType.name
+                    ) !== undefined)
+            ) {
+               
+                return 'uint';
             } else {
+              
                 throw Error('User defined types are not yet supported.');
             }
 
