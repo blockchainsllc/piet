@@ -86,7 +86,7 @@ export const sendFunction: (
     );
 
     const gas: number = result = await contract.methods[name](...changedParamMapping).estimateGas({from: ethAccount });
-    result = await contract.methods[name](...parameterMapping).send({
+    result = await contract.methods[name](...changedParamMapping).send({
         from: ethAccount,
         gas: Math.floor(gas * 1.5)
     });
