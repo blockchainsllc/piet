@@ -108,7 +108,7 @@ export class NavBar extends React.Component<NavBarProps, NavBarState > {
                 </ul>
                 <form className='form-inline'>
                     <div className='input-group'>
-                        <input className='form-control' type='text' placeholder='Dangerous: Private Key ' aria-label='Private Key' onChange={this.onPrivateKeyChange} />
+                        <input className='form-control' type='text' placeholder='Danger: Private Key ' aria-label='Private Key' onChange={this.onPrivateKeyChange} />
                     <div className='input-group-append'>
                         <span className='input-group-text' id='basic-addon2'>{this.props.uiCreationHandling.ethAccount ? this.props.uiCreationHandling.ethAccount : 'No valid key'}</span>
                     </div>
