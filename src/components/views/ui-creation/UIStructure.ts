@@ -6,6 +6,7 @@ export type SetUIStructure = (uiStructure: UIStructure) => void;
 export type AddRow = () => void;
 export type AddElementToRow = (rowIndex: number, element: Element) => void;
 export type AddElementToAction = (element: Element) => void;
+export type AddEthAccount = (privateKey: string) => void;
 
 export interface UICreationHandling {
     uiStructure: UIStructure;
@@ -13,6 +14,8 @@ export interface UICreationHandling {
     addElementToRow: AddElementToRow;
     setUIStructure: SetUIStructure;
     addElementToAction: AddElementToAction;
+    addEthAccount: AddEthAccount;
+    ethAccount: string;
 }
 
 export interface UIStructure {

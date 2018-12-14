@@ -372,6 +372,10 @@ body {
 
 }
 
+.load-ui-file-container {
+    margin-top: 5rem;
+}
+
 .load-ui {
     margin-bottom: 0rem;
 }
@@ -386,6 +390,10 @@ body {
 
 .ui-function {
     background-color: var(--element-color);
+}
+
+.function-exec-msg {
+    margin-top: 1rem;
 }
 
 

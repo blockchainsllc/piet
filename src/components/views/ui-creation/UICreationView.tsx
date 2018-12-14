@@ -17,6 +17,7 @@ import { EventTable } from './ui-elements/EventTable';
 import { NavBar } from './ui-elements/NavBar';
 import { FunctionModal } from './ui-elements/FunctionModal';
 import * as PromiseFileReader from 'promise-file-reader';
+import SVG  from 'react-inlinesvg';
 
 interface UICreationViewProps {
     web3: Web3Type;
@@ -49,6 +50,7 @@ export class UICreationView extends React.Component<UICreationViewProps, UICreat
         this.toogleshowMetaInformation = this.toogleshowMetaInformation.bind(this);
         this.selectFunctionElement = this.selectFunctionElement.bind(this);
         this.loadUIFile = this.loadUIFile.bind(this);
+        this.updateAll = this.updateAll.bind(this);
 
     }
 
@@ -85,7 +87,8 @@ export class UICreationView extends React.Component<UICreationViewProps, UICreat
         });
     }
 
-    updateAll(props: UICreationViewProps): void {
+
+    updateAllProps(props: UICreationViewProps): void {
         props.uiCreationHandling.uiStructure.rows
             .forEach((row: Row) => 
                 row.elements.forEach((element: Element) => 
@@ -94,12 +97,21 @@ export class UICreationView extends React.Component<UICreationViewProps, UICreat
             );
     }
 
+    updateAll(): void {
+        this.props.uiCreationHandling.uiStructure.rows
+            .forEach((row: Row) => 
+                row.elements.forEach((element: Element) => 
+                    this.call(element.abi, element.contractAddress, element.functionName)
+                )
+            );
+    }
+
     componentDidMount(): void {
-        this.updateAll(this.props);
+        this.updateAllProps(this.props);
     }
 
     componentWillReceiveProps(props: UICreationViewProps): void {
-        this.updateAll(props);
+        this.updateAllProps(props);
     }
 
     async loadUIFile(fileList: FileList): Promise<void> {
@@ -166,6 +178,7 @@ export class UICreationView extends React.Component<UICreationViewProps, UICreat
 
         const createdUI: JSX.Element = <div className='ui-creation-container'>
             <NavBar 
+                uiCreationHandling={this.props.uiCreationHandling}
                 web3={this.props.web3}
                 showMetaInformation={devMode}
                 actions={this.props.uiCreationHandling.uiStructure.actionElements}
@@ -174,6 +187,8 @@ export class UICreationView extends React.Component<UICreationViewProps, UICreat
             
             <div className='container'>
                 <FunctionModal 
+                    updateAll={this.updateAll}
+                    uiCreationHandling={this.props.uiCreationHandling}
                     web3={this.props.web3}
                     selectElement={this.selectFunctionElement}
                     selectedElement={this.state.selectedFunctionElement}
@@ -190,10 +205,25 @@ export class UICreationView extends React.Component<UICreationViewProps, UICreat
             ) {
                 return createdUI;
             } else {
-                return <div>
-                    <label className={'btn btn-sm btn-outline-info load-ui'} title='Load UI File' htmlFor='ui-file'>Load</label>
-                    <input id='ui-file' className='files-input' type='file' onChange={(e) => this.loadUIFile(e.target.files)} />
-                </div>;
+                return <div className='text-center help-text-container'>
+                    <h1 className='help-text text-muted'>Piet UI Loader</h1>
+                  
+                    <div className='load-ui-file-container'>
+                        <label className={'btn btn-info load-ui'} title='Load UI File' htmlFor='ui-file'>Load UI File</label>
+                        <input id='ui-file' className='files-input' type='file' onChange={(e) => this.loadUIFile(e.target.files)} />
+                    </div>
+
+                    <p>
+                        <small className='help-text text-muted'>
+                          
+                        </small>
+                    </p>
+                    <div className='logo-container text-center'>
+                        <SVG className='logo-svg' src='assets/Logo.svg' /> 
+                    </div>
+                </div>
+                
+                ;
             }
             
         }

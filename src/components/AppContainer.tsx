@@ -34,6 +34,7 @@ interface AppContainerState {
     activeTab: number[];
     globalErrors: Error[];
     createdUIStructure: UIStructure;
+    ethAccount: string;
 }
 
 class AppContainer extends React.Component<{}, {}> {
@@ -56,7 +57,8 @@ class AppContainer extends React.Component<{}, {}> {
                 contracts: [],
                 rows: [],
                 actionElements: []
-            }
+            },
+            ethAccount: null
 
         };
         
@@ -76,6 +78,7 @@ class AppContainer extends React.Component<{}, {}> {
         this.addRow = this.addRow.bind(this);
         this.addElementToRow = this.addElementToRow.bind(this);
         this.addElementToAction = this.addElementToAction.bind(this);
+        this.addEthAccount = this.addEthAccount.bind(this);
 
     }
 
@@ -87,6 +90,25 @@ class AppContainer extends React.Component<{}, {}> {
 
             return {
                 createdUIStructure: prev.createdUIStructure
+            };
+        });
+    }
+
+    addEthAccount(privateKey: string) : void {
+
+        this.setState((prev: AppContainerState) => {
+            prev.web3.eth.accounts.wallet.clear();
+
+            let address: string;
+            try {
+                address = prev.web3.eth.accounts.wallet.add(privateKey).address;
+            } catch (e) {
+                address = null;
+            }
+            
+            return {
+                ethAccount: address,
+                web3: prev.web3
             };
         });
     }
@@ -179,6 +201,8 @@ class AppContainer extends React.Component<{}, {}> {
 
         let web3: any = null;
         const params: any = queryString.parse((this.props as any).location.search);
+
+    
 
         if (params.rpc) {
             web3 = new Web3(params.rpc);
@@ -467,8 +491,10 @@ class AppContainer extends React.Component<{}, {}> {
             setUIStructure: this.setUIStructure,
             uiStructure: this.state.createdUIStructure,
             addElementToRow: this.addElementToRow,
-            addElementToAction: this.addElementToAction
-
+            addElementToAction: this.addElementToAction,
+            addEthAccount: this.addEthAccount,
+            ethAccount: this.state.ethAccount
+            
         };
 
         const params: any = queryString.parse((this.props as any).location.search);

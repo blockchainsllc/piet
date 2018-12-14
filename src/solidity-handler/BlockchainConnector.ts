@@ -55,3 +55,37 @@ export const callFunction: (
 
         }    
 };
+
+export const sendFunction: (
+    contractFunction: Sol.ContractFunction,
+    web3: Web3Type,
+    contractAddress: string,
+    abi: any,
+    parameterMapping: any[],
+    ethAccount: string
+    
+) => Promise<any> =  async (
+    contractFunction: Sol.ContractFunction,
+    web3: Web3Type,
+    contractAddress: string,
+    abi: any,
+    parameterMapping: any[],
+    ethAccount: string
+): Promise<any> => {
+
+    const name: string = contractFunction.name;
+    const contract: any = new web3.eth.Contract(abi, contractAddress);
+
+    let result: any; 
+
+
+
+    const gas: number = result = await contract.methods[name](...parameterMapping).estimateGas({from: ethAccount });
+    result = await contract.methods[name](...parameterMapping).send({
+        from: ethAccount,
+        gas: Math.floor(gas * 1.5)
+    });
+
+    return result.transactionHash;
+   
+};

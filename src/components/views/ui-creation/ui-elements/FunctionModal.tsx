@@ -11,10 +11,10 @@
 import * as React from 'react';
 import * as Sol from '../../../../solidity-handler/SolidityHandler';
 import Web3Type from '../../../../types/web3';
-import { Element } from '../UIStructure';
+import { Element, UICreationHandling } from '../UIStructure';
 import { InputFunctionParams } from '../../../shared-elements/InputFunctionParams';
 import { OutputFunctionParams } from '../../../shared-elements/OutputFunctionParams';
-import { callFunction } from '../../../../solidity-handler/BlockchainConnector';
+import { callFunction, sendFunction } from '../../../../solidity-handler/BlockchainConnector';
 
 export type SelectElement = (element: Element) => void;
 export interface FunctionModalProps {
@@ -22,6 +22,8 @@ export interface FunctionModalProps {
     selectElement: SelectElement;
     selectedElement: Element;
     web3: Web3Type;
+    uiCreationHandling: UICreationHandling;
+    updateAll: Function;
 
 }
 
@@ -29,6 +31,8 @@ interface FunctionModalState {
 
     parameterMapping: any[];
     resultMapping: any[];
+    result: string;
+    error: string;
 
 }
 
@@ -39,7 +43,9 @@ export class FunctionModal extends React.Component<FunctionModalProps, FunctionM
 
         this.state = {
             parameterMapping: [],
-            resultMapping: []
+            resultMapping: [],
+            result: null,
+            error: null
         };
 
         this.hideFunctionBox = this.hideFunctionBox.bind(this);
@@ -61,6 +67,7 @@ export class FunctionModal extends React.Component<FunctionModalProps, FunctionM
         });
     }
 
+
     hideFunctionBox(): void {
         this.props.selectElement(null);
     }
@@ -76,17 +83,50 @@ export class FunctionModal extends React.Component<FunctionModalProps, FunctionM
     }
 
     async executeFunction(): Promise<void> {
-        const resultMapping: any[] = await callFunction(
-            this.props.selectedElement.data.contractFunction,
-            this.props.web3,
-            this.props.selectedElement.contractAddress,
-            this.props.selectedElement.abi,
-            this.state.parameterMapping
-        );
-    
-        this.setState((prevSate: FunctionModalState) => ({
-            resultMapping: resultMapping
-        }));
+        this.setState({
+            result: null,
+            error: null
+        });
+
+        if ((this.props.selectedElement.data.contractFunction as Sol.ContractFunction).modifiers
+            .find((modifier: string) => modifier === 'view' || modifier === 'constant' || modifier === 'pure')
+        ) {
+            const resultMapping: any[] = await callFunction(
+                this.props.selectedElement.data.contractFunction,
+                this.props.web3,
+                this.props.selectedElement.contractAddress,
+                this.props.selectedElement.abi,
+                this.state.parameterMapping
+            );
+        
+            this.setState((prevSate: FunctionModalState) => ({
+                resultMapping: resultMapping
+            }));
+        } else {
+            
+            try {
+                this.setState({
+                    result: await sendFunction(
+                        this.props.selectedElement.data.contractFunction,
+                        this.props.web3,
+                        this.props.selectedElement.contractAddress,
+                        this.props.selectedElement.abi,
+                        this.state.parameterMapping,
+                        this.props.uiCreationHandling.ethAccount
+                    )
+                });
+                this.props.updateAll();
+
+            } catch (e) {
+                this.setState({
+                    error: e.message
+                });
+            }
+
+            
+        }
+
+        
         
     }
 
@@ -153,9 +193,23 @@ export class FunctionModal extends React.Component<FunctionModalProps, FunctionM
                                 className='btn btn-primary btn-sm' 
                                 onClick={this.executeFunction}
                             >
-                                Call
+                                Execute
                             </button>
                         </div>
+
+                        { this.state.result && 
+                            <div className='alert alert-success function-exec-msg' role='alert'>
+                                {this.state.result}
+                            </div>
+                        }
+                        { this.state.error && 
+                            <div className='alert alert-danger function-exec-msg' role='alert'>
+                                {this.state.error}
+                            </div>
+                        }
+                        
+
+        
                         
                     </div>
                 </div>

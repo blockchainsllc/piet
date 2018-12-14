@@ -10,7 +10,7 @@
  */
 
 import * as React from 'react';
-import { Element } from '../UIStructure';
+import { Element, UICreationHandling } from '../UIStructure';
 import { ActionElement } from './ActionElement';
 import Web3Type from '../../../../types/web3';
 import { SelectElement } from './FunctionModal';
@@ -20,11 +20,44 @@ interface NavBarProps {
     showMetaInformation: boolean;
     web3: Web3Type;
     selectFunctionElement: SelectElement;
+    uiCreationHandling: UICreationHandling;
 }
-export class NavBar extends React.Component<NavBarProps, {} > {
+
+interface NavBarState {
+    privateKey: string;
+}
+export class NavBar extends React.Component<NavBarProps, NavBarState > {
+
+    
+
+    constructor(props: NavBarProps) {
+        super(props);
+
+        this.state = {
+            privateKey: null
+        };
+
+        this.onPrivateKeyChange = this.onPrivateKeyChange.bind(this);
+       
+
+    }
+
+    onPrivateKeyChange (e: any): void {
+
+        e.persist();
+        this.props.uiCreationHandling.addEthAccount(e.target.value);
+    }
+
+
+    
 
     render(): JSX.Element {
 
+        
+
+        
+
+        
         const actions: JSX.Element[] = this.props.actions.map((element: Element) => 
             <ActionElement 
                 key={element.contractAddress + element.functionName}
@@ -51,6 +84,7 @@ export class NavBar extends React.Component<NavBarProps, {} > {
             >
                 <span className='navbar-toggler-icon'></span>
             </button>
+         
             <div className='collapse navbar-collapse' id='navbarSupportedContent'>
                 <ul className='navbar-nav mr-auto'>
                     {actions.length > 0 &&
@@ -72,6 +106,16 @@ export class NavBar extends React.Component<NavBarProps, {} > {
                     }
                 
                 </ul>
+                <form className='form-inline'>
+                    <div className='input-group'>
+                        <input className='form-control' type='text' placeholder='Dangerous: Private Key ' aria-label='Private Key' onChange={this.onPrivateKeyChange} />
+                    <div className='input-group-append'>
+                        <span className='input-group-text' id='basic-addon2'>{this.props.uiCreationHandling.ethAccount ? this.props.uiCreationHandling.ethAccount : 'No valid key'}</span>
+                    </div>
+                    </div>
+                        
+
+                </form>
             </div>
         </nav>;
     }
