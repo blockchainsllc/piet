@@ -110,8 +110,7 @@ const checkType: (solidityType: Sol.SolidityType, contracts: Sol.Contract[]) => 
                     enumeration.name === solidityType.name || enumeration.name === contract.name + '.' + solidityType.name
                     ) !== undefined)
             ) {
-               
-                return 'uint';
+                return 'uint8';
             } else {
               
                 throw Error('User defined types are not yet supported.');
