@@ -112,7 +112,7 @@ const checkType: (solidityType: Sol.SolidityType, contracts: Sol.Contract[]) => 
             ) {
                 return 'uint8';
             } else {
-              
+                
                 throw Error('User defined types are not yet supported.');
             }
 

@@ -118,15 +118,15 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
         }
     }
 
-    parameterChange(e: any, index: number, functionName: string): void {
-       
-        e.persist();
+    parameterChange(input: string, index: number, functionName: string): void {
+        console.log(input)
+ 
         this.setState((prevState: ContractFunctionViewState) => {
             if (prevState.parameterMapping[functionName]) {
-                prevState.parameterMapping[functionName][index] = e.target.value;
+                prevState.parameterMapping[functionName][index] = input;
             } else {
                 prevState.parameterMapping[functionName] = [];
-                prevState.parameterMapping[functionName][index] = e.target.value;
+                prevState.parameterMapping[functionName][index] = input;
             }
             return {parameterMapping: prevState.parameterMapping};
         });
@@ -366,6 +366,7 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
                         inputParameterChange={this.parameterChange}
                         interactiveMode={this.props.testMode}
                         parameter={param}
+                        web3={this.props.web3}
                     />
                 );
             });

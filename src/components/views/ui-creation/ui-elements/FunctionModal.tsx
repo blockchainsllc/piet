@@ -72,11 +72,11 @@ export class FunctionModal extends React.Component<FunctionModalProps, FunctionM
         this.props.selectElement(null);
     }
 
-    parameterChange(e: any, index: number): void {
+    parameterChange(input: string, index: number): void {
+        console.log(input)
         
-        e.persist();
         this.setState((prevState: FunctionModalState) => {
-            prevState.parameterMapping[index] = e.target.value;
+            prevState.parameterMapping[index] = input;
             return {parameterMapping: prevState.parameterMapping};
         });
 
@@ -143,9 +143,10 @@ export class FunctionModal extends React.Component<FunctionModalProps, FunctionM
                     contractAddress={this.props.selectedElement.contractAddress}
                     contractFunctionName={this.props.selectedElement.functionName}
                     index={index}
-                    inputParameterChange={(e) => this.parameterChange(e, index)}
+                    inputParameterChange={this.parameterChange}
                     interactiveMode={true}
                     parameter={param}
+                    web3={this.props.web3}
                 />
                 
             );

@@ -10,8 +10,9 @@
 
 import * as React from 'react';
 import { ContractFunctionParam, Contract } from '../../solidity-handler/SolidityHandler';
+import Web3Type from '../../types/web3';
 
-export type InputParameterChange = (event: any, index: number, contractFunctionName: string) => void;
+export type InputParameterChange = (input: string, index: number, contractFunctionName: string) => void;
 
 export interface InputFunctionParamsProps {
     contractAddress: string;
@@ -20,13 +21,39 @@ export interface InputFunctionParamsProps {
     interactiveMode: boolean;
     inputParameterChange: InputParameterChange;
     index: number;
+    web3: Web3Type;
 }
 
+    
 export class InputFunctionParams extends React.Component<InputFunctionParamsProps, {}> {
 
+    constructor(props: InputFunctionParamsProps) {
+        super(props);
+
+        this.onHexChange = this.onHexChange.bind(this);
+        this.onUTF8Change = this.onUTF8Change.bind(this);
+
+    }
+
+    onHexChange(e: any): void {
+        e.persist();
+        this.props.inputParameterChange(e.target.value, this.props.index, this.props.contractFunctionName);
+    }
+
+    onUTF8Change(e: any): void {
+        e.persist();
+        this.props.inputParameterChange(
+            (this.props.web3.utils as any).utf8ToHex(e.target.value),
+            this.props.index,
+            this.props.contractFunctionName
+        );
+    }
+
    render(): JSX.Element {
+
+        const isBytes: boolean = this.props.parameter.solidityType.name.startsWith('bytes');
       
-       return  <div className='param'>
+        return  <div className='param'>
             <i className='fas fa-arrow-circle-right' aria-hidden='true'></i>&nbsp;
             <strong>{this.props.parameter.name}</strong> <small>&nbsp;{this.props.parameter.solidityType.name}</small>
             {this.props.parameter.description !== '' ? 
@@ -36,8 +63,12 @@ export class InputFunctionParams extends React.Component<InputFunctionParamsProp
             : null}
             {this.props.interactiveMode && this.props.contractAddress != null ?
             <div className='param-content'>
-                <input  onChange={(e) => this.props.inputParameterChange(e, this.props.index, this.props.contractFunctionName)}
-                    className='form-control form-control-sm' type='text' />
+            { isBytes && 
+                <input onChange={this.onUTF8Change}
+                className='form-control form-control-sm' type='text' placeholder='UTF-8 Input' />
+            }
+                <input onChange={this.onHexChange}
+                    className='form-control form-control-sm' type='text' placeholder={isBytes ? 'Hex Input' : ''} />
             </div> : null }
         </div>;
 
