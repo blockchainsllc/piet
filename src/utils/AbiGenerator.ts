@@ -12,6 +12,19 @@ import * as Sol from '../solidity-handler/SolidityHandler';
 import Web3Type from '../types/web3';
 import { ContractEnumeration } from '../solidity-handler/SolidityHandler';
 
+export const isSameFunction: (firstFunctionAbi: any[], secondFunctionAbi: any[], web3: Web3Type) => boolean = 
+    (firstFunctionAbi: any[], secondFunctionAbi: any[], web3: Web3Type): boolean => {
+        const firstSignature: string = firstFunctionAbi.length === 1 ? 
+            web3.eth.abi.encodeFunctionSignature(firstFunctionAbi[0]) : 
+            null;
+        const secondSignature: string = secondFunctionAbi.length === 1 ? 
+            web3.eth.abi.encodeFunctionSignature(secondFunctionAbi[0]) : 
+            null;
+        
+        return firstSignature && secondSignature && (firstSignature === secondSignature);
+
+}
+
 export const getFunctionAbi: (theFunction: Sol.ContractFunction, web3: Web3Type, contracts: Sol.Contract[]) => any  = 
     (theFunction: Sol.ContractFunction, web3: Web3Type, contracts: Sol.Contract[]): any => {
 

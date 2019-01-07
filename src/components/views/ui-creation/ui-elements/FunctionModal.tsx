@@ -15,6 +15,7 @@ import { Element, UICreationHandling } from '../UIStructure';
 import { InputFunctionParams } from '../../../shared-elements/InputFunctionParams';
 import { OutputFunctionParams } from '../../../shared-elements/OutputFunctionParams';
 import { callFunction, sendFunction } from '../../../../solidity-handler/BlockchainConnector';
+import { isSameFunction } from '../../../../utils/AbiGenerator';
 
 export type SelectElement = (element: Element) => void;
 export interface FunctionModalProps {
@@ -56,24 +57,37 @@ export class FunctionModal extends React.Component<FunctionModalProps, FunctionM
     componentDidMount(): void {
         this.setState({
             parameterMapping: [],
-            resultMapping: []
+            resultMapping: [],
+            result: null,
+            error: null
         });
     }
 
-    componentWillReceiveProps(): void {
-        this.setState({
-            parameterMapping: [],
-            resultMapping: []
-        });
-    }
+    componentWillReceiveProps(newProps: FunctionModalProps): void {
 
+        
+
+        if (!this.props.selectedElement 
+            || !newProps.selectedElement 
+            || (newProps.selectedElement.contractAddress !== this.props.selectedElement.contractAddress)
+            || !isSameFunction(newProps.selectedElement.abi, this.props.selectedElement.abi, newProps.web3)
+        ) {
+            this.setState({
+                parameterMapping: [],
+                resultMapping: [],
+                result: null,
+                error: null
+                
+            });
+       } 
+        
+    }
 
     hideFunctionBox(): void {
         this.props.selectElement(null);
     }
 
     parameterChange(input: string, index: number): void {
-        console.log(input)
         
         this.setState((prevState: FunctionModalState) => {
             prevState.parameterMapping[index] = input;
@@ -83,6 +97,8 @@ export class FunctionModal extends React.Component<FunctionModalProps, FunctionM
     }
 
     async executeFunction(): Promise<void> {
+        
+        
         this.setState({
             result: null,
             error: null
