@@ -68,7 +68,6 @@ export class UICreationView extends React.Component<UICreationViewProps, UICreat
 
     async call(abi: any, contractAddress: string, functionName: string): Promise<void> {
         
-
         const contract: any = new this.props.web3.eth.Contract(abi, contractAddress);
 
         let result: any; 

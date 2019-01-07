@@ -119,7 +119,6 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
     }
 
     parameterChange(input: string, index: number, functionName: string): void {
-        console.log(input)
  
         this.setState((prevState: ContractFunctionViewState) => {
             if (prevState.parameterMapping[functionName]) {
