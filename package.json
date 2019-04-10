@@ -52,10 +52,13 @@
     "axios": "^0.18.0",
     "bootstrap": "^4.0.0-beta.3",
     "csv-parse": "^2.2.0",
+    "ethlint": "^1.2.2",
     "highlight.js": "^9.12.0",
     "immutability-helper": "^2.6.2",
+    "in3": "^1.1.22",
     "jointjs": "^2.0.1",
     "jquery": "^3.2.1",
+    "json-format": "^1.0.1",
     "lodash": "^4.17.4",
     "mock-fs": "^4.7.0",
     "moment": "^2.19.4",
@@ -77,6 +80,8 @@
     "require-from-string": "^2.0.2",
     "solc": "^0.4.25",
     "solidity-parser-antlr": "^0.2.15",
+    "solium": "^1.2.2",
+    "solium-plugin-security": "^0.1.1",
     "ts-loader": "^5.3.0",
     "web3": "^1.0.0-beta.37"
   }

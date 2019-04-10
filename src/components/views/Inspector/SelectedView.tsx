@@ -16,12 +16,13 @@ import { StructView } from './StructView';
 import Web3Type from '../../../types/web3';
 import { TabEntity, TabEntityType } from '../../View';
 import { UICreationHandling } from '../ui-creation/UIStructure';
+import { BlockchainConnection } from '../../../solidity-handler/BlockchainConnector';
 
 interface SelectedViewProps {
     selectedElement: Sol.NodeElement;
     testMode: boolean;
     toggleInheritance: Function; 
-    web3: Web3Type;
+    blockchainConnection: BlockchainConnection;
     showInheritedMembers: boolean;
     addTabEntity: Function;
     markCode: Function;
@@ -51,7 +52,8 @@ export class SelectedView extends React.Component<SelectedViewProps, {}> {
                             contracts={this.props.contracts}
                             addTabEntity={this.props.addTabEntity}
                             markCode={this.props.markCode}
-                            testMode={this.props.testMode} web3={this.props.web3}
+                            testMode={this.props.testMode} 
+                            blockchainConnection={this.props.blockchainConnection}
                             showInheritedMembers={this.props.showInheritedMembers} 
                             selectedContract={this.props.selectedElement as Sol.Contract} 
                             editContractAddress={this.props.editContractAddress}

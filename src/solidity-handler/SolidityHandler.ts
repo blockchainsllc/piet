@@ -100,6 +100,7 @@ export interface ContractStateVariable {
     name: string;
     solidityType: SolidityType;
     visibility: string;
+    getter: ContractFunction;
 }
 
 export interface ContractFunctionParam {
@@ -302,11 +303,83 @@ const getStateVariables: (node: any) => ContractStateVariable[] = (node: any): C
         .filter((subNode: any) => subNode.type && subNode.variables && subNode.type === 'StateVariableDeclaration')
         .map((subNode: any) => subNode.variables[0]);
 
-    return varibales.map((variable: any) => ({
+    return varibales.map((variable: any) => {
+        
+        let params: ContractFunctionParam[] = [];
+        let returnParams: ContractFunctionParam[] = [];
+
+        switch (variable.typeName.type) {
+            case 'Mapping':
+                params = [{
+                    name: variable.typeName.name,
+                    solidityType: getType(variable.typeName, []),
+                    isStorage: false,
+                    isIndexed: false,
+                    description: null
+                }];
+                returnParams = [{
+                    name: variable.typeName.name,
+                    solidityType: params[0].solidityType.mapping.value,
+                    isStorage: false,
+                    isIndexed: false,
+                    description: null
+                }];
+                params[0].solidityType = params[0].solidityType.mapping.key;
+                
+                break; 
+            case 'ArrayTypeName':
+                params = [{
+                    name: variable.typeName.name,
+                    solidityType: {
+                        isArray: false,
+                        name: 'uint256',
+                        references: [],
+                        userDefined: false
+                    },
+                    isStorage: false,
+                    isIndexed: false,
+                    description: null
+                }];
+                returnParams = [{
+                    name: variable.typeName.name,
+                    solidityType: getType(variable.typeName, []),
+                    isStorage: false,
+                    isIndexed: false,
+                    description: null
+                }];
+                returnParams[0].solidityType.name = returnParams[0].solidityType.pureName;
+                returnParams[0].solidityType.isArray = false;
+                break; 
+            default:
+                returnParams = [{
+                    name: variable.typeName.name,
+                    solidityType: getType(variable.typeName, []),
+                    isStorage: false,
+                    isIndexed: false,
+                    description: null
+                }];
+                
+        }
+
+        const getter: ContractFunction = {
+            annotations: null,
+            description: null,
+            end: null,
+            modifiers: variable.visibility === 'public' ? ['view', 'public'] : [],
+            name: variable.name,
+            params: params,
+            returnParams: returnParams,
+            source: null,
+            start: null
+        };
+
+        return {
             name: variable.name,
             solidityType: getType(variable.typeName, []),
-            visibility: variable.visibility
-        }));
+            visibility: variable.visibility,
+            getter
+        };
+    });
 };
 
 const contractMemberCopy: (contract: Contract, generalContract: Contract) => Contract = 
@@ -508,9 +581,19 @@ export const parseContent: (fileContents: any) => Contract[] = (fileContents: an
                 };
                 // console.log('################')
                 // console.log(node)
-                // console.log(contract)
+                //console.log(contract)
 
                 contracts.push(contract);
+
+                // const soliumConf = {
+                //     "extends": "solium:recommended",
+                //     "plugins": [],
+                //     "rules": {
+ 
+                //     }
+                // };
+                // console.log(solium.lint(contract.source, soliumConf))
+
             }
         });
     });

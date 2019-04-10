@@ -74,7 +74,7 @@ export class EventCatcherView extends React.Component<EventCatcherViewProps, Eve
         const fromBlock: string = this.props.content.fromBlock ? this.props.content.fromBlock : '0';
         const toBlock: string = this.props.content.toBlock ? this.props.content.toBlock : 'latest';
         const contract: any = new this.props.web3.eth.Contract(
-            getEventAbi(this.props.content.event, this.props.web3, this.props.contracts),
+            getEventAbi(this.props.content.event, this.props.web3, this.props.contracts, this.props.content.contract),
             this.props.content.contract.deployedAt);
         this.props.contentChange(this.props.viewId, this.props.tabId, {
             ...this.props.content,
@@ -182,7 +182,7 @@ export class EventCatcherView extends React.Component<EventCatcherViewProps, Eve
                                 </small>
                                 : null }
                             {this.props.content.result && this.state.rawView ?
-                                <div className='container'>
+                                <div className='container-fluid'>
                                     <div className='row'>
                                         <div className='col-12'>
                                             <small>

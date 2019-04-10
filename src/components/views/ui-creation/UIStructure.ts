@@ -14,7 +14,6 @@ export interface UICreationHandling {
     addElementToRow: AddElementToRow;
     setUIStructure: SetUIStructure;
     addElementToAction: AddElementToAction;
-    addEthAccount: AddEthAccount;
     ethAccount: string;
 }
 

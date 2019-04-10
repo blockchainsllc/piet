@@ -18,11 +18,12 @@ import { ContractModifierView } from './ContractModifierView';
 import { ContractFunctionView } from './ContractFunctionView';
 import { TabEntity, TabEntityType } from '../../View';
 import { UICreationHandling } from '../ui-creation/UIStructure';
+import { BlockchainConnection } from '../../../solidity-handler/BlockchainConnector';
 interface ContractViewProps {
     selectedContract: Sol.Contract;
     contracts: Sol.Contract[];
     testMode: boolean;
-    web3: Web3Type;
+    blockchainConnection: BlockchainConnection;
     showInheritedMembers: boolean;
     addTabEntity: Function;
     markCode: Function;
@@ -111,7 +112,7 @@ export class ContractView extends React.Component<ContractViewProps, ContractVie
                             selectedContract={this.props.selectedContract} 
                             showInheritedMembers={this.props.showInheritedMembers}
                             testMode={this.props.testMode} 
-                            web3={this.props.web3} />
+                            blockchainConnection={this.props.blockchainConnection} />
                         <ContractFunctionView 
                             uiCreationHandling={this.props.uiCreationHandling}
                             selectedTabTypeForView={this.props.selectedTabTypeForView}
@@ -121,7 +122,7 @@ export class ContractView extends React.Component<ContractViewProps, ContractVie
                             selectedContract={this.props.selectedContract} 
                             showInheritedMembers={this.props.showInheritedMembers} 
                             testMode={this.props.testMode}
-                            web3={this.props.web3} 
+                            blockchainConnection={this.props.blockchainConnection} 
                             addTabEntity={this.props.addTabEntity}
                         />
                         <ContractModifierView 
@@ -132,7 +133,7 @@ export class ContractView extends React.Component<ContractViewProps, ContractVie
                             contracts={this.props.contracts}
                             uiCreationHandling={this.props.uiCreationHandling}
                             selectedTabTypeForView={this.props.selectedTabTypeForView}
-                            web3={this.props.web3} 
+                            web3={this.props.blockchainConnection.web3} 
                             toggleInheritance={this.props.toggleInheritance}
                             testMode={this.props.testMode}
                             selectedContract={this.props.selectedContract} 

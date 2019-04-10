@@ -151,7 +151,7 @@ export class ContractEventView extends React.Component<ContractEventViewProps, {
                                 placeHolderName={event.name}
                                 uiCreationHandling={this.props.uiCreationHandling}
                                 contractAddress={contract.deployedAt}
-                                abi={getEventAbi(event, this.props.web3, this.props.contracts)}
+                                abi={getEventAbi(event, this.props.web3, this.props.contracts, this.props.selectedContract)}
                                 event={event}
                             />
                         }

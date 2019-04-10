@@ -37,6 +37,9 @@ export class Sidebar extends React.Component<SidebarProps, {}> {
         this.showAbout = this.showAbout.bind(this);
         this.showMigrationAssistent = this.showMigrationAssistent.bind(this);
         this.showUICreationView = this.showUICreationView.bind(this);
+        this.showConfiguration = this.showConfiguration.bind(this);
+        this.showNodeDiagnostics = this.showNodeDiagnostics.bind(this);
+        this.showTransactionHistory = this.showTransactionHistory.bind(this);
 
     }
 
@@ -76,9 +79,49 @@ export class Sidebar extends React.Component<SidebarProps, {}> {
                 contentType: TabEntityType.MigrationAssistent,
                 name: 'Migration Assistent',
                 content: null,
-                icon: 'random'
+                icon: 'random',
+                removable: true
             }, 
                                 1,
+                                false);
+    }
+
+    showNodeDiagnostics(): void {
+        this.props.addTabEntity({
+                active: true,
+                contentType: TabEntityType.NodeDiagnostics,
+                name: 'Node Diagnostics',
+                content: null,
+                icon: 'server',
+                removable: true
+            }, 
+                                1,
+                                false);
+    }
+
+    showTransactionHistory(): void {
+        this.props.addTabEntity({
+                active: true,
+                contentType: TabEntityType.TransactionHistory,
+                name: 'Transaction History',
+                content: null,
+                icon: 'history',
+                removable: true
+            }, 
+                                1,
+                                false);
+    }
+
+    showConfiguration(): void {
+        this.props.addTabEntity({
+                active: true,
+                contentType: TabEntityType.Configuration,
+                name: 'Configuration',
+                content: null,
+                icon: 'cog',
+                removable: true
+            }, 
+                                0,
                                 false);
     }
 
@@ -92,18 +135,20 @@ export class Sidebar extends React.Component<SidebarProps, {}> {
                         </div>
                     </div>
                     
-                    <div className='sidebar-buttons-container'>
+                    {/* <div className='sidebar-buttons-container'>
                         <div className='row'>
                             <div className='col-sm text-center'>
                                 <a href='#' className='btn btn-outline-secondary btn-lg' 
                                     onClick={() => this.props.changeActiveTab(0, 0)}><i className='fas fa-copy'></i></a>
                             </div>
                         </div>
-                    </div>
+                    </div> */}
                     <div className='sidebar-buttons-container'>
                         <div className='row'>
                             <div className='col-sm text-center'>
-                                <a  href='#' 
+                                <a  
+                                    title='UI Creator'
+                                    href='#' 
                                     className='btn btn-outline-secondary btn-lg' 
                                     onClick={this.showUICreationView}
                                 >
@@ -113,15 +158,20 @@ export class Sidebar extends React.Component<SidebarProps, {}> {
                         </div>
                     </div>
 
-                    {/*<div className='sidebar-buttons-container'>
+                    <div className='sidebar-buttons-container'>
                         <div className='row'>
                             <div className='col-sm text-center'>
-                                <a href='#' className='btn btn-outline-secondary btn-lg' 
-                                    onClick={this.showMigrationAssistent}><i className='fas fa-random'></i></a>
+                                <a 
+                                    title='Migration Assistent'
+                                    href='#' className='btn btn-outline-secondary btn-lg' 
+                                    onClick={this.showMigrationAssistent}
+                                >
+                                    <i className='fas fa-random'></i>
+                                </a>
                             </div>
                         </div>
                     </div>
-                     <div className='sidebar-buttons-container'>
+                    {/*<div className='sidebar-buttons-container'>
                         <div className='row'>
                             <div className='col-sm text-center'>
                                 <a href='#' className='btn btn-outline-secondary btn-lg'>
@@ -137,18 +187,51 @@ export class Sidebar extends React.Component<SidebarProps, {}> {
                             </div>
                         </div>
                     </div>
+                    */}
                     <div className='sidebar-buttons-container'>
                         <div className='row'>
                             <div className='col-sm text-center'>
-                                <a href='#' className='btn btn-outline-secondary btn-lg' >
+                            <a 
+                                href='#' className='btn btn-outline-secondary btn-lg' 
+                                onClick={this.showNodeDiagnostics}
+                                title='Node Diagnostics'
+                            >
+                                    <i className='fas fa-server'></i></a>
+                            </div>
+                        </div>
+                    </div> 
+                    <div className='sidebar-buttons-container'>
+                        <div className='row'>
+                            <div className='col-sm text-center'>
+                            <a 
+                                href='#' className='btn btn-outline-secondary btn-lg' 
+                                onClick={this.showTransactionHistory}
+                                title='Transaction History'
+                            >
+                                    <i className='fas fa-history'></i></a>
+                            </div>
+                        </div>
+                    </div> 
+                    <div className='sidebar-buttons-container'>
+                        <div className='row'>
+                            <div className='col-sm text-center'>
+                            <a 
+                                title='Configuration'
+                                href='#' className='btn btn-outline-secondary btn-lg' 
+                                onClick={this.showConfiguration}
+                            >
                                     <i className='fas fa-cog'></i></a>
                             </div>
                         </div>
-                    </div> */}
+                    </div> 
                     <div className='sidebar-buttons-container'>
                         <div className='row'>
                             <div className='col-sm text-center'>
-                                <a href='#' className='btn btn-outline-secondary btn-lg' onClick={this.showAbout}>
+                                <a 
+                                    title='About'
+                                    href='#' className='btn btn-outline-secondary btn-lg' 
+                                    onClick={this.showAbout}
+                                >
                                     <i className='fas fa-question-circle'></i></a>
                             </div>
                         </div>

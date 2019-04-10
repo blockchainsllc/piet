@@ -14,27 +14,25 @@ import * as queryString from 'query-string';
 import { Sidebar } from './Sidebar';
 import { View, TabEntity, TabEntityType } from './View';
 import * as $ from 'jquery';
-import Web3Type from '../types/web3';
 import SplitPane from 'react-split-pane';
 import { getContracts } from '../utils/GitHub';
 import { withRouter } from 'react-router-dom';
-import * as Web3 from 'web3';
 import * as axios from 'axios';
 import { UIStructure, UICreationHandling, Element } from './views/ui-creation/UIStructure';
 import { UICreationView } from './views/ui-creation/UICreationView';
+import { BlockchainConnection, ConnectionType, initBlockchainConfiguration } from '../solidity-handler/BlockchainConnector';
 
 interface AppContainerState {
     contracts: Sol.Contract[];
     contractToSelect: string;
     contractToSelectAddress: string;
     selectedElement: Sol.NodeElement;
-    web3: Web3Type;
     isLaoding: boolean;
     tabEntities: TabEntity[][];
     activeTab: number[];
     globalErrors: Error[];
     createdUIStructure: UIStructure;
-    ethAccount: string;
+    blockchainConnection: BlockchainConnection;
 }
 
 class AppContainer extends React.Component<{}, {}> {
@@ -48,7 +46,6 @@ class AppContainer extends React.Component<{}, {}> {
             selectedElement: null,
             contractToSelect: null,
             contractToSelectAddress: null,
-            web3: null, // new Web3(web3),
             isLaoding: false,
             globalErrors: [],
             tabEntities: [[], []],
@@ -58,8 +55,18 @@ class AppContainer extends React.Component<{}, {}> {
                 rows: [],
                 actionElements: []
             },
-            ethAccount: null
-
+            blockchainConnection: {
+                connectionType: ConnectionType.None,
+                rpcUrl: null,
+                web3: null,
+                updateBlockchainConnection: null,
+                selectedAccount: null,
+                selectAccount: this.selectAccount,
+                addAccount: this.addAccount,
+                addTransactionToHistory: this.addTransactionToHistory,
+                useDefaultAccount: true,
+                transactionHistory: []
+            }
         };
         
         this.updateContractNames = this.updateContractNames.bind(this);
@@ -78,8 +85,26 @@ class AppContainer extends React.Component<{}, {}> {
         this.addRow = this.addRow.bind(this);
         this.addElementToRow = this.addElementToRow.bind(this);
         this.addElementToAction = this.addElementToAction.bind(this);
-        this.addEthAccount = this.addEthAccount.bind(this);
+        this.updateBlockchainConnection = this.updateBlockchainConnection.bind(this);
+        this.addAccount = this.addAccount.bind(this);
+        this.selectAccount = this.selectAccount.bind(this);
+        this.addTransactionToHistory = this.addTransactionToHistory.bind(this);
 
+    }
+
+    addTransactionToHistory(transaction: any): void {
+        this.setState((prev: AppContainerState) => {
+            prev.blockchainConnection.transactionHistory.push(transaction);
+            return {
+                blockchainConnection: prev.blockchainConnection
+            };
+        });
+    }
+
+    updateBlockchainConnection(blockchainConnection: BlockchainConnection): void {
+        this.setState({
+            blockchainConnection
+        });
     }
 
     addRow(): void {
@@ -94,21 +119,31 @@ class AppContainer extends React.Component<{}, {}> {
         });
     }
 
-    addEthAccount(privateKey: string) : void {
+    selectAccount(address: string): void {
+        this.setState((prevState: AppContainerState) => {
+            prevState.blockchainConnection.selectedAccount = address;
+            prevState.blockchainConnection.useDefaultAccount = address ? false : true;
+            return {
+                blockchainConnection: prevState.blockchainConnection
+            };
+        });
+    }
 
+    addAccount(privateKey: string): void {
+        
         this.setState((prev: AppContainerState) => {
-            prev.web3.eth.accounts.wallet.clear();
+            prev.blockchainConnection.web3.eth.accounts.wallet.clear();
 
             let address: string;
             try {
-                address = prev.web3.eth.accounts.wallet.add(privateKey).address;
+                address = prev.blockchainConnection.web3.eth.accounts.wallet.add(privateKey).address;
             } catch (e) {
                 address = null;
+                
             }
             
             return {
-                ethAccount: address,
-                web3: prev.web3
+                blockchainConnection: prev.blockchainConnection
             };
         });
     }
@@ -198,32 +233,22 @@ class AppContainer extends React.Component<{}, {}> {
     async componentDidMount(): Promise<void> {
 
         this.initViews();
-
-        let web3: any = null;
         const params: any = queryString.parse((this.props as any).location.search);
 
-    
-
-        if (params.rpc) {
-            web3 = new Web3(params.rpc);
-        } else if ((window as any).ethereum) {
-            web3 = new Web3((window as any).ethereum);
-            try {
-                // Request account access if needed
-                await (window as any).ethereum.enable();
-            } catch (error) {
-                // User denied account access...
-            }
-        }
-
-        else if ((window as any).web3) {
-            web3 = new Web3(web3.currentProvider);
-        }
+        const blockchainConnection: BlockchainConnection = await initBlockchainConfiguration(
+            params.rpc ? ConnectionType.Rpc : ConnectionType.Injected, 
+            params.rpc,
+            this.updateBlockchainConnection,
+            this.addAccount,
+            this.selectAccount,
+            this.addTransactionToHistory
+        );
         
         this.setState({
-            web3: web3,
+            blockchainConnection,
             contractToSelect: params.contract ? params.contract : null,
             contractToSelectAddress: params.contractAddress ? params.contractAddress : null
+        
         });
 
         if (params.solFile) {
@@ -492,8 +517,8 @@ class AppContainer extends React.Component<{}, {}> {
             uiStructure: this.state.createdUIStructure,
             addElementToRow: this.addElementToRow,
             addElementToAction: this.addElementToAction,
-            addEthAccount: this.addEthAccount,
-            ethAccount: this.state.ethAccount
+    
+            ethAccount: this.state.blockchainConnection.selectedAccount
             
         };
 
@@ -506,9 +531,8 @@ class AppContainer extends React.Component<{}, {}> {
                 viewId={0}
                 tabId={0}
                 content={null}
-                web3={this.state.web3}
+                blockchainConnection={this.state.blockchainConnection}
                 productiveMode={true}
-        
             />;
         }
 
@@ -537,7 +561,7 @@ class AppContainer extends React.Component<{}, {}> {
                                     tabEntities={this.state.tabEntities[0]}
                                     addTabEntity={this.addTabEntity}
                                     selectedElement={this.state.selectedElement}
-                                    web3={this.state.web3} 
+                                    blockchainConnection={this.state.blockchainConnection} 
                                     changeContractAddress={this.changeContractAddress}
                                     changeSelectedElement={this.changeSelectedElement}
                                     contracts={this.state.contracts}
@@ -563,7 +587,7 @@ class AppContainer extends React.Component<{}, {}> {
                                 tabEntities={this.state.tabEntities[1]}
                                 addTabEntity={this.addTabEntity}
                                 selectedElement={this.state.selectedElement}
-                                web3={this.state.web3} 
+                                blockchainConnection={this.state.blockchainConnection} 
                                 changeContractAddress={this.changeContractAddress}
                                 changeSelectedElement={this.changeSelectedElement}
                                 contracts={this.state.contracts}

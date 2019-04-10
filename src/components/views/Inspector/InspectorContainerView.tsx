@@ -15,9 +15,10 @@ import { SelectedView } from './SelectedView';
 import SplitPane from 'react-split-pane';
 import { TabEntity, TabEntityType } from '../../View';
 import { UICreationHandling } from '../ui-creation/UIStructure';
+import { BlockchainConnection } from '../../../solidity-handler/BlockchainConnector';
 
 interface InspectorContainerViewProps {
-    web3: Web3Type;
+    blockchainConnection: BlockchainConnection;
     markCode: Function;
     changeContractAddress: Function;
     addTabEntity: Function;
@@ -40,7 +41,7 @@ export class InspectorContainerView extends React.Component<InspectorContainerVi
     constructor(props: InspectorContainerViewProps) {
         super(props);
         this.state = {
-            testMode: false,
+            testMode: true,
             showInheritedMembers: false,
     
             editContractAddress: false
@@ -57,9 +58,11 @@ export class InspectorContainerView extends React.Component<InspectorContainerVi
         if (this.props.selectedElement && this.props.selectedElement.elementType === Sol.ElementType.Contract
             && (this.props.selectedElement as Sol.Contract).deployedAt) {
             this.setState({
-                testMode: true
+                testMode: true,
+                editContractAddress: !((this.props.selectedElement as Sol.Contract).deployedAt)
             });
         }
+        
     }
 
     toogleTestMode (): void {
@@ -80,8 +83,32 @@ export class InspectorContainerView extends React.Component<InspectorContainerVi
         
     }
 
+    getInspectorClass(): string {
+        if (this.props.selectedElement) {
+            switch (this.props.selectedElement.elementType) {
+                case Sol.ElementType.Contract:
+                    return 'contract-inspector';
+                
+                case Sol.ElementType.Struct:
+                    return 'struct-inspector';
+    
+                case Sol.ElementType.Enum:
+                    return 'enum-inspector';
+    
+                default:
+                    return 'default-background';
+            }
+        }
+        
+    }
+
     render(): JSX.Element {
-        return   <SplitPane className='scrollable hide-resizer' split='horizontal'  defaultSize={40} allowResize={false} >
+        return  <SplitPane 
+                    className={'scrollable hide-resizer default-inspecor ' + this.getInspectorClass()}
+                    split='horizontal'  
+                    defaultSize={40} 
+                    allowResize={false} 
+                >
                     <div className='h-100 w-100 toolbar'>
                         <button 
                             title={this.state.showInheritedMembers ? 'Hide Inherited Members' : 'Show Inherited Members' } 
@@ -121,7 +148,7 @@ export class InspectorContainerView extends React.Component<InspectorContainerVi
                             toggleInheritance={this.toogleShowInheritedMembers}
                             contracts={this.props.contracts}
                             testMode={this.state.testMode} 
-                            web3={this.props.web3}
+                            blockchainConnection={this.props.blockchainConnection}
                             markCode={this.props.markCode}
                             showInheritedMembers={this.state.showInheritedMembers}
                             selectedElement={this.props.selectedElement}
