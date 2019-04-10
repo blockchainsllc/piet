@@ -26,9 +26,7 @@ export class JsonView extends React.Component<JsonViewProps, {}> {
     render(): JSX.Element {
         
         const theme: any = {
-            scheme: 'monokai',
-            author: 'wimer hazenberg (http://www.monokai.nl)',
-            base00: '#272822',
+            base00: '#232323',
             base01: '#383830',
             base02: '#49483e',
             base03: '#75715e',
@@ -44,7 +42,7 @@ export class JsonView extends React.Component<JsonViewProps, {}> {
             base0D: '#66d9ef',
             base0E: '#ae81ff',
             base0F: '#cc6633'
-          };
+        };
 
         return <SplitPane className='scrollable hide-resizer' split='horizontal'  defaultSize={40} allowResize={false} >
                     <div className='h-100 w-100 toolbar'>
@@ -57,7 +55,7 @@ export class JsonView extends React.Component<JsonViewProps, {}> {
                         allowResize={false}
                     >
                         <div></div>
-                        <div className='container'>
+                        <div className='container-fluid'>
                             <div className='row'>
                                 <div className='col-12'>
                                     <small className='events-json-container'>

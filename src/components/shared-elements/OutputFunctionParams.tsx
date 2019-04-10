@@ -26,8 +26,13 @@ export interface OutputFunctionParamsProps {
 export class OutputFunctionParams extends React.Component<OutputFunctionParamsProps, {}> {
 
    render(): JSX.Element {
-      
-       return  <div 
+
+        const value: string = this.props.resultMapping[this.props.contractFunctionName] 
+            && this.props.resultMapping[this.props.contractFunctionName][this.props.index] ? 
+            this.props.resultMapping[this.props.contractFunctionName][this.props.index] 
+            : '';
+
+        return  <div 
                 className='param' 
                 key={'returnParam' 
                     + this.props.contractAddress 
@@ -39,16 +44,21 @@ export class OutputFunctionParams extends React.Component<OutputFunctionParamsPr
             <strong>{this.props.parameter.name}</strong><small>&nbsp;{this.props.parameter.solidityType.name}</small>
             { this.props.interactiveMode && this.props.contractAddress != null ?
                 <div className='param-content'>
+                { !this.props.parameter.solidityType.userDefined && !this.props.parameter.solidityType.isArray  ? 
                     <input
                         className='form-control form-control-sm'
                         type='text'
                         disabled
-                        value={this.props.resultMapping[this.props.contractFunctionName] 
-                            && this.props.resultMapping[this.props.contractFunctionName][this.props.index] ? 
-                            this.props.resultMapping[this.props.contractFunctionName][this.props.index] 
-                            : '' 
-                        } 
-                    />
+                        value={value} 
+                    /> : 
+                    <textarea
+                        className='form-control form-control-sm'
+                        disabled
+                        rows={(value.match(/\n/g) || []).length + 1}
+                        value={value} 
+                    /> 
+
+                }
                 </div> 
                 : null 
             }

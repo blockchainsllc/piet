@@ -1,5 +1,7 @@
 :root {
-    --main-background-color:#232323;
+    /* --main-background-color:#232323; */
+    --selected-background-color: #232323;
+    --main-background-color: white;
     --sidebar-color: #343a40;
     --toolbar-color: #4c4b4b;
     --element-color: #e4e4e4;
@@ -11,8 +13,60 @@
     --muted-text-color: #adadad;
     --error-red: #dc3545;
 
-
 }
+
+.code-modal-signature {
+    padding-top: 0rem;
+}
+
+.conf-container {
+    margin-top: 1rem;
+}
+
+.conf-select {
+    width: 100px;
+    border-radius: 0rem;
+    color: var(--text-highlight-color);
+    background-color: var(--toolbar-color);
+    border-width: 1px;
+    border-color: var(--selected-background-color);
+}
+
+.rpc-method-select {
+    width: 200px;
+    border-radius: 0rem;
+    color: var(--text-highlight-color);
+    background-color: var(--toolbar-color);
+    border-width: 1px;
+    border-color: var(--selected-background-color);
+}
+
+
+
+.navbar-pane {
+    width: 100%;
+}
+
+.contract-inspector {
+    background-color: var(--contract-color);
+}
+
+.struct-inspector {
+    background-color: var(--struct-color);
+}
+
+.enum-inspector {
+    background-color: var(--enum-color);
+}
+
+.default-background {
+    background-color: var(--selected-background-color) !important;
+}
+
+.plain-background {
+    background-color: var(--main-background-color) !important;
+}
+
 
 .ui-creation-main {
     background-color: #ffffff !important;
@@ -43,8 +97,8 @@
     border-width: 0px;
 }
 
-.migration-select-down {
-    margin-top: 0.1rem;
+.migration-select-form {
+    margin-bottom: 0.1rem;
 }
 
 .file-browser-alert {
@@ -94,7 +148,7 @@
 }
  
 ::-webkit-scrollbar-track {
-    background-color: var(--main-background-color)
+    /* background-color: var(--main-background-color) */
     
 }
  
@@ -106,7 +160,7 @@
 
 
 .joint-paper-background{
-    background-color: var(--main-background-color)
+    background-color: var(--selected-background-color)
 }
 
 .selected-list-item {
@@ -207,7 +261,7 @@ a:hover {
 }
 
 .file-tree > ul {
-    background-color: var(--main-background-color) !important;
+    background-color: var(--selected-background-color) !important;
 }
 
 .help-text {
@@ -361,6 +415,7 @@ body {
 .ui-creation-container {
     width: 100%;
     background-color: white;
+    padding-top: 1rem;
 }
 
 .no-padding {
@@ -481,6 +536,10 @@ body {
     border-radius: 0rem !important; 
 
 }
+.selected-list-item:hover  {
+    z-index: 100;
+
+}
 
 .functionOperations {
     margin-top: 0.5rem
@@ -534,11 +593,25 @@ body {
     margin-top: 0.2rem
 }
 
+.account-list-element {
+    background-color: var(--selected-background-color);
+    border-color: var(--sidebar-color)
+}
+
+.selected-account {
+    color: var(--text-highlight-color);
+}
+
+.user-add-container {
+    background-color: var(--toolbar-color);
+    padding: 5px;
+}
 
 .dark-input {
     border-radius: 0rem;
-    border-width: 0rem;
+    border-width: 1px;
     background-color: var(--sidebar-color);
+    border-color: var(--selected-background-color);
     color: #dcdcdc;
 
 } 
@@ -549,9 +622,9 @@ body {
     color: #dcdcdc !important;
 }
 
-.events-json-container > ul {
+/* .events-json-container > ul {
     background-color: var(--main-background-color) !important;
-}
+} */
 
 
 .loader-logo-loading .logo-quater {

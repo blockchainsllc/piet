@@ -11,7 +11,6 @@
 import * as React from 'react';
 
 import * as Sol from '../solidity-handler/SolidityHandler';
-import Web3Type from '../types/web3';
 import { TabList } from './TabList';
 import { InspectorContainerView } from './views/Inspector/InspectorContainerView';
 import { GraphContainerView } from './views/Graph/GraphContainerView';
@@ -24,6 +23,9 @@ import { MigrationAssistent } from './views/migration-assistent/MigrationAssiste
 import SplitPane from 'react-split-pane';
 import { UICreationView } from './views/ui-creation/UICreationView';
 import { UICreationHandling } from './views/ui-creation/UIStructure';
+import { ConfigurationView } from './views/Configuration/ConfigurationView';
+import { BlockchainConnection } from '../solidity-handler/BlockchainConnector';
+import { NodeDiagnosticsView } from './views/NodeDiagnostic/NodeDiagnostics';
 
 export enum TabEntityType {
     Structure,
@@ -34,7 +36,10 @@ export enum TabEntityType {
     FileBrowser,
     About,
     MigrationAssistent,
-    UICreationView
+    UICreationView,
+    Configuration,
+    NodeDiagnostics, 
+    TransactionHistory
 }
 
 export interface TabEntity {
@@ -49,7 +54,7 @@ export interface TabEntity {
 interface ViewProps {
     selectedElement: Sol.NodeElement;
     changeActiveTab: Function;
-    web3: Web3Type;
+    blockchainConnection: BlockchainConnection;
     contracts: Sol.Contract[];
     changeSelectedElement: Function;
     tabEntities: TabEntity[];
@@ -97,7 +102,7 @@ export class View extends React.Component<ViewProps, {}> {
                                 removeContractToSelect={this.props.removeContractToSelect}
                                 selectedContractName={this.props.selectedContractName}
                                 selectedElement={this.props.selectedElement}
-                                web3={this.props.web3}
+                                web3={this.props.blockchainConnection.web3}
                                 contracts={this.props.contracts}
                                 changeSelectedElement={this.props.changeSelectedElement}
                             />;
@@ -112,7 +117,7 @@ export class View extends React.Component<ViewProps, {}> {
                                 addTabEntity={this.props.addTabEntity}
                                 markCode={this.props.markCode}
                                 selectedElement={this.props.selectedElement}
-                                web3={this.props.web3}
+                                blockchainConnection={this.props.blockchainConnection}
                                 getEvents={this.props.getEvents}
                             />;
                 break;
@@ -135,7 +140,17 @@ export class View extends React.Component<ViewProps, {}> {
                                 tabId={this.props.activeTab[this.props.viewId]}
                                 content={this.props.tabEntities[this.props.activeTab[this.props.viewId]].content}
                                 contentChange={this.props.contentChange}
-                                web3={this.props.web3}
+                                web3={this.props.blockchainConnection.web3}
+                            />;
+                break;
+
+            case TabEntityType.NodeDiagnostics:
+                content =   <NodeDiagnosticsView 
+                  
+                                key={'NodeDiagnosticsView'}
+                                viewId={this.props.viewId}
+                                tabId={this.props.activeTab[this.props.viewId]}
+                                blockchainConnection={this.props.blockchainConnection}
                             />;
                 break;
             
@@ -145,9 +160,19 @@ export class View extends React.Component<ViewProps, {}> {
                             viewId={this.props.viewId}
                             tabId={this.props.activeTab[this.props.viewId]}
                             content={this.props.tabEntities[this.props.activeTab[this.props.viewId]].content}
-                            web3={this.props.web3}
+                            web3={this.props.blockchainConnection.web3}
                         />;
             break;
+
+            case TabEntityType.TransactionHistory:
+                content =   <JsonView 
+                                key={'TransactionHistory'}
+                                viewId={this.props.viewId}
+                                tabId={this.props.activeTab[this.props.viewId]}
+                                content={this.props.blockchainConnection.transactionHistory}
+                                web3={this.props.blockchainConnection.web3}
+                            />;
+                break;
 
             case TabEntityType.FileBrowser:
                 content =   <FileBrowserView 
@@ -156,7 +181,7 @@ export class View extends React.Component<ViewProps, {}> {
                                 viewId={this.props.viewId}
                                 tabId={this.props.activeTab[this.props.viewId]}
                                 content={this.props.tabEntities[this.props.activeTab[this.props.viewId]].content}
-                                web3={this.props.web3}
+                                web3={this.props.blockchainConnection.web3}
                                 submitFiles={this.props.submitFiles}
                                 contracts={this.props.contracts}
                                 loading={this.props.loading}
@@ -169,19 +194,31 @@ export class View extends React.Component<ViewProps, {}> {
                                 viewId={this.props.viewId}
                                 tabId={this.props.activeTab[this.props.viewId]}
                                 content={null}
-                                web3={this.props.web3}
+                                blockchainConnection={this.props.blockchainConnection}
                                 contracts={this.props.contracts}
+                            />;
+                break;
+            
+            case TabEntityType.Configuration:
+                content =   <ConfigurationView 
+                                key={'ConfigurationView'}
+                                viewId={this.props.viewId}
+                                tabId={this.props.activeTab[this.props.viewId]}
+                                content={null}
+                                blockchainConnection={this.props.blockchainConnection}
+                                contracts={this.props.contracts}
+                                loading={this.props.loading}
                             />;
                 break;
             
             case TabEntityType.UICreationView:
                 content =   <UICreationView 
                                 uiCreationHandling={this.props.uiCreationHandling}
-                                key={'Migration Assistent'}
+                                key={'UICreationView'}
                                 viewId={this.props.viewId}
                                 tabId={this.props.activeTab[this.props.viewId]}
                                 content={null}
-                                web3={this.props.web3}
+                                blockchainConnection={this.props.blockchainConnection}
                                 productiveMode={false}
                            
                             />;
@@ -191,7 +228,7 @@ export class View extends React.Component<ViewProps, {}> {
                 content = null;
         }
         
-        return  <div className='h-100'>
+        return  <div className='h-100 default-background'>
                     <SplitPane split='horizontal' className='hide-resizer' defaultSize={50} allowResize={false} >
                         <div className='tabs-container h-100 w-100'>
                             <TabList 

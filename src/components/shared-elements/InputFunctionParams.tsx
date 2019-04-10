@@ -63,12 +63,18 @@ export class InputFunctionParams extends React.Component<InputFunctionParamsProp
             : null}
             {this.props.interactiveMode && this.props.contractAddress != null ?
             <div className='param-content'>
+            
             { isBytes && 
                 <input onChange={this.onUTF8Change}
                 className='form-control form-control-sm' type='text' placeholder='UTF-8 Input' />
             }
-                <input onChange={this.onHexChange}
-                    className='form-control form-control-sm' type='text' placeholder={isBytes ? 'Hex Input' : ''} />
+                { this.props.parameter.solidityType.userDefined || this.props.parameter.solidityType.isArray ? 
+                    <textarea onChange={this.onHexChange}
+                        className='form-control form-control-sm' placeholder={isBytes ? 'Hex Input' : ''} /> :
+                    <input onChange={this.onHexChange}
+                        className='form-control form-control-sm' type='text' placeholder={isBytes ? 'Hex Input' : ''} />
+                }
+                
             </div> : null }
         </div>;
 

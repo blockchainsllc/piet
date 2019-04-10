@@ -11,21 +11,21 @@
 import * as React from 'react';
 import * as Sol from '../../../solidity-handler/SolidityHandler';
 import Web3Type from '../../../types/web3';
-import { ResultBox } from '../../ResultBox';
-import { CodeBox } from '../../CodeBox';
-import { TabEntity, TabEntityType } from '../../View';
-import { getFunctionAbi, getStateVariableAbi } from '../../../utils/AbiGenerator';
+import { CodeBox, CodeToShow } from '../../CodeBox';
+import { TabEntityType } from '../../View';
+import { getFunctionAbi, getFunctionId } from '../../../utils/AbiGenerator';
 import { UICreationHandling } from '../ui-creation/UIStructure';
 import { ValueBox } from '../ui-creation/InspectorTools/ValueBox';
 import { ActionTool } from '../ui-creation/InspectorTools/ActionTool';
 import { InputFunctionParams } from '../../shared-elements/InputFunctionParams';
 import { OutputFunctionParams } from '../../shared-elements/OutputFunctionParams';
+import { callFunction, sendFunction, BlockchainConnection } from '../../../solidity-handler/BlockchainConnector';
 
 interface ContractFunctionViewProps {
     selectedContract: Sol.Contract;
     contracts: Sol.Contract[];
     testMode: boolean;
-    web3: Web3Type;
+    blockchainConnection: BlockchainConnection;
     showInheritedMembers: boolean;
     toggleInheritance: Function;
     markCode: Function;
@@ -44,6 +44,7 @@ interface ContractFunctionViewState {
     functionCollapsed: boolean[];
     codeBoxIsShown: boolean;
     selectedFunction: Sol.ContractFunction;
+    codeToShow: CodeToShow;
     
 }
 
@@ -61,7 +62,8 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
             functionCollapsed: [],
             selectedFunction: null,
             codeBoxIsShown: false,
-            blockchainErrors: []
+            blockchainErrors: [],
+            codeToShow: CodeToShow.Solidity
   
         };
 
@@ -83,9 +85,9 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
         this.setState({codeBoxIsShown: show});
     }
 
-    onShowCode(contractFunction: Sol.ContractFunction): void {
+    onShowCode(contractFunction: Sol.ContractFunction, codeToShow: CodeToShow): void {
         this.showCodeBox(true);
-        this.setState({selectedFunction: contractFunction});
+        this.setState({selectedFunction: contractFunction, codeToShow: codeToShow});
         
     }
 
@@ -205,46 +207,30 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
 
         this.initBlockchainOperation(name, theFunction, functionIndex);
 
-        const contract: any = new this.props.web3.eth.Contract(
-            getFunctionAbi(theFunction, this.props.web3, this.props.contracts),
+        const contract: any = new this.props.blockchainConnection.web3.eth.Contract(
+            getFunctionAbi(theFunction, this.props.blockchainConnection.web3, this.props.contracts, this.props.selectedContract),
             this.props.selectedContract.deployedAt);
 
         let result: any; 
-        let error: any = null;
-        try {
-            result = await (this.state.parameterMapping[name] ? 
-                contract.methods[name](...this.state.parameterMapping[name]).call() : contract.methods[name]().call());
-            
-            if (typeof result !== 'object') {
-                this.setState((prevState: ContractFunctionViewState) => {
-                    if (prevState.resultMapping[name]) {
-                        prevState.resultMapping[name][0] = result.toString();
-                    } else {
-                        prevState.resultMapping[name] = [];
-                        prevState.resultMapping[name][0] = result.toString();
-                    }
-                    return {parameterMapping: prevState.parameterMapping};
-                });
-            } else {
-                for (const index of Object.keys(theFunction.returnParams)) {
-                    this.setState((prevState: ContractFunctionViewState) => {
-                        if (prevState.resultMapping[name]) {
-                            prevState.resultMapping[name][index] = result[index].toString();
-                        } else {
-                            prevState.resultMapping[name] = [];
-                            prevState.resultMapping[name][index] = result[index].toString();
-                        }
-                        return {parameterMapping: prevState.parameterMapping};
-                    });
-                }
-            }
-        
-            result = typeof result === 'object' ? JSON.stringify(result) : result.toString();
+        const error: any = null;
+        result = await callFunction(
+            contractFunction,
+            this.props.blockchainConnection,
+            this.props.selectedContract.deployedAt,
+            getFunctionAbi(theFunction, this.props.blockchainConnection.web3, this.props.contracts, this.props.selectedContract),
+            this.state.parameterMapping[theFunction.name]
+        );
 
-        } catch (e) {
-            error = e.message;
-  
-        }
+
+        this.setState((prevState: ContractFunctionViewState) => {
+            if (prevState.resultMapping[name]) {
+                prevState.resultMapping[name] = result;
+            } else {
+                prevState.resultMapping[name] = [];
+                prevState.resultMapping[name] = result;
+            }
+            return {parameterMapping: prevState.parameterMapping};
+        });
 
         this.setState((prevState: ContractFunctionViewState) => {
             prevState.blockchainErrors[functionIndex] = error;
@@ -258,7 +244,9 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
     }
 
     initBlockchainOperation(name: string, theFunction: Sol.ContractFunction, functionIndex: number): void {
-        for (const index of Object.keys(theFunction.returnParams.keys())) {
+
+        
+        for (const index of Object.keys(theFunction.returnParams)) {
             this.setState((prevState: ContractFunctionViewState) => {
                 if (prevState.resultMapping[name]) {
                     prevState.resultMapping[name][index] = '';
@@ -270,7 +258,8 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
                 return {parameterMapping: prevState.parameterMapping};
             });
         }
-
+        
+        
         this.setState((prevState: ContractFunctionViewState) => {
             prevState.blockchainErrors[functionIndex] = null;
             return {
@@ -286,18 +275,20 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
         const name: string = contractFunction.name;
 
         this.initBlockchainOperation(name, theFunction, functionIndex);
-        const accounts: any[] = await this.props.web3.eth.getAccounts();
+        const accounts: any[] = await this.props.blockchainConnection.web3.eth.getAccounts();
         
         if (accounts.length > 0) {
-            let error: any = null;
-            const contract: any = new this.props.web3.eth
-                .Contract(getFunctionAbi(theFunction, this.props.web3, this.props.contracts), this.props.selectedContract.deployedAt);
 
+            
+            let error: any = null;
             let result: any; 
             try {
-                result = await (this.state.parameterMapping[name] ? 
-                    contract.methods[name](...this.state.parameterMapping[name]).send({from: accounts[0]}) :
-                    contract.methods[name]().send({from: accounts[0]})
+                result = await sendFunction(
+                    contractFunction,
+                    this.props.blockchainConnection,
+                    this.props.selectedContract.deployedAt,
+                    getFunctionAbi(theFunction, this.props.blockchainConnection.web3, this.props.contracts, this.props.selectedContract),
+                    this.state.parameterMapping[name]
                 );
           
             } catch (e) {
@@ -308,6 +299,7 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
                 this.props.addTabEntity({
                     active: true,
                     contentType: TabEntityType.Json,
+                    removable: true,
                     name: name + ' Tx',
                     content: result,
                     icon: 'sign-out-alt'
@@ -365,7 +357,7 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
                         inputParameterChange={this.parameterChange}
                         interactiveMode={this.props.testMode}
                         parameter={param}
-                        web3={this.props.web3}
+                        web3={this.props.blockchainConnection.web3}
                     />
                 );
             });
@@ -405,14 +397,12 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
 
             let abi: any = null;
             try {
-                abi = getFunctionAbi(contractFunction, this.props.web3, this.props.contracts);
+                abi = getFunctionAbi(contractFunction, this.props.blockchainConnection.web3, this.props.contracts, this.props.selectedContract);
             } catch (e) {
                 console.log('could not create abi for ' + contractFunction.name);
             }
 
-            const functionKey: string = 'function' + contract.name + contractFunction.name + contractFunction.params
-                .map((param: Sol.ContractFunctionParam) => param.name + param.solidityType.name)
-                .reduce((previous, current) => previous + current, '');
+            const functionKey: string = getFunctionId(contract, this.props.blockchainConnection.web3, contractFunction);
             
             return  <div 
                         className='
@@ -509,10 +499,19 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
                                             <div className='text-right functionOperations'>
                                                 <button 
                                                     type='button'
-                                                    className='function-operation-button btn btn-outline-primary btn-sm'
+                                                    className='function-operation-button btn btn-outline-secondary btn-sm'
                                                     data-toggle='modal' 
-                                                    data-target={'#codeModal'}
-                                                    onClick={() => this.onShowCode(contractFunction)}
+                                                    data-target={'.codeModal'}
+                                                    onClick={() => this.onShowCode(contractFunction, CodeToShow.Abi)}
+                                                >
+                                                    ABI
+                                                </button>
+                                                <button 
+                                                    type='button'
+                                                    className='function-operation-button btn btn-outline-secondary btn-sm'
+                                                    data-toggle='modal' 
+                                                    data-target={'.codeModal'}
+                                                    onClick={() => this.onShowCode(contractFunction, CodeToShow.Solidity)}
                                                 >
                                                     Code
                                                 </button>
@@ -540,12 +539,16 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
         }
 
         return  <div>
-                    <ResultBox resultBoxIsShown={this.state.resultBoxIsShown} name={this.state.lastResultName}
-                    showResultBox={this.showResultBox} result={this.state.lastResult} id={'Function' + this.props.selectedContract.name} />
+                    {/* <ResultBox resultBoxIsShown={this.state.resultBoxIsShown} name={this.state.lastResultName}
+                    showResultBox={this.showResultBox} result={this.state.lastResult} id={'Function' + this.props.selectedContract.name} /> */}
                     <CodeBox 
+                        codeToShow={this.state.codeToShow}
+                        web3={this.props.blockchainConnection.web3}
+                        contracts={this.props.contracts}
                         codeBoxIsShown={this.state.codeBoxIsShown}
                         showCodeBox={this.showCodeBox}
                         selectedFunction={this.state.selectedFunction}
+                        contextContract={this.props.selectedContract}
                     />
                     <h5 className='member-headline'><i className='fas fa-align-justify'></i> Functions</h5>
                     <div className='list-group'>

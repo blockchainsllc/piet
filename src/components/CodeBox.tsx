@@ -13,13 +13,25 @@ import * as Sol from '../solidity-handler/SolidityHandler';
 import * as Hljs from 'highlight.js';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/styles/hljs';
+import { getFunctionAbi } from '../utils/AbiGenerator';
+import Web3 from '../types/web3';
+import * as jsonFormat from 'json-format';
+import { spawnSync } from 'child_process';
 
 export interface CodeBoxProps {
-
+    contextContract: Sol.Contract;
     selectedFunction: Sol.ContractFunction;
     codeBoxIsShown: boolean;
     showCodeBox: Function;
+    web3: Web3;
+    contracts: Sol.Contract[];
+    codeToShow: CodeToShow;
 
+}
+
+export enum CodeToShow {
+    Solidity,
+    Abi
 }
 
 export class CodeBox extends React.Component<CodeBoxProps, {}> {
@@ -45,14 +57,23 @@ export class CodeBox extends React.Component<CodeBoxProps, {}> {
             return null;
         } 
 
-        return  <div id={'codeModal' } 
-                    className={'modal fade' + (this.props.codeBoxIsShown ? ' show force-show' : '')} 
+        let abi: any;
+        let abiError = null;
+        try {
+            abi = getFunctionAbi(this.props.selectedFunction, this.props.web3, this.props.contracts, this.props.contextContract)[0];
+        } catch (e) {
+            abiError = e.message;
+        }
+            
+
+        return  <div 
+                    className={'codeModal modal fade' + (this.props.codeBoxIsShown ? ' show force-show' : '')} 
                     role='dialog' aria-labelledby='exampleModalLabel' aria-hidden='true'>
                     <div className='modal-dialog modal-lg' role='document'>
                         <div className='modal-content'>
                             <div className='modal-header'>
                                 <h5 className='modal-title'>
-                                    {this.props.selectedFunction.name}
+                                    {this.props.selectedFunction.name}() 
                                 </h5>
                                 <button type='button' onClick={this.hideCodeBox} 
                                     className='close' data-dismiss='modal' aria-label='Close'>
@@ -61,12 +82,34 @@ export class CodeBox extends React.Component<CodeBoxProps, {}> {
                             </div>
                             <div className='modal-body code-modal-body '>
                                 <small>
-                                    <SyntaxHighlighter language='javascript' style={docco}>
-                                        {'    ' + this.props.selectedFunction.source}
-                                    </SyntaxHighlighter>
+                                
+                                    {this.props.codeToShow === CodeToShow.Solidity &&
+                                        <SyntaxHighlighter language='javascript' style={docco}>
+                                            {'    ' + this.props.selectedFunction.source}
+                                        </SyntaxHighlighter>
+                                    }
+                                    {!abiError && this.props.codeToShow === CodeToShow.Abi &&
+                                        <SyntaxHighlighter language='json' style={docco}>
+                                            {jsonFormat(abi) }
+                                        </SyntaxHighlighter>
+                                        
+                                    }
+                                    {abiError && this.props.codeToShow === CodeToShow.Abi && 
+                                        <span>{abiError}</span> 
+                                    }
                                 </small>
                             </div>
+                            <div className='modal-body code-modal-body code-modal-signature'>
+                                {abiError === null && 
+                                    <small>
+                                        <small className='text-muted'>Signature: {this.props.web3.eth.abi.encodeFunctionSignature(abi) }</small>
+                                    </small>
+                                }                                
+                            </div>
+
+                            
                             <div className='modal-footer'>
+                            
                                 <button type='button' onClick={this.hideCodeBox} 
                                     className='btn btn-secondary' data-dismiss='modal'>
                                     Close

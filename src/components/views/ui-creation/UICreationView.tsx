@@ -18,9 +18,10 @@ import { NavBar } from './ui-elements/NavBar';
 import { FunctionModal } from './ui-elements/FunctionModal';
 import * as PromiseFileReader from 'promise-file-reader';
 import SVG  from 'react-inlinesvg';
+import { BlockchainConnection } from '../../../solidity-handler/BlockchainConnector';
 
 interface UICreationViewProps {
-    web3: Web3Type;
+    blockchainConnection: BlockchainConnection;
     content: any;
     viewId: number;
     tabId: number;
@@ -68,7 +69,7 @@ export class UICreationView extends React.Component<UICreationViewProps, UICreat
 
     async call(abi: any, contractAddress: string, functionName: string): Promise<void> {
         
-        const contract: any = new this.props.web3.eth.Contract(abi, contractAddress);
+        const contract: any = new this.props.blockchainConnection.web3.eth.Contract(abi, contractAddress);
 
         let result: any; 
         try {
@@ -151,7 +152,7 @@ export class UICreationView extends React.Component<UICreationViewProps, UICreat
                                 key={element.contractAddress + element.functionName}
                                 showMetaInformation={devMode}
                                 element={element}
-                                web3={this.props.web3}
+                                web3={this.props.blockchainConnection.web3}
                             />;
                         default:
                             return null;
@@ -175,20 +176,22 @@ export class UICreationView extends React.Component<UICreationViewProps, UICreat
  
             }); 
 
+        const navBar: JSX.Element = <NavBar 
+                        uiCreationHandling={this.props.uiCreationHandling}
+                        web3={this.props.blockchainConnection.web3}
+                        showMetaInformation={devMode}
+                        actions={this.props.uiCreationHandling.uiStructure.actionElements}
+                        selectFunctionElement={this.selectFunctionElement}
+                    />
+
         const createdUI: JSX.Element = <div className='ui-creation-container'>
-            <NavBar 
-                uiCreationHandling={this.props.uiCreationHandling}
-                web3={this.props.web3}
-                showMetaInformation={devMode}
-                actions={this.props.uiCreationHandling.uiStructure.actionElements}
-                selectFunctionElement={this.selectFunctionElement}
-            />
             
-            <div className='container'>
+            
+            <div className='container plain-background'>
                 <FunctionModal 
                     updateAll={this.updateAll}
                     uiCreationHandling={this.props.uiCreationHandling}
-                    web3={this.props.web3}
+                    blockchainConnection={this.props.blockchainConnection}
                     selectElement={this.selectFunctionElement}
                     selectedElement={this.state.selectedFunctionElement}
                 />
@@ -196,13 +199,32 @@ export class UICreationView extends React.Component<UICreationViewProps, UICreat
             </div>
         </div>;
 
+        const uiContent: JSX.Element = <SplitPane 
+            className='scrollable hide-resizer' 
+            split='horizontal'  
+            defaultSize={40} 
+            allowResize={false} 
+        >
+            <div className='navbar-pane'>{navBar}</div>
+            <SplitPane 
+                className='scrollable hide-resizer empty-first-pane' 
+                split='horizontal'  
+                defaultSize={1} 
+                allowResize={false} 
+            >
+                <div></div>
+                {createdUI}
+            </SplitPane>
+            
+        </SplitPane>;
+
         if (this.props.productiveMode) {
      
             if (this.props.uiCreationHandling.uiStructure.actionElements.length !== 0
                 || this.props.uiCreationHandling.uiStructure.rows.length !== 0
                 || this.props.uiCreationHandling.uiStructure.contracts.length !== 0
             ) {
-                return createdUI;
+                return uiContent;
             } else {
                 return <div className='text-center help-text-container'>
                     <h1 className='help-text text-muted'>Piet UI Loader</h1>
@@ -262,16 +284,7 @@ export class UICreationView extends React.Component<UICreationViewProps, UICreat
                 <input id='ui-file' className='files-input' type='file' onChange={(e) => this.loadUIFile(e.target.files)} />
                               
             </div>
-            <SplitPane 
-                className='scrollable hide-resizer empty-first-pane' 
-                split='horizontal'  
-                defaultSize={1} 
-                allowResize={false} 
-            >
-                <div></div>
-                {createdUI}
-                
-            </SplitPane>
+            {uiContent}
                 
         </SplitPane>;
                

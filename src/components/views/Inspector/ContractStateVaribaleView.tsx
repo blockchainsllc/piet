@@ -11,15 +11,16 @@
 import * as React from 'react';
 import * as Sol from '../../../solidity-handler/SolidityHandler';
 import Web3Type from '../../../types/web3';
-import { getStateVariableAbi } from '../../../utils/AbiGenerator';
+import { getFunctionAbi } from '../../../utils/AbiGenerator';
 import { TabEntity, TabEntityType } from '../../View';
 import { ValueBox } from '../ui-creation/InspectorTools/ValueBox';
 import { UICreationHandling } from '../ui-creation/UIStructure';
+import { callFunction, BlockchainConnection } from '../../../solidity-handler/BlockchainConnector';
 
 interface ContractStateVaribaleViewProps {
     selectedContract: Sol.Contract;
     testMode: boolean;
-    web3: Web3Type;
+    blockchainConnection: BlockchainConnection;
     showInheritedMembers: boolean;
     contracts: Sol.Contract[];
     toggleInheritance: Function;
@@ -122,36 +123,25 @@ export class ContractStateVaribaleView extends React.Component<ContractStateVari
             let result: any; 
             let abi: any = null;
             try {
-                abi = getStateVariableAbi(stateVariable, this.props.web3, this.props.contracts);
+                abi = getFunctionAbi(stateVariable.getter, this.props.blockchainConnection.web3, this.props.contracts, this.props.selectedContract);
             } catch (e) {
                 result = 'could not create abi for ' + stateVariable.name;
             }
 
             if (abi) {
-                const contract: any = new this.props.web3.eth.Contract(
+                const contract: any = new this.props.blockchainConnection.web3.eth.Contract(
                     abi,
                     this.props.selectedContract.deployedAt);
-    
-                try {
-                    const arrayOrMappingKey: any = stateVariable.solidityType.mapping || stateVariable.solidityType.isArray 
-                        ? this.state.stateVariableInput[stateVariable.name] : [];
-    
-                    if (stateVariable.solidityType.mapping) {
-                        result = await (this.state.parameterMapping[stateVariable.name] ? 
-                            contract.methods[stateVariable.name](...this.state.parameterMapping[stateVariable.name], arrayOrMappingKey).call() :
-                            contract.methods[stateVariable.name](arrayOrMappingKey).call());
-                    } else {
-                        result = await (this.state.parameterMapping[stateVariable.name] ? 
-                            contract.methods[stateVariable.name](
-                                ...this.state.parameterMapping[stateVariable.name], 
-                                ...arrayOrMappingKey).call() :
-                                contract.methods[stateVariable.name](...arrayOrMappingKey).call());
-                    }
-    
-                    result = typeof result === 'object' ? JSON.stringify(result) : result.toString();
-                } catch (e) {
-                    result = e.toString();
-                }
+
+                result = await callFunction(
+                    stateVariable.getter,
+                    this.props.blockchainConnection,
+                    this.props.selectedContract.deployedAt,
+                    abi,
+                    stateVariable.solidityType.mapping || stateVariable.solidityType.isArray ? 
+                        [this.state.stateVariableInput[stateVariable.name]] : []
+                );
+                
             }
             
             this.setState({
@@ -188,10 +178,14 @@ export class ContractStateVaribaleView extends React.Component<ContractStateVari
             const svIndexOffset: number = inherited ? contract.stateVariables.length : 0;
             let abi: any = null;
             try {
-                abi = getStateVariableAbi(stateVariable, this.props.web3, this.props.contracts);
+                abi = getFunctionAbi(stateVariable.getter, this.props.blockchainConnection.web3, this.props.contracts, this.props.selectedContract);
             } catch (e) {
                 console.log('could not create abi for ' + stateVariable.name);
             }
+
+            const result = this.state.resultMapping[svIndexOffset + index];
+
+            const outputValue = result ? Array.isArray(result) ? result[0] : result : '';
 
             return  <div className='selected-list-item list-group-item list-group-item-action flex-column align-items-start'
                         key={'stateVariable' + contract.name + stateVariable.name}>
@@ -220,10 +214,19 @@ export class ContractStateVaribaleView extends React.Component<ContractStateVari
                                     onChange={(e) => this.onStateVariableInputChange(e, stateVariable.name)} />
                             }
                                 <div className='input-group mb-3 state-varibale-result-container'>
-                                
-                                    <input  className='form-control form-control-sm' type='text' disabled
-                                        value={this.state.resultMapping[svIndexOffset + index] ? 
-                                            this.state.resultMapping[svIndexOffset + index] : ''} />
+                                    {stateVariable.solidityType.userDefined ?
+                                    <textarea  
+                                        className='form-control form-control-sm' 
+                                        disabled
+                                        rows={(outputValue.match(/\n/g) || []).length + 1}
+                                        value={outputValue} 
+                                    />
+
+                                    : <input  className='form-control form-control-sm' type='text' disabled
+                                        value={outputValue} />
+                                    
+                                    }
+                                    
                                     <div className='input-group-append'>
                                         <button type='button' className='btn btn-outline-secondary btn-sm sv-call' data-toggle='modal' 
                                             data-target={'#resultModal' + 'SV' + this.props.selectedContract.name}

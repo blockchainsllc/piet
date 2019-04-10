@@ -92,7 +92,7 @@ export class EventTool extends React.Component<EventToolProps, EventToolState> {
         />
         <div className='input-group-append'>
             <button 
-                className='btn  btn-sm btn-outline-primary dropdown-toggle sv-call'
+                className='btn btn-sm btn-outline-primary dropdown-toggle sv-call'
                 type='button' 
                 data-toggle='dropdown' 
                 aria-haspopup='true' 

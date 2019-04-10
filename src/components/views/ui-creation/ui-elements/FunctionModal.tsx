@@ -14,7 +14,7 @@ import Web3Type from '../../../../types/web3';
 import { Element, UICreationHandling } from '../UIStructure';
 import { InputFunctionParams } from '../../../shared-elements/InputFunctionParams';
 import { OutputFunctionParams } from '../../../shared-elements/OutputFunctionParams';
-import { callFunction, sendFunction } from '../../../../solidity-handler/BlockchainConnector';
+import { callFunction, sendFunction, BlockchainConnection } from '../../../../solidity-handler/BlockchainConnector';
 import { isSameFunction } from '../../../../utils/AbiGenerator';
 
 export type SelectElement = (element: Element) => void;
@@ -22,7 +22,7 @@ export interface FunctionModalProps {
 
     selectElement: SelectElement;
     selectedElement: Element;
-    web3: Web3Type;
+    blockchainConnection: BlockchainConnection;
     uiCreationHandling: UICreationHandling;
     updateAll: Function;
 
@@ -70,7 +70,7 @@ export class FunctionModal extends React.Component<FunctionModalProps, FunctionM
         if (!this.props.selectedElement 
             || !newProps.selectedElement 
             || (newProps.selectedElement.contractAddress !== this.props.selectedElement.contractAddress)
-            || !isSameFunction(newProps.selectedElement.abi, this.props.selectedElement.abi, newProps.web3)
+            || !isSameFunction(newProps.selectedElement.abi, this.props.selectedElement.abi, newProps.blockchainConnection.web3)
         ) {
             this.setState({
                 parameterMapping: [],
@@ -109,7 +109,7 @@ export class FunctionModal extends React.Component<FunctionModalProps, FunctionM
         ) {
             const resultMapping: any[] = await callFunction(
                 this.props.selectedElement.data.contractFunction,
-                this.props.web3,
+                this.props.blockchainConnection,
                 this.props.selectedElement.contractAddress,
                 this.props.selectedElement.abi,
                 this.state.parameterMapping
@@ -124,11 +124,10 @@ export class FunctionModal extends React.Component<FunctionModalProps, FunctionM
                 this.setState({
                     result: await sendFunction(
                         this.props.selectedElement.data.contractFunction,
-                        this.props.web3,
+                        this.props.blockchainConnection,
                         this.props.selectedElement.contractAddress,
                         this.props.selectedElement.abi,
-                        this.state.parameterMapping,
-                        this.props.uiCreationHandling.ethAccount
+                        this.state.parameterMapping
                     )
                 });
                 this.props.updateAll();
@@ -162,7 +161,7 @@ export class FunctionModal extends React.Component<FunctionModalProps, FunctionM
                     inputParameterChange={this.parameterChange}
                     interactiveMode={true}
                     parameter={param}
-                    web3={this.props.web3}
+                    web3={this.props.blockchainConnection.web3}
                 />
                 
             );

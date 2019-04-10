@@ -110,7 +110,7 @@ export class FileBrowserView extends React.Component<FileBrowserViewProps, FileB
             ];
 
             const contractRepresentation: any = {
-                name: contract.name,
+                name: contract.name + (contract.deployedAt ? ' (' + contract.deployedAt.substr(0, 6) + '...)' : ''),
                 icon: 'fas fa-file-alt',
                 className: 'contract-icon',
                 children: contractChildren.length > 0 ? contractChildren : undefined
@@ -212,9 +212,9 @@ export class FileBrowserView extends React.Component<FileBrowserViewProps, FileB
                                 (this.props.contracts.length > 0 &&  this.state.data ? 
                                     <div className='container'>
                                         <div className='row'>
-                                            <div className='col-12 file-tree'>
+                                            <div className='col-12 file-tree default-background'>
                                             
-                                                <Treebeard data={this.state.data} decorators={decorators} onToggle={this.onToggle}/> 
+                                                <Treebeard className='default-background' data={this.state.data} decorators={decorators} onToggle={this.onToggle}/> 
                                             
                                             </div>
                                         </div>
