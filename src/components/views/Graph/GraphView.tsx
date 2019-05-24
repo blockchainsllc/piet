@@ -26,6 +26,7 @@ interface GraphViewProps {
     selectedContractName: string;
     removeContractToSelect: Function;
 }
+
 export class GraphView extends React.Component<GraphViewProps, {}> {
 
     graph: joint.dia.Graph;

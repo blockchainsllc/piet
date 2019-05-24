@@ -209,20 +209,20 @@ export class ContractStateVaribaleView extends React.Component<ContractStateVari
                         { this.props.testMode && contract.deployedAt != null && stateVariable.visibility === 'public' ?
                             <div>{(stateVariable.solidityType.mapping || stateVariable.solidityType.isArray) && 
                                 <input  
-                                    className='form-control form-control-sm'
+                                    className='form-control form-control-sm input-output'
                                     type='text'
                                     onChange={(e) => this.onStateVariableInputChange(e, stateVariable.name)} />
                             }
                                 <div className='input-group mb-3 state-varibale-result-container'>
                                     {stateVariable.solidityType.userDefined ?
                                     <textarea  
-                                        className='form-control form-control-sm' 
+                                        className='form-control form-control-sm input-output' 
                                         disabled
                                         rows={(outputValue.match(/\n/g) || []).length + 1}
                                         value={outputValue} 
                                     />
 
-                                    : <input  className='form-control form-control-sm' type='text' disabled
+                                    : <input  className='form-control form-control-sm input-output' type='text' disabled
                                         value={outputValue} />
                                     
                                     }

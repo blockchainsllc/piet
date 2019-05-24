@@ -43,7 +43,7 @@ export const resultToOutput: (result: any) => string = (result: any): string => 
         return result.toString();
     } else {
         
-        return JSON.stringify({...result}, null, 4);
+        return JSON.stringify({...result}, null, 2);
     }
 };
 

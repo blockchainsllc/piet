@@ -28,6 +28,7 @@ export interface NodeDiagnosticsViewState {
     rpcId: number;
     result: any;
     rpcUrl: string;
+    block: string;
 }
 
 export class NodeDiagnosticsView extends React.Component<NodeDiagnosticsViewProps, NodeDiagnosticsViewState> {
@@ -39,12 +40,15 @@ export class NodeDiagnosticsView extends React.Component<NodeDiagnosticsViewProp
             selectedMethod: rpcMethods[0],
             rpcId: 0,
             result: null,
-            rpcUrl: null
+            rpcUrl: null,
+            block: 'latest'
         };
 
         this.onClickPlay = this.onClickPlay.bind(this);
         this.onMethodChange = this.onMethodChange.bind(this);
         this.onUrlChange = this.onUrlChange.bind(this);
+        this.onBlockChange = this.onBlockChange.bind(this);
+        this.onGetBlock = this.onGetBlock.bind(this);
 
     }
 
@@ -58,6 +62,13 @@ export class NodeDiagnosticsView extends React.Component<NodeDiagnosticsViewProp
         e.persist();
         this.setState({
                 rpcUrl: e.target.value
+        });
+    }
+
+    onBlockChange(e: any): void {
+        e.persist();
+        this.setState({
+                block: e.target.value
         });
     }
 
@@ -82,6 +93,18 @@ export class NodeDiagnosticsView extends React.Component<NodeDiagnosticsViewProp
             return ({
                 result: error ? error : result.data,
                 rpcId: ++prevState.rpcId
+            });
+        });
+    }
+
+    async onGetBlock(): Promise<void> {
+
+        const result: any = await this.props.blockchainConnection.web3.eth.getBlock(this.state.block as any)
+
+        this.setState((prevState: NodeDiagnosticsViewState) => {
+            return ({
+                result
+        
             });
         });
     }
@@ -113,48 +136,91 @@ export class NodeDiagnosticsView extends React.Component<NodeDiagnosticsViewProp
 
         return <SplitPane className='scrollable hide-resizer' split='horizontal' defaultSize={40} allowResize={false} >
                     <div className='h-100 w-100 toolbar'>
-                        <div className='form-inline'>
-                            <input 
-                                type='url'
-                                className='form-control form-control-sm dark-input rpc-url'
-                                onChange={this.onUrlChange}
-                                defaultValue={this.state.rpcUrl}
-    
-                            >
-                            </input>
-                            &nbsp;
-                            <select 
-                                onChange={this.onMethodChange} 
-                                
-                                className='custom-select custom-select-sm rpc-method-select'
-                            >
-                                {methods}
-                                </select> 
-                            &nbsp;
-                            <button className={'btn btn-sm btn-outline-info'}
-                                onClick={this.onClickPlay}>
-                                <i className='fas fa-play'></i>
-                            </button>
-              
-                        </div>
+                        
                         
                     </div>
-                    <SplitPane className='scrollable hide-resizer empty-first-pane' 
-                    split='horizontal'  defaultSize={1} allowResize={false} >
+                    <SplitPane 
+                        className='scrollable hide-resizer empty-first-pane' 
+                        split='horizontal'  
+                        defaultSize={1} 
+                        allowResize={false}
+                    >
                         <div></div>
-                        <div>
-                    
-                            <div className='container-fluid'>
-                                <div className='row'>
-                                    <div className='col-12'>
-                                        <small>
-                                            <JSONTree data={this.state.result} theme={theme} invertTheme={false}/> 
-                                        </small>
+                        <SplitPane 
+                            className='scrollable hide-resizer empty-first-pane' 
+                            split='vertical'  
+                            defaultSize={200} 
+                            allowResize={false}
+                        >
+                            <div className='h-100 w-100 toolbar'>
+                                <div className='form node-diagnostics-form'>
+                                    <div className='text-muted vertical-toolbar-headline'><small>RPC Methods</small></div>
+                                    <div className='form-group'>
+                                        <input 
+                                            type='url'
+                                            className='form-control form-control-sm dark-input rpc-url'
+                                            onChange={this.onUrlChange}
+                                            defaultValue={this.state.rpcUrl}
+                
+                                        >
+                                        </input>
                                     </div>
+                                    <div className='form-group'>
+                         
+                                        <select 
+                                            onChange={this.onMethodChange} 
+                                            
+                                            className='custom-select custom-select-sm rpc-method-select'
+                                        >
+                                            {methods}
+                                        </select> 
+                                    </div>
+                                   
+                                    <button 
+                                        className={'btn btn-sm btn-outline-info'}
+                                        onClick={this.onClickPlay}
+                                    >
+                                        Send
+                                    </button>
+                    
+                                </div>
+                                <hr />
+                                <div className='form node-diagnostics-form'>
+                                    <div className='text-muted vertical-toolbar-headline'><small>Block</small></div>
+                                    <div className='form-group'>
+                                        <input 
+                                            type='url'
+                                            className='form-control form-control-sm dark-input rpc-url'
+                                            onChange={this.onBlockChange}
+                                            defaultValue={this.state.block}
+                
+                                        >
+                                        </input>
+                                    </div>
+                                   
+                                    <button 
+                                        className={'btn btn-sm btn-outline-info'}
+                                        onClick={this.onGetBlock}
+                                    >
+                                        Get Block
+                                    </button>
+                    
                                 </div>
                             </div>
-                    
-                        </div>
+                            <div>
+                        
+                                <div className='container-fluid'>
+                                    <div className='row'>
+                                        <div className='col-12'>
+                                            <small>
+                                                <JSONTree data={this.state.result} theme={theme} invertTheme={false}/> 
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                        
+                            </div>
+                        </SplitPane>
                             
                     </SplitPane>
                 </SplitPane>;

@@ -28,6 +28,7 @@ interface ConfigurationViewState {
     accounts: string[];
     showAddUserView: boolean;
     newPrivateKey: string;
+    chainId: string;
 
 }
 
@@ -40,7 +41,8 @@ export class ConfigurationView extends React.Component<ConfigurationViewProps, C
             newBlockchainConnection: null,
             accounts: [],
             showAddUserView: false,
-            newPrivateKey: null
+            newPrivateKey: null,
+            chainId: null
         };
         this.onConnectionTypeChange = this.onConnectionTypeChange.bind(this);
         this.onUrlChange = this.onUrlChange.bind(this);
@@ -75,26 +77,41 @@ export class ConfigurationView extends React.Component<ConfigurationViewProps, C
     } 
 
     async componentDidMount(): Promise<void> {
+        this.updateChainId(this.props.blockchainConnection);
         this.setState({
             newBlockchainConnection: this.props.blockchainConnection
-        });
-        this.updateAccounts(this.props);
+        }, () => this.updateAccounts(this.props.blockchainConnection));
 
+
+    }
+
+    async updateChainId(blockchainConnection: BlockchainConnection): Promise<string> {
+        let chainId: string = null;
+
+        try {
+            chainId = blockchainConnection.web3 ? 
+                await (blockchainConnection.web3.eth as any).net.getId() : null;
+        } catch (e) {
+            //TODO: error message
+        }
+        this.setState({
+            chainId
+        }); 
+        return chainId;     
     }
 
     async componentWillReceiveProps(newProps: ConfigurationViewProps): Promise<void> {
         this.setState({
             newBlockchainConnection: newProps.blockchainConnection
-        });
-        this.updateAccounts(newProps);
+        }, () => this.updateAccounts(newProps.blockchainConnection));
+        
     }
 
-    async updateAccounts(props: ConfigurationViewProps): Promise<void> {
+    async updateAccounts(blockchainConnection: BlockchainConnection): Promise<void> {
 
-        if (props.blockchainConnection && props.blockchainConnection.web3) {
-            await props.blockchainConnection.web3.eth.personal.getAccounts()
+        if (blockchainConnection && blockchainConnection.web3 && await this.updateChainId) {
             this.setState({
-                accounts: await props.blockchainConnection.web3.eth.getAccounts()
+                accounts: await blockchainConnection.web3.eth.getAccounts()
             });
         }
     }
@@ -121,9 +138,15 @@ export class ConfigurationView extends React.Component<ConfigurationViewProps, C
     }
 
     async onSubmit(): Promise<void> {
-        this.props.blockchainConnection.updateBlockchainConnection(
-            await changeBlockchainConfiguration(this.state.newBlockchainConnection)
-        );
+        try {
+            this.props.blockchainConnection.updateBlockchainConnection(
+                await changeBlockchainConfiguration(this.state.newBlockchainConnection)
+            );
+        } catch (e) {
+            //TODO error message
+        }
+        
+        this.updateChainId(this.state.newBlockchainConnection);
     }
 
     connectionTypeToLabel(connectionType: ConnectionType): string {
@@ -150,11 +173,15 @@ export class ConfigurationView extends React.Component<ConfigurationViewProps, C
                 {this.connectionTypeToLabel(ConnectionType[enumString])}
             </option>
         );
-
-        const memWallet: any = this.props.blockchainConnection.web3.eth.accounts.wallet;
         const memAccounts: string[] = [];
-        for (let i: number = 0; i < memWallet.length; i++) {
-            memAccounts.push(memWallet[i].address);
+
+        if (this.props.blockchainConnection.web3) {
+
+            const memWallet: any = this.props.blockchainConnection.web3.eth.accounts.wallet;
+            
+            for (let i: number = 0; i < memWallet.length; i++) {
+                memAccounts.push(memWallet[i].address);
+            }
         }
 
         const accounts: JSX.Element[] = this.state.accounts.concat(memAccounts).map((account: string) => 
@@ -171,40 +198,47 @@ export class ConfigurationView extends React.Component<ConfigurationViewProps, C
         return <SplitPane className='scrollable hide-resizer' split='horizontal'  defaultSize={40} allowResize={false} >
                     <div className='h-100 w-100 toolbar'>
                     {this.state.newBlockchainConnection &&
-                            
-                            <div className='form-inline'>
-                                <select 
-                                    onChange={this.onConnectionTypeChange} 
-                                    defaultValue={this.props.blockchainConnection.connectionType}
-                                    className='custom-select custom-select-sm conf-select'
-                                >
-                                    {conntectionType}
-                                </select>
-                                &nbsp;
-
-                                {(this.state.newBlockchainConnection.connectionType === ConnectionType.Rpc || 
-                                    this.state.newBlockchainConnection.connectionType === ConnectionType.WebSocketRPC
-                                ) && 
-                                    
-                                        <input 
-                                            type='url'
-                                            className='form-control form-control-sm dark-input rpc-url'
-                                            onChange={this.onUrlChange}
-                                            defaultValue={this.state.newBlockchainConnection.rpcUrl}
-                
-                                        >
-                                        </input>
-                              
-                                }
-                                    &nbsp;
-                                    <button className='btn btn-sm btn-outline-info' onClick={this.onSubmit}>Connect</button>
-                                    &nbsp;&nbsp;&nbsp;
-                                    <button 
-                                        className={'btn btn-sm btn' + (this.state.showAddUserView ? '' : '-outline') + '-info'} 
-                                        onClick={this.toggleUserView}
+                            <div className='d-flex w-100 justify-content-between full-block'>
+                                <div className='form-inline'>
+                                    <select 
+                                        onChange={this.onConnectionTypeChange} 
+                                        defaultValue={this.props.blockchainConnection.connectionType}
+                                        className='custom-select custom-select-sm conf-select'
                                     >
-                                        <i className='fas fa-user-plus'></i>
-                                    </button>
+                                        {conntectionType}
+                                    </select>
+                                    &nbsp;
+
+                                    {(this.state.newBlockchainConnection.connectionType === ConnectionType.Rpc || 
+                                        this.state.newBlockchainConnection.connectionType === ConnectionType.WebSocketRPC
+                                    ) && 
+                                        
+                                            <input 
+                                                type='url'
+                                                className='form-control form-control-sm dark-input rpc-url'
+                                                onChange={this.onUrlChange}
+                                                defaultValue={this.state.newBlockchainConnection.rpcUrl}
+                    
+                                            >
+                                            </input>
+                                
+                                    }
+                                        &nbsp;
+                                        <button className='btn btn-sm btn-outline-info' onClick={this.onSubmit}>Connect</button>
+                                        &nbsp;&nbsp;&nbsp;
+                                        <button 
+                                            className={'btn btn-sm btn' + (this.state.showAddUserView ? '' : '-outline') + '-info'} 
+                                            onClick={this.toggleUserView}
+                                        >
+                                            <i className='fas fa-user-plus'></i>
+                                        </button>
+                                </div>
+                                <div 
+                                    className={'form-inline ' + (this.state.chainId ? 'connected' : 'text-muted')}
+                                    title={(this.state.chainId ? 'Connected to chain ' + this.state.chainId : 'Disconnected')}
+                                >
+                                    <i className='fas fa-network-wired'></i>
+                                </div>
                             </div>
                         }
                     </div>
@@ -229,7 +263,11 @@ export class ConfigurationView extends React.Component<ConfigurationViewProps, C
                                     </div>
                                 </div>
                             }
+                    
+        
+                    
                             <div className='container'>
+                                
                                 <small>
                                     <div className='list-group list-group-flush account-list'>
                                         <button
@@ -245,6 +283,7 @@ export class ConfigurationView extends React.Component<ConfigurationViewProps, C
                                     </div>
                                 </small>
                             </div>
+                          
                             
                         </div>
                     </SplitPane>
