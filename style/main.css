@@ -33,7 +33,7 @@
 }
 
 .rpc-method-select {
-    width: 200px;
+    width: 100%;
     border-radius: 0rem;
     color: var(--text-highlight-color);
     background-color: var(--toolbar-color);
@@ -76,8 +76,9 @@
     color: var(--error-red);
 }
 
-.migration-function-cell {
-  
+.input-output {
+    font-family: monospace;
+    font-size: small;
 }
 
 .output-message-container {
@@ -95,6 +96,14 @@
     color: var(--text-highlight-color);
     background-color: var(--toolbar-color);
     border-width: 0px;
+}
+
+.connected {
+    color: #ffffff !important;
+}
+
+.vertical-toolbar-headline {
+    margin-bottom: 1rem;
 }
 
 .migration-select-form {

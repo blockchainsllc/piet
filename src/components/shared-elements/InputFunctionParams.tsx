@@ -66,13 +66,13 @@ export class InputFunctionParams extends React.Component<InputFunctionParamsProp
             
             { isBytes && 
                 <input onChange={this.onUTF8Change}
-                className='form-control form-control-sm' type='text' placeholder='UTF-8 Input' />
+                className='form-control form-control-sm input-output' type='text' placeholder='UTF-8 Input' />
             }
                 { this.props.parameter.solidityType.userDefined || this.props.parameter.solidityType.isArray ? 
                     <textarea onChange={this.onHexChange}
-                        className='form-control form-control-sm' placeholder={isBytes ? 'Hex Input' : ''} /> :
+                        className='form-control form-control-sm input-output' placeholder={isBytes ? 'Hex Input' : ''} /> :
                     <input onChange={this.onHexChange}
-                        className='form-control form-control-sm' type='text' placeholder={isBytes ? 'Hex Input' : ''} />
+                        className='form-control form-control-sm input-output' type='text' placeholder={isBytes ? 'Hex Input' : ''} />
                 }
                 
             </div> : null }

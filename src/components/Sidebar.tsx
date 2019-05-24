@@ -142,7 +142,7 @@ export class Sidebar extends React.Component<SidebarProps, {}> {
                                     onClick={() => this.props.changeActiveTab(0, 0)}><i className='fas fa-copy'></i></a>
                             </div>
                         </div>
-                    </div> */}
+                    </div> 
                     <div className='sidebar-buttons-container'>
                         <div className='row'>
                             <div className='col-sm text-center'>
@@ -156,7 +156,7 @@ export class Sidebar extends React.Component<SidebarProps, {}> {
                                 </a>
                             </div>
                         </div>
-                    </div>
+                    </div>*/}
 
                     <div className='sidebar-buttons-container'>
                         <div className='row'>

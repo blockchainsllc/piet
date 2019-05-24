@@ -46,13 +46,13 @@ export class OutputFunctionParams extends React.Component<OutputFunctionParamsPr
                 <div className='param-content'>
                 { !this.props.parameter.solidityType.userDefined && !this.props.parameter.solidityType.isArray  ? 
                     <input
-                        className='form-control form-control-sm'
+                        className='form-control form-control-sm input-output'
                         type='text'
                         disabled
                         value={value} 
                     /> : 
                     <textarea
-                        className='form-control form-control-sm'
+                        className='form-control form-control-sm input-output'
                         disabled
                         rows={(value.match(/\n/g) || []).length + 1}
                         value={value} 
