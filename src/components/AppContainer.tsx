@@ -176,20 +176,23 @@ class AppContainer extends React.Component<{}, {}> {
 
     addElementToRow(rowIndex: number, element: Element): void {
 
-        this.setState((prev: AppContainerState) => {
+        this.setState(
+            (prev: AppContainerState) => {
 
-            if (rowIndex >= 0) {
-                prev.createdUIStructure.rows[rowIndex].elements.push(element);
-            } else {
-                prev.createdUIStructure.rows.push({
-                    elements: [element]
-                });
-            }
-            
-            return {
-                createdUIStructure: prev.createdUIStructure
-            };
-        }, () => console.log(JSON.stringify(this.state.createdUIStructure)));
+                if (rowIndex >= 0) {
+                    prev.createdUIStructure.rows[rowIndex].elements.push(element);
+                } else {
+                    prev.createdUIStructure.rows.push({
+                        elements: [element]
+                    });
+                }
+                
+                return {
+                    createdUIStructure: prev.createdUIStructure
+                };
+            }, 
+            () => console.log(JSON.stringify(this.state.createdUIStructure))
+        );
     }
 
     addElementToAction(element: Element): void {
@@ -360,9 +363,7 @@ class AppContainer extends React.Component<{}, {}> {
             this.setState((prev: AppContainerState) => ({
                 contracts,
                 graph: null
-            }));
-            
-            
+            }));    
 
         }
         this.setIsLoading(false);

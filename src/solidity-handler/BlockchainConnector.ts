@@ -47,11 +47,15 @@ export const resultToOutput: (result: any) => string = (result: any): string => 
     }
 };
 
-export const changeBlockchainConfiguration = async (
+type ChangeBlockchainConfiguration = (
+    blockchainConnection: BlockchainConnection
+) => Promise<BlockchainConnection>;
+
+export const changeBlockchainConfiguration: ChangeBlockchainConfiguration = async (
     blockchainConnection: BlockchainConnection
 ): Promise<BlockchainConnection> => {
 
-    const getFirstAccount = async (web3: Web3Type): Promise<string> =>  {
+    const getFirstAccount: (web3: Web3Type) => Promise<string> = async (web3: Web3Type): Promise<string> =>  {
         const accounts: string[] = await blockchainConnection.web3.eth.getAccounts();
         if (blockchainConnection.useDefaultAccount) {
             return null;
@@ -107,7 +111,15 @@ export const changeBlockchainConfiguration = async (
     }
 };
 
-export const initBlockchainConfiguration = async (
+type InitBlockchainConfiguration = (
+    connectionType: ConnectionType, 
+    rpcUrl: string, 
+    updateBlockchainConnection: UpdateBlockchainConnection,
+    addAccount: AddAccount,
+    selectAccount: SelectAccount,
+    addTransactionToHistory: AddTransactionToHistory
+) => Promise<BlockchainConnection>;
+export const initBlockchainConfiguration: InitBlockchainConfiguration = async (
     connectionType: ConnectionType, 
     rpcUrl: string, 
     updateBlockchainConnection: UpdateBlockchainConnection,
@@ -140,7 +152,8 @@ export const initBlockchainConfiguration = async (
     
 };
 
-export const decodeWeb3Result = (tupleAbi: any, web3Tuple: any, initJson: any = {}) => {
+type DecodeWeb3Result = (tupleAbi: any, web3Tuple: any, initJson?: any) => any;
+export const decodeWeb3Result: DecodeWeb3Result = (tupleAbi: any, web3Tuple: any, initJson: any = {}): any => {
 
     let current: any;
     if (Object.keys(initJson).length === 0) {

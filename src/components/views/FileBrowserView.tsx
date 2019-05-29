@@ -34,7 +34,7 @@ interface FileBrowserViewState {
     data: any;
 }
 
-decorators.Header = ({style, node}): any => {
+decorators.Header = ({style, node}: any): any => {
     const iconStyle: any = {marginRight: '5px'};
 
     return (
@@ -51,8 +51,8 @@ decorators.Header = ({style, node}): any => {
     );
 };
 
-decorators.Toggle =  ({style}) => {
-    const {height, width} = style;
+decorators.Toggle =  ({style}: any): JSX.Element => {
+    const {height, width}: any = style;
     const midHeight: number = height * 0.5;
     const points: string = `0,0 0,${height} ${width},${midHeight}`;
 
@@ -113,7 +113,7 @@ export class FileBrowserView extends React.Component<FileBrowserViewProps, FileB
         const files: any[] = [];
 
         contracts.forEach((contract: Sol.Contract) => {
-            const file: any = files.find((file: any) => file.name === contract.inFile);
+            const file: any = files.find((aFile: any) => aFile.name === contract.inFile);
 
             const contractChildren: any = [
                 ...contract.enumerations.map((contractEnum: Sol.ContractEnumeration) => ({
@@ -214,7 +214,13 @@ export class FileBrowserView extends React.Component<FileBrowserViewProps, FileB
                     <div className='h-100 w-100 toolbar'>
                     
                         <label className={'btn btn-sm btn-outline-info'} htmlFor='file'>Load</label>
-                        <input id='file' className='files-input' type='file' onChange={ (e) => this.submitFiles(e.target.files)} multiple />
+                        <input 
+                            id='file' 
+                            className='files-input' 
+                            type='file' 
+                            onChange={ (e: any): void => this.submitFiles(e.target.files)} 
+                            multiple 
+                        />
                         
                        &nbsp;
                         <button 
@@ -242,7 +248,12 @@ export class FileBrowserView extends React.Component<FileBrowserViewProps, FileB
                                         <div className='row'>
                                             <div className='col-12 file-tree default-background'>
                                             
-                                                <Treebeard className='default-background' data={this.state.data} decorators={decorators} onToggle={this.onToggle}/> 
+                                                <Treebeard 
+                                                    className='default-background' 
+                                                    data={this.state.data} 
+                                                    decorators={decorators} 
+                                                    onToggle={this.onToggle}
+                                                /> 
                                             
                                             </div>
                                         </div>

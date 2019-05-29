@@ -64,7 +64,7 @@ export class TabList extends React.Component<TabListProps, TabListState> {
  
     render(): JSX.Element {
 
-        const tabs = this.props.tabNames.map((tab: string, index: number) => 
+        const tabs: JSX.Element[] = this.props.tabNames.map((tab: string, index: number) => 
             <li key={tab} className='nav-item nav-tab-item'>
                 <span>
                     <a 

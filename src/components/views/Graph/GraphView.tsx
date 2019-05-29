@@ -12,7 +12,7 @@ import * as React from 'react';
 import * as joint from 'jointjs';
 import * as ReactDOM from 'react-dom';
 import * as SolidityHandler from '../../../solidity-handler/SolidityHandler';
-import * as JointElements from '../../../utils/JointElements';
+import * as JointElements from './JointElements';
 import { Graph, graphGenerator, getDefaultGraph, GraphViewType, extractElementsFromGraph } from './GraphGenerator';
 
 interface GraphViewProps {
@@ -31,7 +31,6 @@ export class GraphView extends React.Component<GraphViewProps, {}> {
     inheritanceLinks: any;
     nodeIdNamePairs: any;
     otherLinks: any;
-
 
     constructor(props: GraphViewProps) {
         super(props);
@@ -144,7 +143,7 @@ export class GraphView extends React.Component<GraphViewProps, {}> {
         }
 
         if (newProps.contracts.length === 0) {
-            //this.paper = null;
+            this.paper = null;
         }
         
         if (newProps.contracts.length > 0 && (!newProps.graph || !this.props.graph)) {

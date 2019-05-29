@@ -68,7 +68,7 @@ export class GraphContainerView extends React.Component<GraphContainerViewProps,
                         <button 
                             title='Zoom Out'
                             className='btn btn-sm btn-outline-info'
-                            onClick={() => this.zoomOut()}
+                            onClick={this.zoomOut}
                         >
                             <i className='fa fa-minus' aria-hidden='true'></i>
                         </button>
@@ -76,7 +76,7 @@ export class GraphContainerView extends React.Component<GraphContainerViewProps,
                         <button 
                             title='Zoom In'
                             className='btn btn-sm btn-outline-info' 
-                            onClick={() => this.zoomIn()}
+                            onClick={this.zoomIn}
                         >
                             <i className='fa fa-plus' aria-hidden='true'></i>
                         </button>

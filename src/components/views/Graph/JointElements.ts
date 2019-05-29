@@ -9,8 +9,7 @@
  */
 
 import * as joint from 'jointjs';
-import { Contract, NodeElement, SolidityAnnotation } from '../solidity-handler/SolidityHandler';
-
+import { Contract, NodeElement } from '../../../solidity-handler/SolidityHandler';
 
 // const link = joint.dia.Link.extend({
 //     markup: '<path class="connection"/><path class="marker-target"/><g class="labels" />'
@@ -117,7 +116,7 @@ export const enumHighlighted: (enumName: string) => any = (enumName: string): an
     } 
 });
 
-export const structNotHighlighted: (structName: string) => any= (structName: string): any => ({ 
+export const structNotHighlighted: (structName: string) => any = (structName: string): any => ({ 
     rect: { 
         class: 'struct-node'
 
@@ -133,7 +132,7 @@ export const structNotHighlighted: (structName: string) => any= (structName: str
     }
 });
 
-export const structHighlighted: (structName: string) => any= (structName: string): any => ({  
+export const structHighlighted: (structName: string) => any = (structName: string): any => ({  
     rect: { 
         class: 'struct-node node-highlighted'
     },
@@ -211,4 +210,3 @@ function cutText(text: string): string {
 }
 
 joint.shapes.basic.Rect = iconRect;
-

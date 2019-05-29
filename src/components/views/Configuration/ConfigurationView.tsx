@@ -78,11 +78,10 @@ export class ConfigurationView extends React.Component<ConfigurationViewProps, C
 
     async componentDidMount(): Promise<void> {
         this.updateChainId(this.props.blockchainConnection);
-        this.setState({
-            newBlockchainConnection: this.props.blockchainConnection
-        }, () => this.updateAccounts(this.props.blockchainConnection));
-
-
+        this.setState(
+            {newBlockchainConnection: this.props.blockchainConnection},
+            () => this.updateAccounts(this.props.blockchainConnection)
+        );
     }
 
     async updateChainId(blockchainConnection: BlockchainConnection): Promise<string> {
@@ -101,14 +100,13 @@ export class ConfigurationView extends React.Component<ConfigurationViewProps, C
     }
 
     async componentWillReceiveProps(newProps: ConfigurationViewProps): Promise<void> {
-        this.setState({
-            newBlockchainConnection: newProps.blockchainConnection
-        }, () => this.updateAccounts(newProps.blockchainConnection));
-        
+        this.setState(
+            {newBlockchainConnection: newProps.blockchainConnection},
+            () => this.updateAccounts(newProps.blockchainConnection)
+        );
     }
 
     async updateAccounts(blockchainConnection: BlockchainConnection): Promise<void> {
-
         if (blockchainConnection && blockchainConnection.web3 && await this.updateChainId) {
             this.setState({
                 accounts: await blockchainConnection.web3.eth.getAccounts()
@@ -179,8 +177,8 @@ export class ConfigurationView extends React.Component<ConfigurationViewProps, C
 
             const memWallet: any = this.props.blockchainConnection.web3.eth.accounts.wallet;
             
-            for (let i: number = 0; i < memWallet.length; i++) {
-                memAccounts.push(memWallet[i].address);
+            for (const wallet of memWallet) {
+                memAccounts.push(wallet.address);
             }
         }
 
@@ -189,7 +187,7 @@ export class ConfigurationView extends React.Component<ConfigurationViewProps, C
                 className={'list-group-item account-list-element' 
                     + (account === this.props.blockchainConnection.selectedAccount ? ' selected-account' : ' text-muted')} 
                 key={account}
-                onClick={() => this.props.blockchainConnection.selectAccount(account)}
+                onClick={(): void => this.props.blockchainConnection.selectAccount(account)}
             >
                 {account}
             </button>
@@ -264,10 +262,7 @@ export class ConfigurationView extends React.Component<ConfigurationViewProps, C
                                 </div>
                             }
                     
-        
-                    
                             <div className='container'>
-                                
                                 <small>
                                     <div className='list-group list-group-flush account-list'>
                                         <button
@@ -275,16 +270,14 @@ export class ConfigurationView extends React.Component<ConfigurationViewProps, C
                                                 + (this.props.blockchainConnection.useDefaultAccount ? 
                                                     ' selected-account' : ' text-muted')} 
                                             key={'defaultAccount'}
-                                            onClick={() => this.props.blockchainConnection.selectAccount(null)}
+                                            onClick={(): void => this.props.blockchainConnection.selectAccount(null)}
                                         >
                                             Default Account
                                         </button>
                                         {accounts}
                                     </div>
                                 </small>
-                            </div>
-                          
-                            
+                            </div>       
                         </div>
                     </SplitPane>
                 </SplitPane>;

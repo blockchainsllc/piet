@@ -579,20 +579,8 @@ export const parseContent: (fileContents: any) => Contract[] = (fileContents: an
                     isAbstract: (node as any).subNodes
                         .filter((subNode: any) => subNode.type && subNode.type === 'FunctionDefinition' && subNode.body === null).length > 0
                 };
-                // console.log('################')
-                // console.log(node)
-                //console.log(contract)
 
                 contracts.push(contract);
-
-                // const soliumConf = {
-                //     "extends": "solium:recommended",
-                //     "plugins": [],
-                //     "rules": {
- 
-                //     }
-                // };
-                // console.log(solium.lint(contract.source, soliumConf))
 
             }
         });

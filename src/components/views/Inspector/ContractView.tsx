@@ -84,7 +84,11 @@ export class ContractView extends React.Component<ContractViewProps, ContractVie
                     <div className='card-body selected-card contract-card'>
                         <div className='text-center'>
                             {/* <h3>
-                                 <a href='#' className='inspector-view-headline' onClick={() => this.props.addTabEntity(tabEntity, 1, false)}>
+                                 <a 
+                                    href='#' 
+                                    className='inspector-view-headline' 
+                                    onClick={() => this.props.addTabEntity(tabEntity, 1, false)}
+                                 >
                                     {this.props.selectedContract.name}
                                  </a>
                             </h3>  */}
@@ -153,14 +157,16 @@ export class ContractView extends React.Component<ContractViewProps, ContractVie
                                             <div>
                                                 <input
                                                     placeholder={contract.deployedAt}
-                                                    onChange={(e) => this.onChangeContractAddress(e)}
+                                                    onChange={(e: any): void => this.onChangeContractAddress(e)}
                                                     className='form-control form-control-sm' type='text'
                                                 />
                                                 <div className='text-right functionOperations'>
                                                 <button 
                                                     type='button'
                                                     className='function-operation-button btn btn-outline-primary btn-sm'
-                                                    onClick={() => {this.props.changeContractAddress(this.state.contractAddress, contract.name); }}
+                                                    onClick={(): void => {
+                                                        this.props.changeContractAddress(this.state.contractAddress, contract.name); 
+                                                    }}
                                                 >
                                                         Save
                                                 </button>

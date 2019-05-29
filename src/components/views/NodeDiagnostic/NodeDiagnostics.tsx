@@ -87,7 +87,7 @@ export class NodeDiagnosticsView extends React.Component<NodeDiagnosticsViewProp
             method: this.state.selectedMethod, 
             params: [], 
             id: this.state.rpcId
-        }).catch(e => error = e);
+        }).catch((e: Error) => error = e);
 
         this.setState((prevState: NodeDiagnosticsViewState) => {
             return ({
@@ -99,7 +99,7 @@ export class NodeDiagnosticsView extends React.Component<NodeDiagnosticsViewProp
 
     async onGetBlock(): Promise<void> {
 
-        const result: any = await this.props.blockchainConnection.web3.eth.getBlock(this.state.block as any)
+        const result: any = await this.props.blockchainConnection.web3.eth.getBlock(this.state.block as any);
 
         this.setState((prevState: NodeDiagnosticsViewState) => {
             return ({
@@ -136,7 +136,6 @@ export class NodeDiagnosticsView extends React.Component<NodeDiagnosticsViewProp
 
         return <SplitPane className='scrollable hide-resizer' split='horizontal' defaultSize={40} allowResize={false} >
                     <div className='h-100 w-100 toolbar'>
-                        
                         
                     </div>
                     <SplitPane 

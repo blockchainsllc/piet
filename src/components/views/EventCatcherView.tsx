@@ -151,14 +151,14 @@ export class EventCatcherView extends React.Component<EventCatcherViewProps, Eve
                             />
                             &nbsp;
                             <button className={'btn btn-sm btn-outline-info'}
-                                onClick={() => this.onClickPlay()}>
+                                onClick={(): Promise<void> => this.onClickPlay()}>
                                 <i className='fas fa-play'></i>
                             </button>
                             &nbsp;
                             &nbsp;
                             &nbsp;
                             <button className={'btn btn-sm btn-' + (this.state.rawView ? '' : 'outline-') + 'info'}
-                                onClick={() => this.onClickRaw()}>
+                                onClick={(): void => this.onClickRaw()}>
                                 Raw View
                             </button>
                         </div>

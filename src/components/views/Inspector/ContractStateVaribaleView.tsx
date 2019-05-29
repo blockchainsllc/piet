@@ -123,7 +123,12 @@ export class ContractStateVaribaleView extends React.Component<ContractStateVari
             let result: any; 
             let abi: any = null;
             try {
-                abi = getFunctionAbi(stateVariable.getter, this.props.blockchainConnection.web3, this.props.contracts, this.props.selectedContract);
+                abi = getFunctionAbi(
+                    stateVariable.getter,
+                    this.props.blockchainConnection.web3,
+                    this.props.contracts,
+                    this.props.selectedContract
+                );
             } catch (e) {
                 result = 'could not create abi for ' + stateVariable.name;
             }
@@ -166,7 +171,7 @@ export class ContractStateVaribaleView extends React.Component<ContractStateVari
             return  [<div className='selected-list-item list-group-item list-group-item-action flex-column align-items-start'
                         key={'stateVariable' + contract.name + 'inheritedInfo'}>
                         <small>
-                            <a href='#' onClick={() => {this.props.toggleInheritance(); }} className={'text-muted'}>
+                            <a href='#' onClick={(): void => this.props.toggleInheritance()} className={'text-muted'}>
                                 {contract.inheritedStateVariables.length}
                                 &nbsp;inherited state variable{contract.inheritedStateVariables.length === 1 ? '' : 's'}
                             </a>
@@ -178,14 +183,19 @@ export class ContractStateVaribaleView extends React.Component<ContractStateVari
             const svIndexOffset: number = inherited ? contract.stateVariables.length : 0;
             let abi: any = null;
             try {
-                abi = getFunctionAbi(stateVariable.getter, this.props.blockchainConnection.web3, this.props.contracts, this.props.selectedContract);
+                abi = getFunctionAbi(
+                    stateVariable.getter,
+                    this.props.blockchainConnection.web3,
+                    this.props.contracts,
+                    this.props.selectedContract
+                );
             } catch (e) {
                 console.log('could not create abi for ' + stateVariable.name);
             }
 
-            const result = this.state.resultMapping[svIndexOffset + index];
+            const result: any = this.state.resultMapping[svIndexOffset + index];
 
-            const outputValue = result ? Array.isArray(result) ? result[0] : result : '';
+            const outputValue: any = result ? Array.isArray(result) ? result[0] : result : '';
 
             return  <div className='selected-list-item list-group-item list-group-item-action flex-column align-items-start'
                         key={'stateVariable' + contract.name + stateVariable.name}>
@@ -211,7 +221,7 @@ export class ContractStateVaribaleView extends React.Component<ContractStateVari
                                 <input  
                                     className='form-control form-control-sm input-output'
                                     type='text'
-                                    onChange={(e) => this.onStateVariableInputChange(e, stateVariable.name)} />
+                                    onChange={(e: any): void  => this.onStateVariableInputChange(e, stateVariable.name)} />
                             }
                                 <div className='input-group mb-3 state-varibale-result-container'>
                                     {stateVariable.solidityType.userDefined ?
@@ -230,7 +240,7 @@ export class ContractStateVaribaleView extends React.Component<ContractStateVari
                                     <div className='input-group-append'>
                                         <button type='button' className='btn btn-outline-secondary btn-sm sv-call' data-toggle='modal' 
                                             data-target={'#resultModal' + 'SV' + this.props.selectedContract.name}
-                                            onClick={() => this.call(stateVariable, svIndexOffset + index)}>
+                                            onClick={(): void => {this.call(stateVariable, svIndexOffset + index); }}>
                                             <i className='fas fa-sync'></i>
                                         </button>
                                     </div>

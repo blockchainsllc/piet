@@ -1,5 +1,5 @@
 // tslint:disable-next-line:missing-jsdoc
-import * as JointElements from '../../../utils/JointElements';
+import * as JointElements from './JointElements';
 import * as joint from 'jointjs';
 import * as SolidityHandler from '../../../solidity-handler/SolidityHandler';
 import * as ReactDOM from 'react-dom';

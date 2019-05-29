@@ -58,14 +58,13 @@ export class CodeBox extends React.Component<CodeBoxProps, {}> {
         } 
 
         let abi: any;
-        let abiError = null;
+        let abiError: string = null;
         try {
             abi = getFunctionAbi(this.props.selectedFunction, this.props.web3, this.props.contracts, this.props.contextContract)[0];
         } catch (e) {
             abiError = e.message;
         }
             
-
         return  <div 
                     className={'codeModal modal fade' + (this.props.codeBoxIsShown ? ' show force-show' : '')} 
                     role='dialog' aria-labelledby='exampleModalLabel' aria-hidden='true'>
@@ -102,12 +101,13 @@ export class CodeBox extends React.Component<CodeBoxProps, {}> {
                             <div className='modal-body code-modal-body code-modal-signature'>
                                 {abiError === null && 
                                     <small>
-                                        <small className='text-muted'>Signature: {this.props.web3.eth.abi.encodeFunctionSignature(abi) }</small>
+                                        <small className='text-muted'>
+                                            Signature: {this.props.web3.eth.abi.encodeFunctionSignature(abi)}
+                                        s</small>
                                     </small>
                                 }                                
                             </div>
 
-                            
                             <div className='modal-footer'>
                             
                                 <button type='button' onClick={this.hideCodeBox} 

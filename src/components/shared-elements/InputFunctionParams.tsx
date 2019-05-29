@@ -24,7 +24,6 @@ export interface InputFunctionParamsProps {
     web3: Web3Type;
 }
 
-    
 export class InputFunctionParams extends React.Component<InputFunctionParamsProps, {}> {
 
     constructor(props: InputFunctionParamsProps) {
