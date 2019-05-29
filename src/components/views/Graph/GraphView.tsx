@@ -12,54 +12,37 @@ import * as React from 'react';
 import * as joint from 'jointjs';
 import * as ReactDOM from 'react-dom';
 import * as SolidityHandler from '../../../solidity-handler/SolidityHandler';
-import { JointElements } from '../../../utils/JointElements';
+import * as JointElements from '../../../utils/JointElements';
+import { Graph, graphGenerator, getDefaultGraph, GraphViewType, extractElementsFromGraph } from './GraphGenerator';
 
-export enum ViewType {
-    Inheritance,
-    TypeResolution
-}
 interface GraphViewProps {
     contracts: SolidityHandler.Contract[];
-    changeSelectedElement: Function;
     graphScale: number;
-    viewType: ViewType;
+    changeSelectedElement: Function;
     selectedContractName: string;
     removeContractToSelect: Function;
+    graph: Graph;
+    setGraph: Function;
+    graphViewType: GraphViewType;
 }
-
 export class GraphView extends React.Component<GraphViewProps, {}> {
+    paper: any;
+    model: any;
+    inheritanceLinks: any;
+    nodeIdNamePairs: any;
+    otherLinks: any;
 
-    graph: joint.dia.Graph;
-    paper: joint.dia.Paper;
-    cells: any[];
-    nodeIdNamePairs: JointElements.NodeNameIdPair[];
-    inheritanceLinks: any[];
-    otherLinks: any[];
 
     constructor(props: GraphViewProps) {
         super(props);
+
+        this.scale = this.scale.bind(this);
+        this.storeGraph = this.storeGraph.bind(this);
         
-    }
-
-    init(): void {
-        this.graph = new joint.dia.Graph();
-
-        this.paper = new joint.dia.Paper(
-            {
-                el: ReactDOM.findDOMNode(this.refs.placeholder),
-                width: '100%',
-                height: 2000,
-                model: this.graph,
-                gridSize: 20
-                
-            } as any
-        );
     }
 
     componentDidMount(): void {
-        
-        this.init();
-        this.initInteraction();
+  
         this.update(this.props);
 
         if (this.props.selectedContractName) {
@@ -86,6 +69,7 @@ export class GraphView extends React.Component<GraphViewProps, {}> {
     }
 
     highlightContract(cellView: any, contratName: any): void {
+
         const nodenodeIdNamePair: JointElements.NodeNameIdPair = this.nodeIdNamePairs
             .find((item: JointElements.NodeNameIdPair) =>
                 cellView ? item.jointjsNode.id.toString() === cellView.model.id : item.nodeElement.name === contratName);
@@ -111,17 +95,8 @@ export class GraphView extends React.Component<GraphViewProps, {}> {
                 
             });
                     
-        }  
-    }
-
-    initInteraction(): void {
-
-        this.paper.on('cell:pointerdown', 
-                      (cellView: any, evt: any, x: any, y: any) => { 
-                        this.highlightContract(cellView, null);
-                
-            }
-        );
+        }
+        
     }
 
     unHightlightNode(slectedNodeElement: any, node: any): void {
@@ -167,143 +142,83 @@ export class GraphView extends React.Component<GraphViewProps, {}> {
         if (this.props.graphScale !== newProps.graphScale) {
             this.scale(newProps.graphScale);
         }
-        if (this.props.contracts !== newProps.contracts) {
-            this.init();
-            this.initInteraction();
-            this.update(newProps);
-        }
-        if (this.props.viewType !== newProps.viewType) {
-            this.init();
-            this.initInteraction();
-            this.update(newProps);
-        }
 
+        if (newProps.contracts.length === 0) {
+            //this.paper = null;
+        }
+        
+        if (newProps.contracts.length > 0 && (!newProps.graph || !this.props.graph)) {
+
+            this.update(newProps);
+        }
+        
+    }
+
+    storeGraph(): void {
+        this.props.setGraph({ 
+            graph: this.model.toJSON(),
+            inheritanceLinks: this.inheritanceLinks,
+            otherLinks: this.otherLinks,
+            nodeIdNamePairs: this.nodeIdNamePairs
+        });
+    }   
+
+    componentWillUnmount(): void {
+        this.storeGraph();
     }
 
     update(props: GraphViewProps): void {
         
-        this.nodeIdNamePairs = [];
-        const nodes: any[] = [];
-        this.inheritanceLinks = [];
-        this.otherLinks = [];
-     
-        props.contracts.forEach((contract: SolidityHandler.Contract) => {
-            
-            const contractNode: any = JointElements.contractNode(contract);
-            const newContract: any = {
-                nodeElement: contract,
-                jointjsNode: contractNode,
-                inheritanceLinks: [],
-                otherLinks: []
-            };
-            this.nodeIdNamePairs.push(newContract);
-          
-            nodes.push(contractNode);
-            
-            if (props.viewType === ViewType.Inheritance) {
-                contract.enumerations.forEach((contractEnum: SolidityHandler.ContractEnumeration) =>  {
-                    const enumNode: any = JointElements.enumerationNode(contractEnum.shortName);
-                    nodes.push(enumNode);
-                    const link: any = JointElements.contractElementLink(enumNode.id.toString(), contractNode.id.toString());
-                    this.nodeIdNamePairs.push({
-                        jointjsNode: enumNode,
-                        nodeElement: contractEnum,
-                        inheritanceLinks: [],
-                        otherLinks: [link]
-                    });
-                    newContract.otherLinks.push(link);
-                    
-                    this.otherLinks.push(link);
+        const defaultGraph: Graph = getDefaultGraph();
+    
+        this.paper = new joint.dia.Paper(
+            {
+                el: ReactDOM.findDOMNode(this.refs.placeholder),
+                width: '100%',
+                height: 2000,
+                model: defaultGraph.graph,
+                gridSize: 20
+                
+            } as any
+        );
 
-                    });
-                    
-                contract.structs.forEach((contractStruct: SolidityHandler.ContractStruct) =>  {
-                        const structNode: any = JointElements.structNode(contractStruct.shortName);
-                        nodes.push(structNode);
-                        
-                        const link: any = JointElements.contractElementLink(structNode.id.toString(), contractNode.id.toString());
-                        this.nodeIdNamePairs.push({
-                            nodeElement: contractStruct,
-                            jointjsNode: structNode,
-                            inheritanceLinks: [],
-                            otherLinks: [link]
-                        });
-                        
-                        newContract.otherLinks.push(link);
-                        this.otherLinks.push(link);
-                        
-                });
-            }
-            
-        });
-
-        if (props.viewType === ViewType.TypeResolution) {
-
-            props.contracts.forEach((contract: SolidityHandler.Contract) => {
-                this.inheritanceLinks = this.inheritanceLinks.concat(contract.references.map((generalContractName: string) => {
-                    const fromContract: JointElements.NodeNameIdPair = this.nodeIdNamePairs
-                        .find((item: JointElements.NodeNameIdPair) => item.nodeElement.name === contract.name);
-                    const toContract: JointElements.NodeNameIdPair = this.nodeIdNamePairs
-                        .find((item: JointElements.NodeNameIdPair) => item.nodeElement.name === generalContractName);
-
-                    if (fromContract && toContract) {
-                        const link: any = JointElements.inheritanceLink(
-                            fromContract.jointjsNode.id.toString(),
-                            toContract.jointjsNode.id.toString());
-                        fromContract.inheritanceLinks.push(link);
-                        toContract.inheritanceLinks.push(link);
-                        return link;
-                    } else {
-                        return null;
-                    }
-                    
-                })).filter((item: any) => item != null);
-
-            });
+        if (props.graph) {
+            defaultGraph.graph.fromJSON(props.graph.graph);
+            defaultGraph.nodeIdNamePairs = props.graph.nodeIdNamePairs;
+            defaultGraph.otherLinks = props.graph.otherLinks;
+            defaultGraph.inheritanceLinks = props.graph.inheritanceLinks;
         }
 
-        if (props.viewType === ViewType.Inheritance) {
-            props.contracts.forEach((contract: SolidityHandler.Contract) => {
-                this.inheritanceLinks = this.inheritanceLinks.concat(contract.baseContracts.map((generalContractName: string) => {
-                    const fromContract: JointElements.NodeNameIdPair = this.nodeIdNamePairs
-                        .find((item: JointElements.NodeNameIdPair) => item.nodeElement.name === contract.name);
-                    const toContract: JointElements.NodeNameIdPair = this.nodeIdNamePairs
-                        .find((item: JointElements.NodeNameIdPair) => item.nodeElement.name === generalContractName);
-                    const link: any = JointElements
-                        .inheritanceLink(fromContract.jointjsNode.id.toString(), toContract.jointjsNode.id.toString());
-                    fromContract.inheritanceLinks.push(link);
-                    toContract.inheritanceLinks.push(link);
-                    return link;
-                    
-                }));
-            
-            });
-        }
+        const graph: Graph = props.graph ? 
+            extractElementsFromGraph(defaultGraph) :
+            graphGenerator(props.contracts, props.graphViewType, defaultGraph);
         
-        // const getMax = (max, cur) => Math.max(max, cur)
-        // const maxWidth = nodes.map(node  => node.attributes.size.width).reduce(getMax, -Infinity)
-        // nodes.forEach(node => node.attributes.size.width = Math.min(maxWidth, 160))
-        
-        nodes.forEach((node: any) => {
-            node.attributes.size.width = 150;
-            node.toFront();
+        this.model = graph.graph;
+        this.nodeIdNamePairs = graph.nodeIdNamePairs;
+        this.inheritanceLinks = graph.inheritanceLinks;
+        this.otherLinks = graph.otherLinks;
+
+        this.paper.on('cell:pointerdown', (cellView: any, evt: any, x: any, y: any) => { 
+            this.highlightContract(cellView, null);
         });
 
-        this.graph.addCells(nodes.concat(this.inheritanceLinks).concat(this.otherLinks));
-        const graphBBox: joint.g.Rect  = joint.layout.DirectedGraph.layout(this.graph, {
-            nodeSep: 30,
-            edgeSep: 30,
-            ranker: 'network-simplex',  // tight-tree longest-path network-simplex
-            rankDir: 'LR'
+        this.paper.on('element:pointerup', (cellView: any, evt: any, x: any, y: any) => { 
+            this.storeGraph();
         });
-        this.inheritanceLinks.forEach((link: any) => link.toBack());
-        this.otherLinks.forEach((link: any) => link.toBack());
 
-        this.scale(this.props.graphScale);
-        
+        this.props.setGraph({ 
+            graph: graph.graph.toJSON(),
+            inheritanceLinks: graph.inheritanceLinks,
+            otherLinks: graph.otherLinks,
+            nodeIdNamePairs: graph.nodeIdNamePairs
+        });
+
+        this.scale(props.graphScale);
+    
     }
 
     scale(factor: number): void {
+        
         this.paper.scale(factor, factor);
         this.paper.fitToContent({
             padding: 40,
@@ -311,6 +226,7 @@ export class GraphView extends React.Component<GraphViewProps, {}> {
             gridHeight: 1,
             allowNewOrigin: 'any'
         });
+
     }
 
     render(): JSX.Element {

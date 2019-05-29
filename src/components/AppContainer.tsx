@@ -21,6 +21,8 @@ import * as axios from 'axios';
 import { UIStructure, UICreationHandling, Element } from './views/ui-creation/UIStructure';
 import { UICreationView } from './views/ui-creation/UICreationView';
 import { BlockchainConnection, ConnectionType, initBlockchainConfiguration } from '../solidity-handler/BlockchainConnector';
+import { Graph, GraphViewType } from './views/Graph/GraphGenerator';
+import * as PromiseFileReader from 'promise-file-reader';
 
 interface AppContainerState {
     contracts: Sol.Contract[];
@@ -33,6 +35,9 @@ interface AppContainerState {
     globalErrors: Error[];
     createdUIStructure: UIStructure;
     blockchainConnection: BlockchainConnection;
+    graph: Graph;
+    graphToLoad: Graph;
+    graphViewType: GraphViewType;
 }
 
 class AppContainer extends React.Component<{}, {}> {
@@ -66,7 +71,10 @@ class AppContainer extends React.Component<{}, {}> {
                 addTransactionToHistory: this.addTransactionToHistory,
                 useDefaultAccount: true,
                 transactionHistory: []
-            }
+            },
+            graph: null,
+            graphToLoad: null,
+            graphViewType: GraphViewType.Inheritance
         };
         
         this.updateContractNames = this.updateContractNames.bind(this);
@@ -89,6 +97,24 @@ class AppContainer extends React.Component<{}, {}> {
         this.addAccount = this.addAccount.bind(this);
         this.selectAccount = this.selectAccount.bind(this);
         this.addTransactionToHistory = this.addTransactionToHistory.bind(this);
+        this.changeGraphView = this.changeGraphView.bind(this);
+        this.setGraph = this.setGraph.bind(this);
+
+    }
+
+    setGraph(graph: Graph): void {
+        this.setState({
+            graph
+        });
+    }
+
+    changeGraphView(graphViewType: GraphViewType): void {
+        this.setState((prev: AppContainerState) => {
+            return {
+                graphViewType: graphViewType,
+                graph: null
+            };
+        });
 
     }
 
@@ -318,15 +344,30 @@ class AppContainer extends React.Component<{}, {}> {
     }
 
     async updateContractNames(selectorFiles: FileList): Promise<void> {
-        this.setState({selectedElement: null});
-        this.setIsLoading(true);
+        if (selectorFiles.length === 1 && selectorFiles[0].name.endsWith('.piet.json')) {
+            const file: any = JSON.parse(await PromiseFileReader.readAsText(selectorFiles[0]));
+    
+            this.setState({
+                contracts: file.contracts,
+                graph: file.graph
+            });
+        } else {
+            this.setState({selectedElement: null});
+            this.setIsLoading(true);
 
-        this.setState({
-            contracts: await Sol.pushFiles(selectorFiles)
-        });
+            const contracts: Sol.Contract[] = await Sol.pushFiles(selectorFiles);
+
+            this.setState((prev: AppContainerState) => ({
+                contracts,
+                graph: null
+            }));
+            
+            
+
+        }
         this.setIsLoading(false);
         this.removeTabEntity('About');
-        
+
     }
 
     removeTabEntity(tabName: string): void {
@@ -547,7 +588,10 @@ class AppContainer extends React.Component<{}, {}> {
                                     submitFiles={this.updateContractNames} 
                                     changeActiveTab={this.changeActiveTab}
                                 />
-                                <View 
+                                <View
+                                    setGraph={this.setGraph}
+                                    graph={this.state.graph}
+                                    changeGraphView={this.changeGraphView}
                                     uiCreationHandling={uiCreationHandling}
                                     selectedTabTypeForView={selectedTabTypeForView}
                                     globalErrors={this.state.globalErrors}
@@ -569,11 +613,16 @@ class AppContainer extends React.Component<{}, {}> {
                                     getEvents={this.getEvents}
                                     contentChange={this.contentChange}
                                     submitFiles={this.updateContractNames}
+                                    graphViewType={this.state.graphViewType}
                                 />
                                     
                         </SplitPane>
                     
                             <View
+                                graphViewType={this.state.graphViewType}
+                                setGraph={this.setGraph}
+                                graph={this.state.graph}
+                                changeGraphView={this.changeGraphView}
                                 uiCreationHandling={uiCreationHandling}
                                 selectedTabTypeForView={selectedTabTypeForView}
                                 globalErrors={this.state.globalErrors}
