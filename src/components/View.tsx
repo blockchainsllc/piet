@@ -26,6 +26,8 @@ import { UICreationHandling } from './views/ui-creation/UIStructure';
 import { ConfigurationView } from './views/Configuration/ConfigurationView';
 import { BlockchainConnection } from '../solidity-handler/BlockchainConnector';
 import { NodeDiagnosticsView } from './views/NodeDiagnostic/NodeDiagnostics';
+import { GraphView } from './views/Graph/GraphView';
+import { Graph, GraphViewType } from './views/Graph/GraphGenerator';
 
 export enum TabEntityType {
     Structure,
@@ -73,6 +75,10 @@ interface ViewProps {
     globalErrors: Error[];
     selectedTabTypeForView: TabEntityType[];
     uiCreationHandling: UICreationHandling;
+    changeGraphView: Function;
+    graph: Graph;
+    setGraph: Function;
+    graphViewType: GraphViewType;
     
 }
 
@@ -99,12 +105,16 @@ export class View extends React.Component<ViewProps, {}> {
 
             case TabEntityType.Graph:
                 content =   <GraphContainerView
+                                graphViewType={this.props.graphViewType}
                                 removeContractToSelect={this.props.removeContractToSelect}
                                 selectedContractName={this.props.selectedContractName}
                                 selectedElement={this.props.selectedElement}
                                 web3={this.props.blockchainConnection.web3}
                                 contracts={this.props.contracts}
                                 changeSelectedElement={this.props.changeSelectedElement}
+                                changeGraphView={this.props.changeGraphView}
+                                graph={this.props.graph}
+                                setGraph={this.props.setGraph}
                             />;
                 break;
 
@@ -176,6 +186,7 @@ export class View extends React.Component<ViewProps, {}> {
 
             case TabEntityType.FileBrowser:
                 content =   <FileBrowserView 
+                                graph={this.props.graph}
                                 globalErrors={this.props.globalErrors}
                                 key={'eventCatcher' + this.props.activeTab[this.props.viewId] }
                                 viewId={this.props.viewId}

@@ -46,7 +46,7 @@ export class About extends React.Component<{}, {}> {
                                 <div className='col-md-8 help-text-container'>
                                     <h1 className='help-text text-muted'>Piet</h1>
                                     <p><small className='help-text text-muted'>
-                                        Click <strong>"Choose Files"</strong> to get started.
+                                        Click <strong>"Load"</strong> to get started.
                                     </small></p>
                                     <p><small className='help-text text-muted'>This is a beta release.</small></p>
                                     <p>

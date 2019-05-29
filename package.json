@@ -53,6 +53,7 @@
     "bootstrap": "^4.0.0-beta.3",
     "csv-parse": "^2.2.0",
     "ethlint": "^1.2.2",
+    "file-saver": "^2.0.2",
     "highlight.js": "^9.12.0",
     "immutability-helper": "^2.6.2",
     "in3": "^1.1.22",

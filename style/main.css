@@ -460,6 +460,7 @@ body {
     margin-top: 1rem;
 }
 
+.link-tools .tool-remove { display: none }
 
 .selected-card {
     border-bottom-right-radius: 0rem;
@@ -473,8 +474,8 @@ body {
 
 }
 
-.graph-placeholder {
-  
+.save-button {
+    margin-bottom: 8px;
 }
 
 .detailed-button {

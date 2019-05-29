@@ -12,8 +12,9 @@ import * as React from 'react';
 
 import * as Sol from '../../../solidity-handler/SolidityHandler';
 import Web3Type from '../../../types/web3';
-import { GraphView, ViewType } from './GraphView';
+import { GraphView } from './GraphView';
 import SplitPane from 'react-split-pane';
+import { Graph, GraphViewType } from './GraphGenerator';
 
 interface GraphContainerViewProps {
     selectedElement: Sol.NodeElement;
@@ -22,11 +23,14 @@ interface GraphContainerViewProps {
     changeSelectedElement: Function;
     selectedContractName: string;
     removeContractToSelect: Function;
+    graph: Graph;
+    changeGraphView: Function;
+    setGraph: Function;
+    graphViewType: GraphViewType;
 }
 
 interface GraphContainerViewState {
     graphScale: number;
-    viewType: ViewType;
 }
 
 export class GraphContainerView extends React.Component<GraphContainerViewProps, GraphContainerViewState> {
@@ -34,32 +38,28 @@ export class GraphContainerView extends React.Component<GraphContainerViewProps,
     constructor(props: GraphContainerViewProps) {
         super(props);
         this.state = {
-            viewType: ViewType.Inheritance,
             graphScale: 1
         };
 
         this.zoomIn = this.zoomIn.bind(this);
         this.zoomOut = this.zoomOut.bind(this);
-        this.changeSubView = this.changeSubView.bind(this);
        
     }
 
-    changeSubView(viewType: ViewType): void {
-        this.setState({
-            viewType: viewType
-        });
-    }
-
     zoomOut(): void {
-        this.setState((prevState: GraphContainerViewState) => ({
-            graphScale: prevState.graphScale - 0.1 >= 0.1 ? prevState.graphScale - 0.1 : 0.1
-        }));
+        if (this.props.graph) {
+            this.setState((prevState: GraphContainerViewState) => ({
+                graphScale: prevState.graphScale - 0.1 >= 0.1 ? prevState.graphScale - 0.1 : 0.1
+            }));
+        }   
     }
 
     zoomIn(): void {
-        this.setState((prevState: GraphContainerViewState) => ({
-            graphScale: prevState.graphScale + 0.1
-        }));
+        if (this.props.graph) {
+            this.setState((prevState: GraphContainerViewState) => ({
+                graphScale: prevState.graphScale + 0.1
+            }));
+        }
     }
 
     render(): JSX.Element {
@@ -80,22 +80,28 @@ export class GraphContainerView extends React.Component<GraphContainerViewProps,
                         >
                             <i className='fa fa-plus' aria-hidden='true'></i>
                         </button>
-                        &nbsp;
+                        {/* &nbsp;
                         &nbsp;
                         &nbsp;
                         <button 
-                            className={'btn btn-sm' + (this.state.viewType === ViewType.Inheritance ? ' btn-info' : ' btn-outline-info')}
-                            onClick={() => this.changeSubView(ViewType.Inheritance)}
+                            className={'btn btn-sm' + (this.props.graph &&  this.props.graphViewType === GraphViewType.Inheritance ? 
+                                ' btn-info' : 
+                                ' btn-outline-info'
+                            )}
+                            onClick={() => this.props.changeGraphView(GraphViewType.Inheritance)}
                         >
                             Inheritance
                         </button>
                         &nbsp;
                         <button 
-                            className={'btn btn-sm' + (this.state.viewType === ViewType.TypeResolution ? ' btn-info' : ' btn-outline-info')}
-                            onClick={() => this.changeSubView(ViewType.TypeResolution)}
+                            className={'btn btn-sm' + (this.props.graph && this.props.graphViewType === GraphViewType.TypeResolution ? 
+                                ' btn-info' : 
+                                ' btn-outline-info'
+                            )}
+                            onClick={() => this.props.changeGraphView(GraphViewType.TypeResolution)}
                         >
                             References
-                        </button>
+                        </button> */}
                     </div>
                     <SplitPane 
                         className='scrollable hide-resizer empty-first-pane' 
@@ -105,12 +111,14 @@ export class GraphContainerView extends React.Component<GraphContainerViewProps,
                     >
                         <div></div>
                         <GraphView 
+                            setGraph={this.props.setGraph}
                             removeContractToSelect={this.props.removeContractToSelect}
                             graphScale={this.state.graphScale} 
                             changeSelectedElement={this.props.changeSelectedElement}
-                            viewType={this.state.viewType}
                             contracts={this.props.contracts}
                             selectedContractName={this.props.selectedContractName} 
+                            graph={this.props.graph}
+                            graphViewType={this.props.graphViewType}
                         />
                     </SplitPane>
                 </SplitPane>;

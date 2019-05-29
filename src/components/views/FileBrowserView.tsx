@@ -13,6 +13,8 @@ import * as Sol from '../../solidity-handler/SolidityHandler';
 import Web3Type from '../../types/web3';
 import {Treebeard, decorators} from 'react-treebeard';
 import SplitPane from 'react-split-pane';
+import { Graph } from './Graph/GraphGenerator';
+import { saveAs } from 'file-saver';
 
 interface FileBrowserViewProps {
     web3: Web3Type;
@@ -23,6 +25,7 @@ interface FileBrowserViewProps {
     contracts: Sol.Contract[];
     loading: boolean;
     globalErrors: Error[];
+    graph: Graph;
 
 }
 
@@ -77,7 +80,23 @@ export class FileBrowserView extends React.Component<FileBrowserViewProps, FileB
         
         this.submitFiles = this.submitFiles.bind(this);
         this.onToggle = this.onToggle.bind(this);
+        this.save = this.save.bind(this);
        
+    }
+
+    save(): void {
+        const stateData: string = JSON.stringify(
+            {
+                pietFileVersion: '0.0.1',
+                contracts: this.props.contracts,
+                graph: this.props.graph
+            },
+            null,
+            2
+        );
+
+        saveAs(new Blob([stateData], {type : 'application/json'}), 'export' + Date.now() + '.piet.json');
+
     }
 
     componentDidMount(): void {
@@ -194,9 +213,18 @@ export class FileBrowserView extends React.Component<FileBrowserViewProps, FileB
         return <SplitPane className='scrollable hide-resizer' split='horizontal'  defaultSize={40} allowResize={false} >
                     <div className='h-100 w-100 toolbar'>
                     
-                        <label className={'btn btn-sm btn-outline-info'} htmlFor='file'>Choose Files</label>
+                        <label className={'btn btn-sm btn-outline-info'} htmlFor='file'>Load</label>
                         <input id='file' className='files-input' type='file' onChange={ (e) => this.submitFiles(e.target.files)} multiple />
                         
+                       &nbsp;
+                        <button 
+                            title='Zoom Out'
+                            className='btn btn-sm btn-outline-info save-button'
+                            onClick={this.save}
+                        >
+                            Save
+                        </button>
+
                     </div>
                     <SplitPane className='scrollable hide-resizer empty-first-pane' split='horizontal'  defaultSize={1} allowResize={false}>
                         <div></div>
