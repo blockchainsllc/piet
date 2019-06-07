@@ -186,6 +186,7 @@ export class View extends React.Component<ViewProps, {}> {
 
             case TabEntityType.FileBrowser:
                 content =   <FileBrowserView 
+                                selectedElement={this.props.selectedElement}
                                 graph={this.props.graph}
                                 globalErrors={this.props.globalErrors}
                                 key={'eventCatcher' + this.props.activeTab[this.props.viewId] }

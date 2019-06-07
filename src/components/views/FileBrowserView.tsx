@@ -25,6 +25,7 @@ interface FileBrowserViewProps {
     contracts: Sol.Contract[];
     loading: boolean;
     globalErrors: Error[];
+    selectedElement: Sol.NodeElement;
     graph: Graph;
 
 }
@@ -89,7 +90,8 @@ export class FileBrowserView extends React.Component<FileBrowserViewProps, FileB
             {
                 pietFileVersion: '0.0.1',
                 contracts: this.props.contracts,
-                graph: this.props.graph
+                graph: this.props.graph,
+                selectedElement: this.props.selectedElement
             },
             null,
             2
