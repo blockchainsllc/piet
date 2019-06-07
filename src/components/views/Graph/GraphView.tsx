@@ -146,8 +146,7 @@ export class GraphView extends React.Component<GraphViewProps, {}> {
             this.paper = null;
         }
         
-        if (newProps.contracts.length > 0 && (!newProps.graph || !this.props.graph)) {
-
+        if (newProps.contracts.length > 0 && !newProps.graph) {
             this.update(newProps);
         }
         
@@ -161,10 +160,6 @@ export class GraphView extends React.Component<GraphViewProps, {}> {
             nodeIdNamePairs: this.nodeIdNamePairs
         });
     }   
-
-    componentWillUnmount(): void {
-        this.storeGraph();
-    }
 
     update(props: GraphViewProps): void {
         

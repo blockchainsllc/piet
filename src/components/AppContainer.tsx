@@ -352,8 +352,10 @@ class AppContainer extends React.Component<{}, {}> {
     
             this.setState({
                 contracts: file.contracts,
-                graph: file.graph
+                graph: file.graph,
+                selectedElement: file.selectedElement
             });
+            this.changeActiveTab(0, 1);
         } else {
             this.setState({selectedElement: null});
             this.setIsLoading(true);
