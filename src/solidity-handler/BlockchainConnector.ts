@@ -265,7 +265,7 @@ export const sendFunction: SendFunction =  async (
 
     let result: any;
     
-    const changedParamMapping: any[] = parameterMapping.map((param: any, index: number) => 
+    const changedParamMapping: any[] = !parameterMapping ? [] : parameterMapping.map((param: any, index: number) => 
         contractFunction.params[index].solidityType.isArray || contractFunction.params[index].solidityType.userDefined ? 
             JSON.parse(param) : param
     );
