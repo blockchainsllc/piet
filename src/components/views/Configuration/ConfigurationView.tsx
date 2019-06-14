@@ -176,10 +176,12 @@ export class ConfigurationView extends React.Component<ConfigurationViewProps, C
         if (this.props.blockchainConnection.web3) {
 
             const memWallet: any = this.props.blockchainConnection.web3.eth.accounts.wallet;
-            
-            for (const wallet of memWallet) {
-                memAccounts.push(wallet.address);
-            }
+
+            if (memWallet.length > 0) {
+                for (const wallet of memWallet) {
+                    memAccounts.push(wallet.address);
+                }
+            } 
         }
 
         const accounts: JSX.Element[] = this.state.accounts.concat(memAccounts).map((account: string) => 
