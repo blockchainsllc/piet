@@ -11,7 +11,7 @@
 import * as React from 'react';
 import * as Sol from '../../../solidity-handler/SolidityHandler';
 import Web3Type from '../../../types/web3';
-import { getFunctionAbi } from '../../../utils/AbiGenerator';
+import { getFunctionAbi, getStateVariableAbi } from '../../../utils/AbiGenerator';
 import { TabEntity, TabEntityType } from '../../View';
 import { ValueBox } from '../ui-creation/InspectorTools/ValueBox';
 import { UICreationHandling } from '../ui-creation/UIStructure';
@@ -117,13 +117,15 @@ export class ContractStateVaribaleView extends React.Component<ContractStateVari
             this.setState({
                 resultMapping: [...this.state.resultMapping.slice(0, index),
                                 '',
-                                ...this.state.resultMapping.slice(index + 1)]
+                                ...this.state.resultMapping.slice(index + 1)],
+                lastResult: ''
+
             });
-            this.setState({lastResult: ''});
+ 
             let result: any; 
             let abi: any = null;
             try {
-                abi = getFunctionAbi(
+                abi = getStateVariableAbi(
                     stateVariable.getter,
                     this.props.blockchainConnection.web3,
                     this.props.contracts,

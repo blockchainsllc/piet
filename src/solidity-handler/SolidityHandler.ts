@@ -341,7 +341,7 @@ const getStateVariables: (node: any) => ContractStateVariable[] = (node: any): C
                     description: null
                 }];
                 returnParams = [{
-                    name: variable.typeName.name,
+                    name: '',
                     solidityType: getType(variable.typeName, []),
                     isStorage: false,
                     isIndexed: false,
@@ -352,7 +352,7 @@ const getStateVariables: (node: any) => ContractStateVariable[] = (node: any): C
                 break; 
             default:
                 returnParams = [{
-                    name: variable.typeName.name,
+                    name: '',
                     solidityType: getType(variable.typeName, []),
                     isStorage: false,
                     isIndexed: false,
