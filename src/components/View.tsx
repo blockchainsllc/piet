@@ -28,6 +28,8 @@ import { BlockchainConnection } from '../solidity-handler/BlockchainConnector';
 import { NodeDiagnosticsView } from './views/NodeDiagnostic/NodeDiagnostics';
 import { GraphView } from './views/Graph/GraphView';
 import { Graph, GraphViewType } from './views/Graph/GraphGenerator';
+import { DocGeneratorView } from './views/documentatin-generator/DocGeneratorView';
+import { generateMarkdownDoc } from '../utils/DocGenerator';
 
 export enum TabEntityType {
     Structure,
@@ -41,7 +43,8 @@ export enum TabEntityType {
     UICreationView,
     Configuration,
     NodeDiagnostics, 
-    TransactionHistory
+    TransactionHistory,
+    DocGenerator
 }
 
 export interface TabEntity {
@@ -233,6 +236,15 @@ export class View extends React.Component<ViewProps, {}> {
                                 blockchainConnection={this.props.blockchainConnection}
                                 productiveMode={false}
                            
+                            />;
+                break;
+
+            case TabEntityType.DocGenerator:
+                content =   <DocGeneratorView 
+                                key={'UICreationView'}
+                                viewId={this.props.viewId}
+                                tabId={this.props.activeTab[this.props.viewId]}
+                                content={this.props.selectedElement ? generateMarkdownDoc(this.props.selectedElement) : null}
                             />;
                 break;
                                 

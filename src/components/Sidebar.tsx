@@ -40,6 +40,7 @@ export class Sidebar extends React.Component<SidebarProps, {}> {
         this.showConfiguration = this.showConfiguration.bind(this);
         this.showNodeDiagnostics = this.showNodeDiagnostics.bind(this);
         this.showTransactionHistory = this.showTransactionHistory.bind(this);
+        this.showDocumentation = this.showDocumentation.bind(this);
 
     }
 
@@ -122,6 +123,19 @@ export class Sidebar extends React.Component<SidebarProps, {}> {
                 removable: true
             }, 
                                 0,
+                                false);
+    }
+
+    showDocumentation(): void {
+        this.props.addTabEntity({
+                active: true,
+                contentType: TabEntityType.DocGenerator,
+                name: 'Documentation',
+                content: null,
+                icon: 'book-open',
+                removable: true
+            }, 
+                                1,
                                 false);
     }
 
@@ -221,6 +235,18 @@ export class Sidebar extends React.Component<SidebarProps, {}> {
                                 onClick={this.showConfiguration}
                             >
                                     <i className='fas fa-cog'></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div className='sidebar-buttons-container'>
+                        <div className='row'>
+                            <div className='col-sm text-center'>
+                            <a 
+                                title='Documentation'
+                                href='#' className='btn btn-outline-secondary btn-lg' 
+                                onClick={this.showDocumentation}
+                            >
+                                    <i className='fas fa-book-open'></i></a>
                             </div>
                         </div>
                     </div> 
