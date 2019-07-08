@@ -6,7 +6,6 @@ export const generateMarkdownDoc: GenerateMarkdownDoc = (nodeElement: Sol.NodeEl
     const contract: Sol.Contract = nodeElement.elementType === Sol.ElementType.Contract ? nodeElement as Sol.Contract : null;
     if (contract) {
         let output: string = '# ' + contract.name + '\n';
-        console.log(contract)
 
         output += contract.annotations
             .filter((annotation: Sol.SolidityAnnotation) => annotation.name === 'title')
