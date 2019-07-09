@@ -72,11 +72,11 @@ export const changeBlockchainConfiguration: ChangeBlockchainConfiguration = asyn
     switch (blockchainConnection.connectionType) {
         case ConnectionType.MainnetIncubed:
             blockchainConnection.web3 = new Web3(new In3Client({
-                proof: 'standard',
-                signatureCount: 1,
-                requestCount : 2,
-                chainId: 'mainnet'
-            }));
+                proof         : 'none',
+                signatureCount: 0,
+                requestCount  : 2,
+                chainId       : 'mainnet'
+            }).createWeb3Provider());
             blockchainConnection.selectedAccount = null;
             blockchainConnection.useDefaultAccount = true;
             return blockchainConnection;
