@@ -422,6 +422,10 @@ body {
     font-family: monospace;
 }
 
+.tabs-container ul li {
+    margin-left: 1px;
+}
+
 .markdown-preview {
     background-color: var(--main-background-color)
 }
