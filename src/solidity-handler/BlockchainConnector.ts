@@ -20,6 +20,7 @@ export enum ConnectionType {
     None = 'NONE'
 }
 
+
 type UpdateBlockchainConnection = (blockchainConnection: BlockchainConnection) => void;
 type AddAccount = (privateKey: string) => void;
 type SelectAccount = (address: string) => void;
@@ -36,6 +37,13 @@ export interface BlockchainConnection {
     useDefaultAccount: boolean;
     transactionHistory: any[];
 }
+
+type CheckBlockchainConnection = (blockchainConnection: BlockchainConnection) => boolean;
+export const checkBlockchainConnection: CheckBlockchainConnection = (blockchainConnection: BlockchainConnection): boolean => {
+    return blockchainConnection &&
+        blockchainConnection.connectionType !== ConnectionType.None &&
+        blockchainConnection.web3;
+};
 
 export const resultToOutput: (result: any) => string = (result: any): string => {
     if (typeof result !== 'object') {
@@ -101,11 +109,11 @@ export const changeBlockchainConfiguration: ChangeBlockchainConfiguration = asyn
             } else {
                 blockchainConnection.connectionType = ConnectionType.None;
                 blockchainConnection.selectedAccount = null;
-                blockchainConnection.web3 = null;
+                blockchainConnection.web3 = new Web3();
             }
             return blockchainConnection;
         default:
-            blockchainConnection.web3 = null;
+            blockchainConnection.web3 = new Web3();
             return blockchainConnection;
     }
 };
@@ -126,7 +134,6 @@ export const getAccounts: GetAccounts = (blockchainConnection: BlockchainConnect
 };
 
 type InitBlockchainConfiguration = (
-    connectionType: ConnectionType, 
     rpcUrl: string, 
     updateBlockchainConnection: UpdateBlockchainConnection,
     addAccount: AddAccount,
@@ -134,7 +141,6 @@ type InitBlockchainConfiguration = (
     addTransactionToHistory: AddTransactionToHistory
 ) => Promise<BlockchainConnection>;
 export const initBlockchainConfiguration: InitBlockchainConfiguration = async (
-    connectionType: ConnectionType, 
     rpcUrl: string, 
     updateBlockchainConnection: UpdateBlockchainConnection,
     addAccount: AddAccount,
@@ -142,13 +148,19 @@ export const initBlockchainConfiguration: InitBlockchainConfiguration = async (
     addTransactionToHistory: AddTransactionToHistory
 ): Promise<BlockchainConnection> => {
     let web3: Web3;
+    let connectionType: ConnectionType = ConnectionType.None;
     if (rpcUrl) {
         web3 = new Web3(rpcUrl);
+        connectionType = ConnectionType.Rpc;
     } else if ((window as any).ethereum) {
         web3 = new Web3((window as any).ethereum);
         await (window as any).ethereum.enable();
+        connectionType = ConnectionType.Injected;
     } else if ((window as any).web3) {
         web3 = new Web3(web3.currentProvider);
+        connectionType = ConnectionType.Injected;
+    } else {
+        web3 = new Web3();
     }
     
     return {
