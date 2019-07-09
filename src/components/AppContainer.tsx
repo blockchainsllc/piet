@@ -265,7 +265,6 @@ class AppContainer extends React.Component<{}, {}> {
         const params: any = queryString.parse((this.props as any).location.search);
 
         const blockchainConnection: BlockchainConnection = await initBlockchainConfiguration(
-            params.rpc ? ConnectionType.Rpc : ConnectionType.Injected, 
             params.rpc,
             this.updateBlockchainConnection,
             this.addAccount,

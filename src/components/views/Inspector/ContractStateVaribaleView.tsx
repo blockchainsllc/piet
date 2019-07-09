@@ -14,7 +14,7 @@ import { getFunctionAbi, getStateVariableAbi } from '../../../utils/AbiGenerator
 import { TabEntityType } from '../../View';
 import { ValueBox } from '../ui-creation/InspectorTools/ValueBox';
 import { UICreationHandling } from '../ui-creation/UIStructure';
-import { callFunction, BlockchainConnection } from '../../../solidity-handler/BlockchainConnector';
+import { callFunction, BlockchainConnection, checkBlockchainConnection } from '../../../solidity-handler/BlockchainConnector';
 
 interface ContractStateVaribaleViewProps {
     selectedContract: Sol.Contract;
@@ -107,6 +107,7 @@ export class ContractStateVaribaleView extends React.Component<ContractStateVari
     async call(stateVariable: Sol.ContractStateVariable, index: number): Promise<void> {
 
         if (stateVariable.visibility === 'public' 
+            && checkBlockchainConnection(this.props.blockchainConnection)
             && this.props.selectedContract.deployedAt 
             && ((stateVariable.solidityType.mapping && this.state.stateVariableInput[stateVariable.name]) 
                 || !stateVariable.solidityType.mapping)

@@ -11,7 +11,7 @@
 import * as React from 'react';
 import * as Sol from '../../../solidity-handler/SolidityHandler';
 import SplitPane from 'react-split-pane';
-import { BlockchainConnection, ConnectionType, changeBlockchainConfiguration } from '../../../solidity-handler/BlockchainConnector';
+import { BlockchainConnection, ConnectionType, changeBlockchainConfiguration, checkBlockchainConnection } from '../../../solidity-handler/BlockchainConnector';
 
 interface ConfigurationViewProps {
     blockchainConnection: BlockchainConnection;
@@ -107,7 +107,10 @@ export class ConfigurationView extends React.Component<ConfigurationViewProps, C
     }
 
     async updateAccounts(blockchainConnection: BlockchainConnection): Promise<void> {
-        if (blockchainConnection && blockchainConnection.web3 && await this.updateChainId) {
+        if (
+            checkBlockchainConnection(this.props.blockchainConnection) &&
+            await this.updateChainId
+        ) {
             this.setState({
                 accounts: await blockchainConnection.web3.eth.getAccounts()
             });

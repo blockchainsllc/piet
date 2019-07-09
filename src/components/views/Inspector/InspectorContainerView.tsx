@@ -14,7 +14,7 @@ import { SelectedView } from './SelectedView';
 import SplitPane from 'react-split-pane';
 import { TabEntity, TabEntityType } from '../../View';
 import { UICreationHandling } from '../ui-creation/UIStructure';
-import { BlockchainConnection } from '../../../solidity-handler/BlockchainConnector';
+import { BlockchainConnection, ConnectionType, checkBlockchainConnection } from '../../../solidity-handler/BlockchainConnector';
 
 interface InspectorContainerViewProps {
     blockchainConnection: BlockchainConnection;
@@ -40,7 +40,7 @@ export class InspectorContainerView extends React.Component<InspectorContainerVi
     constructor(props: InspectorContainerViewProps) {
         super(props);
         this.state = {
-            testMode: true,
+            testMode: false,
             showInheritedMembers: false,
     
             editContractAddress: false
@@ -54,14 +54,25 @@ export class InspectorContainerView extends React.Component<InspectorContainerVi
     }
 
     componentDidMount(): void {
-        if (this.props.selectedElement && this.props.selectedElement.elementType === Sol.ElementType.Contract
-            && (this.props.selectedElement as Sol.Contract).deployedAt) {
+       this.checkReadynessForInteractiveMode(this.props);
+    }
+
+    componentWillReceiveProps(props: InspectorContainerViewProps): void {
+        this.checkReadynessForInteractiveMode(this.props);
+    }
+
+    checkReadynessForInteractiveMode(props: InspectorContainerViewProps): void {
+        if (
+            props.selectedElement &&
+            props.selectedElement.elementType === Sol.ElementType.Contract && 
+            (props.selectedElement as Sol.Contract).deployedAt &&
+            checkBlockchainConnection(this.props.blockchainConnection)
+        ) {
             this.setState({
                 testMode: true,
-                editContractAddress: !((this.props.selectedElement as Sol.Contract).deployedAt)
+                editContractAddress: !((props.selectedElement as Sol.Contract).deployedAt)
             });
         }
-        
     }
 
     toogleTestMode (): void {
