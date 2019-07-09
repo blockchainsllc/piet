@@ -14,16 +14,16 @@ import * as Hljs from 'highlight.js';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/styles/hljs';
 import { getFunctionAbi } from '../utils/AbiGenerator';
-import Web3 from '../types/web3';
 import * as jsonFormat from 'json-format';
 import { spawnSync } from 'child_process';
+import { BlockchainConnection, getFunctionSignature } from '../solidity-handler/BlockchainConnector';
 
 export interface CodeBoxProps {
     contextContract: Sol.Contract;
     selectedFunction: Sol.ContractFunction;
     codeBoxIsShown: boolean;
     showCodeBox: Function;
-    web3: Web3;
+    blockchainConnection: BlockchainConnection; 
     contracts: Sol.Contract[];
     codeToShow: CodeToShow;
 
@@ -60,7 +60,7 @@ export class CodeBox extends React.Component<CodeBoxProps, {}> {
         let abi: any;
         let abiError: string = null;
         try {
-            abi = getFunctionAbi(this.props.selectedFunction, this.props.web3, this.props.contracts, this.props.contextContract)[0];
+            abi = getFunctionAbi(this.props.selectedFunction, this.props.contracts, this.props.contextContract)[0];
         } catch (e) {
             abiError = e.message;
         }
@@ -102,7 +102,7 @@ export class CodeBox extends React.Component<CodeBoxProps, {}> {
                                 {abiError === null && 
                                     <small>
                                         <small className='text-muted'>
-                                            Signature: {this.props.web3.eth.abi.encodeFunctionSignature(abi)}
+                                            Signature: {getFunctionSignature(this.props.blockchainConnection, abi)}
                                         s</small>
                                     </small>
                                 }                                

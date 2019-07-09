@@ -10,7 +10,6 @@
 
 import * as React from 'react';
 import * as Sol from '../../../../solidity-handler/SolidityHandler';
-import Web3Type from '../../../../types/web3';
 import { Element, UICreationHandling } from '../UIStructure';
 import { InputFunctionParams } from '../../../shared-elements/InputFunctionParams';
 import { OutputFunctionParams } from '../../../shared-elements/OutputFunctionParams';
@@ -137,12 +136,9 @@ export class FunctionModal extends React.Component<FunctionModalProps, FunctionM
                     error: e.message
                 });
             }
-
             
         }
-
-        
-        
+  
     }
 
     render(): JSX.Element {
@@ -161,7 +157,7 @@ export class FunctionModal extends React.Component<FunctionModalProps, FunctionM
                     inputParameterChange={this.parameterChange}
                     interactiveMode={true}
                     parameter={param}
-                    web3={this.props.blockchainConnection.web3}
+                    blockchainConnection={this.props.blockchainConnection}
                 />
                 
             );

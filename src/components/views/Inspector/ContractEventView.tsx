@@ -14,11 +14,11 @@ import { EventTool } from '../ui-creation/InspectorTools/EventTool';
 import { getEventAbi } from '../../../utils/AbiGenerator';
 import { UICreationHandling } from '../ui-creation/UIStructure';
 import { TabEntityType } from '../../View';
-import Web3Type from '../../../types/web3';
+import { BlockchainConnection } from '../../../solidity-handler/BlockchainConnector';
 
 interface ContractEventViewProps {
     contracts: Sol.Contract[];
-    web3: Web3Type;
+    blockchainConnection: BlockchainConnection;
     selectedTabTypeForView: TabEntityType[];
     uiCreationHandling: UICreationHandling;
     toggleInheritance: Function;
@@ -151,7 +151,7 @@ export class ContractEventView extends React.Component<ContractEventViewProps, {
                                 placeHolderName={event.name}
                                 uiCreationHandling={this.props.uiCreationHandling}
                                 contractAddress={contract.deployedAt}
-                                abi={getEventAbi(event, this.props.web3, this.props.contracts, this.props.selectedContract)}
+                                abi={getEventAbi(event, this.props.contracts, this.props.selectedContract)}
                                 event={event}
                             />
                         }

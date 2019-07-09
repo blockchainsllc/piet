@@ -13,8 +13,7 @@ import * as Sol from '../../../solidity-handler/SolidityHandler';
 import { ContractView } from './ContractView';
 import { EnumView } from './EnumView';
 import { StructView } from './StructView';
-import Web3Type from '../../../types/web3';
-import { TabEntity, TabEntityType } from '../../View';
+import { TabEntityType } from '../../View';
 import { UICreationHandling } from '../ui-creation/UIStructure';
 import { BlockchainConnection } from '../../../solidity-handler/BlockchainConnector';
 

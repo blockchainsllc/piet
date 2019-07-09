@@ -11,7 +11,6 @@
 import * as React from 'react';
 
 import * as Sol from '../../../solidity-handler/SolidityHandler';
-import Web3Type from '../../../types/web3';
 import { ContractStateVaribaleView } from './ContractStateVaribaleView';
 import { ContractEventView } from './ContractEventView';
 import { ContractModifierView } from './ContractModifierView';
@@ -137,7 +136,7 @@ export class ContractView extends React.Component<ContractViewProps, ContractVie
                             contracts={this.props.contracts}
                             uiCreationHandling={this.props.uiCreationHandling}
                             selectedTabTypeForView={this.props.selectedTabTypeForView}
-                            web3={this.props.blockchainConnection.web3} 
+                            blockchainConnection={this.props.blockchainConnection} 
                             toggleInheritance={this.props.toggleInheritance}
                             testMode={this.props.testMode}
                             selectedContract={this.props.selectedContract} 

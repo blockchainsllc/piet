@@ -9,33 +9,44 @@
  */
 
 import * as Sol from '../solidity-handler/SolidityHandler';
-import Web3Type from '../types/web3';
-import { ContractEnumeration } from '../solidity-handler/SolidityHandler';
-import { OutputFunctionParams } from '../components/shared-elements/OutputFunctionParams';
+import { BlockchainConnection} from '../solidity-handler/BlockchainConnector';
 
-export const isSameFunction: (firstFunctionAbi: any[], secondFunctionAbi: any[], web3: Web3Type) => boolean = 
-    (firstFunctionAbi: any[], secondFunctionAbi: any[], web3: Web3Type): boolean => {
+export const isSameFunction = 
+    (firstFunctionAbi: any[], secondFunctionAbi: any[], blockchainConnection: BlockchainConnection): boolean => {
         const firstSignature: string = firstFunctionAbi.length === 1 ? 
-            web3.eth.abi.encodeFunctionSignature(firstFunctionAbi[0]) : 
+            blockchainConnection.web3.eth.abi.encodeFunctionSignature(firstFunctionAbi[0]) : 
             null;
         const secondSignature: string = secondFunctionAbi.length === 1 ? 
-            web3.eth.abi.encodeFunctionSignature(secondFunctionAbi[0]) : 
+            blockchainConnection.web3.eth.abi.encodeFunctionSignature(secondFunctionAbi[0]) : 
             null;
         
         return firstSignature && secondSignature && (firstSignature === secondSignature);
 
 }
 
-export const getFunctionId = (contract: Sol.Contract, web3: Web3Type, contractFunction: Sol.ContractFunction): string => {
+export const getFunctionId = (
+    contract: Sol.Contract, 
+    blockchainConnection: BlockchainConnection,
+    contractFunction: Sol.ContractFunction
+): string => {
     const id: string = 'function' + contract.name + contractFunction.name + contractFunction.params
         .map((param: Sol.ContractFunctionParam) => param.name + param.solidityType.name)
         .reduce((previous, current) => previous + current, '');
 
-    return web3.utils.sha3(id);
-}
+    return blockchainConnection.web3.utils.sha3(id);
+};
 
-export const getFunctionAbi: (theFunction: Sol.ContractFunction, web3: Web3Type, contracts: Sol.Contract[], contextContract: Sol.Contract) => any  = 
-    (theFunction: Sol.ContractFunction, web3: Web3Type, contracts: Sol.Contract[], contextContract: Sol.Contract): any => {
+type GetFunctionAbi = (
+    theFunction: Sol.ContractFunction,
+    contracts: Sol.Contract[], 
+    contextContract: Sol.Contract
+) => any;
+
+export const getFunctionAbi: GetFunctionAbi  = (
+    theFunction: Sol.ContractFunction,
+    contracts: Sol.Contract[], 
+    contextContract: Sol.Contract
+) : any => {
 
         const functionAbi: any = {
             name: theFunction.name,
@@ -47,8 +58,8 @@ export const getFunctionAbi: (theFunction: Sol.ContractFunction, web3: Web3Type,
         return [functionAbi];
     };
 
-export const getStateVariableAbi: (theFunction: Sol.ContractFunction, web3: Web3Type, contracts: Sol.Contract[], contextContract: Sol.Contract) => any  = 
-    (theFunction: Sol.ContractFunction, web3: Web3Type, contracts: Sol.Contract[], contextContract: Sol.Contract): any => {
+export const getStateVariableAbi: (theFunction: Sol.ContractFunction, contracts: Sol.Contract[], contextContract: Sol.Contract) => any  = 
+    (theFunction: Sol.ContractFunction, contracts: Sol.Contract[], contextContract: Sol.Contract): any => {
 
         const functionAbi: any = {
             name: theFunction.name,
@@ -56,7 +67,7 @@ export const getStateVariableAbi: (theFunction: Sol.ContractFunction, web3: Web3
             inputs: getInAndOutputs(theFunction.params, contracts, contextContract),
             outputs: getInAndOutputs(theFunction.returnParams, contracts, contextContract)
         };
-        if (functionAbi.outputs[0].type && functionAbi.outputs[0].type === "tuple") {
+        if (functionAbi.outputs[0].type && functionAbi.outputs[0].type === 'tuple') {
             functionAbi.outputs = functionAbi.outputs[0].components;
         } 
         
@@ -103,8 +114,11 @@ const getInAndOutputs = (params: Sol.ContractFunctionParam[], contracts: Sol.Con
     });
 };
 
-export const getEventAbi: (theEvent: Sol.ContractEvent, web3: Web3Type, contracts: Sol.Contract[], contextContract: Sol.Contract) => any = 
-    (theEvent: Sol.ContractEvent, web3: Web3Type, contracts: Sol.Contract[], contextContract: Sol.Contract): any => {
+export const getEventAbi = (
+    theEvent: Sol.ContractEvent,
+    contracts: Sol.Contract[],
+    contextContract: Sol.Contract
+): any => {
 
         const eventAbi: any = {
             name: theEvent.name,
@@ -126,7 +140,7 @@ const checkType: (solidityType: Sol.SolidityType, contracts: Sol.Contract[], con
             if (contracts.find((contract: Sol.Contract) => contract.name === solidityType.name)) {
                 return 'address';
             } else if (contracts.find((contract: Sol.Contract) => 
-                contract.enumerations.find((enumeration: ContractEnumeration) => 
+                contract.enumerations.find((enumeration: Sol.ContractEnumeration) => 
                     enumeration.name === solidityType.name || enumeration.name === contract.name + '.' + solidityType.name
                     ) !== undefined)
             ) {

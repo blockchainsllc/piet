@@ -10,7 +10,7 @@
 
 import * as React from 'react';
 import * as Sol from '../../../solidity-handler/SolidityHandler';
-import { Conversion, Convert } from '../../../solidity-handler/TypeConversion';
+import { Conversion, convert } from '../../../solidity-handler/TypeConversion';
 import * as CsvParse from 'csv-parse';
 import * as PromiseFileReader from 'promise-file-reader';
 import SplitPane from 'react-split-pane';
@@ -112,7 +112,7 @@ export class MigrationAssistent extends React.Component<MigrationAssistentProps,
                         
                         convertedParams[rowIndex] = [
                             ...convertedParams[rowIndex].slice(0, paramIndex),
-                            Convert(migrationFunctionMapping.conversion, row[migrationFunctionMapping.columnNumber], this.props.blockchainConnection.web3),
+                            convert(migrationFunctionMapping.conversion, row[migrationFunctionMapping.columnNumber], this.props.blockchainConnection),
                             ...convertedParams[rowIndex].slice(paramIndex + 1)
                         ]; 
                             

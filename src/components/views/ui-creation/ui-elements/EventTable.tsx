@@ -9,12 +9,12 @@
  */
 
 import * as React from 'react';
-import Web3Type from '../../../../types/web3';
 import { Element } from '../UIStructure';
 import * as Sol from '../../../../solidity-handler/SolidityHandler';
+import { BlockchainConnection } from '../../../../solidity-handler/BlockchainConnector';
 
 interface EventTableProps {
-    web3: Web3Type;
+    blockchainConnection: BlockchainConnection;
     element: Element;
     showMetaInformation: boolean;
 }
@@ -45,7 +45,7 @@ export class EventTable extends React.Component<EventTableProps, EventTableState
 
     async updateEvents(): Promise<void> {
 
-        const contract: any = new this.props.web3.eth.Contract(
+        const contract: any = new this.props.blockchainConnection.web3.eth.Contract(
             this.props.element.abi,
             this.props.element.contractAddress);
         this.setState({

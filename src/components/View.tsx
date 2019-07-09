@@ -112,7 +112,7 @@ export class View extends React.Component<ViewProps, {}> {
                                 removeContractToSelect={this.props.removeContractToSelect}
                                 selectedContractName={this.props.selectedContractName}
                                 selectedElement={this.props.selectedElement}
-                                web3={this.props.blockchainConnection.web3}
+                                blockchainConnection={this.props.blockchainConnection}
                                 contracts={this.props.contracts}
                                 changeSelectedElement={this.props.changeSelectedElement}
                                 changeGraphView={this.props.changeGraphView}
@@ -153,13 +153,12 @@ export class View extends React.Component<ViewProps, {}> {
                                 tabId={this.props.activeTab[this.props.viewId]}
                                 content={this.props.tabEntities[this.props.activeTab[this.props.viewId]].content}
                                 contentChange={this.props.contentChange}
-                                web3={this.props.blockchainConnection.web3}
+                                blockchainConnection={this.props.blockchainConnection}
                             />;
                 break;
 
             case TabEntityType.NodeDiagnostics:
                 content =   <NodeDiagnosticsView 
-                  
                                 key={'NodeDiagnosticsView'}
                                 viewId={this.props.viewId}
                                 tabId={this.props.activeTab[this.props.viewId]}
@@ -173,7 +172,7 @@ export class View extends React.Component<ViewProps, {}> {
                             viewId={this.props.viewId}
                             tabId={this.props.activeTab[this.props.viewId]}
                             content={this.props.tabEntities[this.props.activeTab[this.props.viewId]].content}
-                            web3={this.props.blockchainConnection.web3}
+                            blockchainConnection={this.props.blockchainConnection}
                         />;
             break;
 
@@ -183,7 +182,7 @@ export class View extends React.Component<ViewProps, {}> {
                                 viewId={this.props.viewId}
                                 tabId={this.props.activeTab[this.props.viewId]}
                                 content={this.props.blockchainConnection.transactionHistory}
-                                web3={this.props.blockchainConnection.web3}
+                                blockchainConnection={this.props.blockchainConnection}
                             />;
                 break;
 
@@ -196,7 +195,7 @@ export class View extends React.Component<ViewProps, {}> {
                                 viewId={this.props.viewId}
                                 tabId={this.props.activeTab[this.props.viewId]}
                                 content={this.props.tabEntities[this.props.activeTab[this.props.viewId]].content}
-                                web3={this.props.blockchainConnection.web3}
+                                blockchainConnection={this.props.blockchainConnection}
                                 submitFiles={this.props.submitFiles}
                                 contracts={this.props.contracts}
                                 loading={this.props.loading}

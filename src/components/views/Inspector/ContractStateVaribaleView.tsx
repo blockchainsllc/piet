@@ -10,9 +10,8 @@
 
 import * as React from 'react';
 import * as Sol from '../../../solidity-handler/SolidityHandler';
-import Web3Type from '../../../types/web3';
 import { getFunctionAbi, getStateVariableAbi } from '../../../utils/AbiGenerator';
-import { TabEntity, TabEntityType } from '../../View';
+import { TabEntityType } from '../../View';
 import { ValueBox } from '../ui-creation/InspectorTools/ValueBox';
 import { UICreationHandling } from '../ui-creation/UIStructure';
 import { callFunction, BlockchainConnection } from '../../../solidity-handler/BlockchainConnector';
@@ -127,7 +126,6 @@ export class ContractStateVaribaleView extends React.Component<ContractStateVari
             try {
                 abi = getStateVariableAbi(
                     stateVariable.getter,
-                    this.props.blockchainConnection.web3,
                     this.props.contracts,
                     this.props.selectedContract
                 );
@@ -187,7 +185,6 @@ export class ContractStateVaribaleView extends React.Component<ContractStateVari
             try {
                 abi = getFunctionAbi(
                     stateVariable.getter,
-                    this.props.blockchainConnection.web3,
                     this.props.contracts,
                     this.props.selectedContract
                 );

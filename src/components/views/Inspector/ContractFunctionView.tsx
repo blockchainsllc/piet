@@ -10,7 +10,6 @@
 
 import * as React from 'react';
 import * as Sol from '../../../solidity-handler/SolidityHandler';
-import Web3Type from '../../../types/web3';
 import { CodeBox, CodeToShow } from '../../CodeBox';
 import { TabEntityType } from '../../View';
 import { getFunctionAbi, getFunctionId } from '../../../utils/AbiGenerator';
@@ -19,7 +18,7 @@ import { ValueBox } from '../ui-creation/InspectorTools/ValueBox';
 import { ActionTool } from '../ui-creation/InspectorTools/ActionTool';
 import { InputFunctionParams } from '../../shared-elements/InputFunctionParams';
 import { OutputFunctionParams } from '../../shared-elements/OutputFunctionParams';
-import { callFunction, sendFunction, BlockchainConnection } from '../../../solidity-handler/BlockchainConnector';
+import { callFunction, sendFunction, BlockchainConnection, getAccounts } from '../../../solidity-handler/BlockchainConnector';
 
 interface ContractFunctionViewProps {
     selectedContract: Sol.Contract;
@@ -207,20 +206,15 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
 
         this.initBlockchainOperation(name, theFunction, functionIndex);
 
-        const contract: any = new this.props.blockchainConnection.web3.eth.Contract(
-            getFunctionAbi(theFunction, this.props.blockchainConnection.web3, this.props.contracts, this.props.selectedContract),
-            this.props.selectedContract.deployedAt);
-
         let result: any; 
         const error: any = null;
         result = await callFunction(
             contractFunction,
             this.props.blockchainConnection,
             this.props.selectedContract.deployedAt,
-            getFunctionAbi(theFunction, this.props.blockchainConnection.web3, this.props.contracts, this.props.selectedContract),
+            getFunctionAbi(theFunction, this.props.contracts, this.props.selectedContract),
             this.state.parameterMapping[theFunction.name]
         );
-
 
         this.setState((prevState: ContractFunctionViewState) => {
             if (prevState.resultMapping[name]) {
@@ -275,11 +269,10 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
         const name: string = contractFunction.name;
 
         this.initBlockchainOperation(name, theFunction, functionIndex);
-        const accounts: any[] = await this.props.blockchainConnection.web3.eth.getAccounts();
+        const accounts: any[] = await getAccounts(this.props.blockchainConnection);
         
         if (accounts.length > 0) {
 
-            
             let error: any = null;
             let result: any; 
             try {
@@ -287,7 +280,7 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
                     contractFunction,
                     this.props.blockchainConnection,
                     this.props.selectedContract.deployedAt,
-                    getFunctionAbi(theFunction, this.props.blockchainConnection.web3, this.props.contracts, this.props.selectedContract),
+                    getFunctionAbi(theFunction, this.props.contracts, this.props.selectedContract),
                     this.state.parameterMapping[name]
                 );
           
@@ -357,7 +350,7 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
                         inputParameterChange={this.parameterChange}
                         interactiveMode={this.props.testMode}
                         parameter={param}
-                        web3={this.props.blockchainConnection.web3}
+                        blockchainConnection={this.props.blockchainConnection}
                     />
                 );
             });
@@ -397,12 +390,12 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
 
             let abi: any = null;
             try {
-                abi = getFunctionAbi(contractFunction, this.props.blockchainConnection.web3, this.props.contracts, this.props.selectedContract);
+                abi = getFunctionAbi(contractFunction, this.props.contracts, this.props.selectedContract);
             } catch (e) {
                 console.log('could not create abi for ' + contractFunction.name);
             }
 
-            const functionKey: string = getFunctionId(contract, this.props.blockchainConnection.web3, contractFunction);
+            const functionKey: string = getFunctionId(contract, this.props.blockchainConnection, contractFunction);
             
             return  <div 
                         className='
@@ -543,7 +536,7 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
                     showResultBox={this.showResultBox} result={this.state.lastResult} id={'Function' + this.props.selectedContract.name} /> */}
                     <CodeBox 
                         codeToShow={this.state.codeToShow}
-                        web3={this.props.blockchainConnection.web3}
+                        blockchainConnection={this.props.blockchainConnection}
                         contracts={this.props.contracts}
                         codeBoxIsShown={this.state.codeBoxIsShown}
                         showCodeBox={this.showCodeBox}

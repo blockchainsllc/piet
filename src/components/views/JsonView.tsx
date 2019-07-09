@@ -9,12 +9,12 @@
  */
 
 import * as React from 'react';
-import Web3Type from '../../types/web3';
 import JSONTree from 'react-json-tree';
 import SplitPane from 'react-split-pane';
+import { BlockchainConnection } from '../../solidity-handler/BlockchainConnector';
 
 interface JsonViewProps {
-    web3: Web3Type;
+    blockchainConnection: BlockchainConnection;
     content: any;
     viewId: number;
     tabId: number;

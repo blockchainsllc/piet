@@ -10,14 +10,14 @@
 
 import * as React from 'react';
 import * as Sol from '../../solidity-handler/SolidityHandler';
-import Web3Type from '../../types/web3';
 import {Treebeard, decorators} from 'react-treebeard';
 import SplitPane from 'react-split-pane';
 import { Graph } from './Graph/GraphGenerator';
 import { saveAs } from 'file-saver';
+import { BlockchainConnection } from '../../solidity-handler/BlockchainConnector';
 
 interface FileBrowserViewProps {
-    web3: Web3Type;
+    blockchainConnection: BlockchainConnection;
     content: any;
     viewId: number;
     tabId: number;

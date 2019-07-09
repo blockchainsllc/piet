@@ -9,7 +9,6 @@
  */
 
 import * as Sol from './SolidityHandler';
-import Web3Type from '../types/web3';
 import * as Web3 from 'web3';
 import In3Client from 'in3';
 
@@ -28,7 +27,7 @@ type AddTransactionToHistory = (transaction: any) => void;
 export interface BlockchainConnection {
     connectionType: ConnectionType;
     rpcUrl: string;
-    web3: Web3Type;
+    web3: Web3;
     selectedAccount: string;
     updateBlockchainConnection: UpdateBlockchainConnection;
     addAccount: AddAccount;
@@ -55,7 +54,7 @@ export const changeBlockchainConfiguration: ChangeBlockchainConfiguration = asyn
     blockchainConnection: BlockchainConnection
 ): Promise<BlockchainConnection> => {
 
-    const getFirstAccount: (web3: Web3Type) => Promise<string> = async (web3: Web3Type): Promise<string> =>  {
+    const getFirstAccount: (web3: Web3) => Promise<string> = async (web3: Web3): Promise<string> =>  {
         const accounts: string[] = await blockchainConnection.web3.eth.getAccounts();
         if (blockchainConnection.useDefaultAccount) {
             return null;
@@ -111,6 +110,21 @@ export const changeBlockchainConfiguration: ChangeBlockchainConfiguration = asyn
     }
 };
 
+type GetFunctionSignature = (blockchainConnection: BlockchainConnection, abi: any) => string;
+export const getFunctionSignature: GetFunctionSignature = (blockchainConnection: BlockchainConnection, abi: any): string => {
+    return blockchainConnection.web3.eth.abi.encodeFunctionSignature(abi);
+};
+
+type Utf8ToHex = (blockchainConnection: BlockchainConnection, input: string) => string;
+export const utf8ToHex: Utf8ToHex = (blockchainConnection: BlockchainConnection, input: string): string => {
+    return blockchainConnection.web3.utf8ToHex(input);
+};
+
+type GetAccounts = (blockchainConnection: BlockchainConnection) => any[]; 
+export const getAccounts: GetAccounts = (blockchainConnection: BlockchainConnection): any[] => {
+    return blockchainConnection.web3.eth.getAccounts();
+};
+
 type InitBlockchainConfiguration = (
     connectionType: ConnectionType, 
     rpcUrl: string, 
@@ -127,7 +141,7 @@ export const initBlockchainConfiguration: InitBlockchainConfiguration = async (
     selectAccount: SelectAccount,
     addTransactionToHistory: AddTransactionToHistory
 ): Promise<BlockchainConnection> => {
-    let web3: Web3Type;
+    let web3: Web3;
     if (rpcUrl) {
         web3 = new Web3(rpcUrl);
     } else if ((window as any).ethereum) {

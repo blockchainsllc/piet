@@ -10,13 +10,13 @@
 
 import * as React from 'react';
 import * as Sol from '../../solidity-handler/SolidityHandler';
-import Web3Type from '../../types/web3';
 import JSONTree from 'react-json-tree';
 import SplitPane from 'react-split-pane';
 import { getEventAbi } from '../../utils/AbiGenerator';
+import { BlockchainConnection } from '../../solidity-handler/BlockchainConnector';
 
 interface EventCatcherViewProps {
-    web3: Web3Type;
+    blockchainConnection: BlockchainConnection;
     content: EventViewContent;
     contentChange: Function;
     viewId: number;
@@ -73,8 +73,8 @@ export class EventCatcherView extends React.Component<EventCatcherViewProps, Eve
         });
         const fromBlock: string = this.props.content.fromBlock ? this.props.content.fromBlock : '0';
         const toBlock: string = this.props.content.toBlock ? this.props.content.toBlock : 'latest';
-        const contract: any = new this.props.web3.eth.Contract(
-            getEventAbi(this.props.content.event, this.props.web3, this.props.contracts, this.props.content.contract),
+        const contract: any = new this.props.blockchainConnection.web3.eth.Contract(
+            getEventAbi(this.props.content.event, this.props.contracts, this.props.content.contract),
             this.props.content.contract.deployedAt);
         this.props.contentChange(this.props.viewId, this.props.tabId, {
             ...this.props.content,

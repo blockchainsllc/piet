@@ -10,7 +10,6 @@
 
 import * as React from 'react';
 import * as Sol from '../../../solidity-handler/SolidityHandler';
-import Web3Type from '../../../types/web3';
 import { SelectedView } from './SelectedView';
 import SplitPane from 'react-split-pane';
 import { TabEntity, TabEntityType } from '../../View';

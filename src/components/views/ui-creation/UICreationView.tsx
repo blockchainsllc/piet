@@ -9,7 +9,6 @@
  */
 
 import * as React from 'react';
-import Web3Type from '../../../types/web3';
 import SplitPane from 'react-split-pane';
 import { UICreationHandling, Row, Element, ElementType } from './UIStructure';
 import { SingleValueBox } from './ui-elements/SingleValueBox';
@@ -152,7 +151,7 @@ export class UICreationView extends React.Component<UICreationViewProps, UICreat
                                 key={element.contractAddress + element.functionName}
                                 showMetaInformation={devMode}
                                 element={element}
-                                web3={this.props.blockchainConnection.web3}
+                                blockchainConnection={this.props.blockchainConnection}
                             />;
                         default:
                             return null;
@@ -178,7 +177,7 @@ export class UICreationView extends React.Component<UICreationViewProps, UICreat
 
         const navBar: JSX.Element = <NavBar 
                         uiCreationHandling={this.props.uiCreationHandling}
-                        web3={this.props.blockchainConnection.web3}
+                        blockchainConnection={this.props.blockchainConnection}
                         showMetaInformation={devMode}
                         actions={this.props.uiCreationHandling.uiStructure.actionElements}
                         selectFunctionElement={this.selectFunctionElement}
