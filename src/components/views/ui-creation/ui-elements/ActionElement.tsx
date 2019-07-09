@@ -9,13 +9,12 @@
  */
 
 import * as React from 'react';
-import Web3Type from '../../../../types/web3';
 import { Element } from '../UIStructure';
-import * as Sol from '../../../../solidity-handler/SolidityHandler';
 import { SelectElement } from './FunctionModal';
+import { BlockchainConnection } from '../../../../solidity-handler/BlockchainConnector';
 
 interface ActionElementProps {
-    web3: Web3Type;
+    blockchainConnection: BlockchainConnection;
     element: Element;
     showMetaInformation: boolean;
     selectFunctionElement: SelectElement;

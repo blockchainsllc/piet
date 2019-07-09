@@ -10,7 +10,7 @@
 
 import * as React from 'react';
 import { ContractFunctionParam, Contract } from '../../solidity-handler/SolidityHandler';
-import Web3Type from '../../types/web3';
+import { BlockchainConnection, utf8ToHex } from '../../solidity-handler/BlockchainConnector';
 
 export type InputParameterChange = (input: string, index: number, contractFunctionName: string) => void;
 
@@ -21,7 +21,7 @@ export interface InputFunctionParamsProps {
     interactiveMode: boolean;
     inputParameterChange: InputParameterChange;
     index: number;
-    web3: Web3Type;
+    blockchainConnection: BlockchainConnection;
 }
 
 export class InputFunctionParams extends React.Component<InputFunctionParamsProps, {}> {
@@ -42,7 +42,7 @@ export class InputFunctionParams extends React.Component<InputFunctionParamsProp
     onUTF8Change(e: any): void {
         e.persist();
         this.props.inputParameterChange(
-            (this.props.web3.utils as any).utf8ToHex(e.target.value),
+            utf8ToHex(this.props.blockchainConnection, e.target.value),
             this.props.index,
             this.props.contractFunctionName
         );

@@ -12,13 +12,13 @@
 import * as React from 'react';
 import { Element, UICreationHandling } from '../UIStructure';
 import { ActionElement } from './ActionElement';
-import Web3Type from '../../../../types/web3';
 import { SelectElement } from './FunctionModal';
+import { BlockchainConnection } from '../../../../solidity-handler/BlockchainConnector';
 
 interface NavBarProps {
     actions: Element[];
     showMetaInformation: boolean;
-    web3: Web3Type;
+    blockchainConnection: BlockchainConnection;
     selectFunctionElement: SelectElement;
     uiCreationHandling: UICreationHandling;
 }
@@ -59,7 +59,7 @@ export class NavBar extends React.Component<NavBarProps, NavBarState > {
                 key={element.contractAddress + element.functionName}
                 element={element} 
                 showMetaInformation={this.props.showMetaInformation} 
-                web3={this.props.web3}
+                blockchainConnection={this.props.blockchainConnection}
                 selectFunctionElement={this.props.selectFunctionElement}
             />
             );

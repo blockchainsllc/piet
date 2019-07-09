@@ -11,14 +11,14 @@
 import * as React from 'react';
 
 import * as Sol from '../../../solidity-handler/SolidityHandler';
-import Web3Type from '../../../types/web3';
 import { GraphView } from './GraphView';
 import SplitPane from 'react-split-pane';
 import { Graph, GraphViewType } from './GraphGenerator';
+import { BlockchainConnection } from '../../../solidity-handler/BlockchainConnector';
 
 interface GraphContainerViewProps {
     selectedElement: Sol.NodeElement;
-    web3: Web3Type;
+    blockchainConnection: BlockchainConnection;
     contracts: Sol.Contract[];
     changeSelectedElement: Function;
     selectedContractName: string;
