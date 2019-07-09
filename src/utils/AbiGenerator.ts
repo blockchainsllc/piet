@@ -11,6 +11,7 @@
 import * as Sol from '../solidity-handler/SolidityHandler';
 import Web3Type from '../types/web3';
 import { ContractEnumeration } from '../solidity-handler/SolidityHandler';
+import { OutputFunctionParams } from '../components/shared-elements/OutputFunctionParams';
 
 export const isSameFunction: (firstFunctionAbi: any[], secondFunctionAbi: any[], web3: Web3Type) => boolean = 
     (firstFunctionAbi: any[], secondFunctionAbi: any[], web3: Web3Type): boolean => {
@@ -42,6 +43,22 @@ export const getFunctionAbi: (theFunction: Sol.ContractFunction, web3: Web3Type,
             inputs: getInAndOutputs(theFunction.params, contracts, contextContract),
             outputs: getInAndOutputs(theFunction.returnParams, contracts, contextContract)
         };
+        
+        return [functionAbi];
+    };
+
+export const getStateVariableAbi: (theFunction: Sol.ContractFunction, web3: Web3Type, contracts: Sol.Contract[], contextContract: Sol.Contract) => any  = 
+    (theFunction: Sol.ContractFunction, web3: Web3Type, contracts: Sol.Contract[], contextContract: Sol.Contract): any => {
+
+        const functionAbi: any = {
+            name: theFunction.name,
+            type: 'function',
+            inputs: getInAndOutputs(theFunction.params, contracts, contextContract),
+            outputs: getInAndOutputs(theFunction.returnParams, contracts, contextContract)
+        };
+        if (functionAbi.outputs[0].type && functionAbi.outputs[0].type === "tuple") {
+            functionAbi.outputs = functionAbi.outputs[0].components;
+        } 
         
         return [functionAbi];
     };
