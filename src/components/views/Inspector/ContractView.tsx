@@ -145,7 +145,7 @@ export class ContractView extends React.Component<ContractViewProps, ContractVie
                         />
                         {contract.deployedAt || this.props.editContractAddress ? 
                             <div>
-                                <h5 id='meta' className='member-headline'><i className='fas fa-info-circle'></i> Meta</h5>
+                                <h5 id='meta' className='member-headline'><i className='fas fa-info-circle'></i> Instance information</h5>
                                 <div className='list-group'>
                                     <a  href='#' 
                                         className='selected-list-item list-group-item list-group-item-action flex-column align-items-start'

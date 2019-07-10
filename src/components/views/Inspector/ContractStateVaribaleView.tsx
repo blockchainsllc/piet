@@ -35,8 +35,7 @@ interface ContractStateVaribaleViewState {
     stateVariableInput: any[];
 }
 
-export class ContractStateVaribaleView extends React.Component<ContractStateVaribaleViewProps, {}> {
-    state: ContractStateVaribaleViewState;
+export class ContractStateVaribaleView extends React.Component<ContractStateVaribaleViewProps, ContractStateVaribaleViewState> {
 
     constructor(props: ContractStateVaribaleViewProps) {
         super(props);
@@ -45,7 +44,6 @@ export class ContractStateVaribaleView extends React.Component<ContractStateVari
             parameterMapping: [],
             resultMapping: [],
             stateVariableInput: []
-
         };
 
         this.call = this.call.bind(this);
@@ -79,28 +77,32 @@ export class ContractStateVaribaleView extends React.Component<ContractStateVari
 
     }
 
-    componentDidMount(): void  {
-        const numberOfStateVariables: number = this.props.selectedContract.stateVariables.length
-            + this.props.selectedContract.inheritedStateVariables.length;
-        this.setState({
-            resultMapping: Array(numberOfStateVariables).fill(false)
+    reset(props: ContractStateVaribaleViewProps): void {
+        const numberOfStateVariables: number = props.selectedContract.stateVariables.length
+            + props.selectedContract.inheritedStateVariables.length;
+        this.setState(
+            {
+                resultMapping: Array(numberOfStateVariables).fill(false)
+            },
+            () => this.getAll(props)
+        );
+    }
 
-        },            this.getAll);
+    componentDidMount(): void  {
+        this.reset(this.props);
     }
 
     componentWillReceiveProps(nextProps: ContractStateVaribaleViewProps): void  {
-
-        if (this.props.selectedContract.name !== nextProps.selectedContract.name) {
-            const numberOfStateVariables: number = this.props.selectedContract.stateVariables.length
-                + this.props.selectedContract.inheritedStateVariables.length;
-            this.setState({
-                resultMapping: Array(numberOfStateVariables).fill(false)
-            },            this.getAll);
+        if (
+            this.props.selectedContract.name !== nextProps.selectedContract.name || 
+            this.props.selectedContract.deployedAt !== nextProps.selectedContract.deployedAt
+        ) {
+            this.reset(nextProps);
         }
     }
 
-    getAll(): void  {
-        [...this.props.selectedContract.stateVariables, ...this.props.selectedContract.inheritedStateVariables]
+    getAll(props: ContractStateVaribaleViewProps): void  {
+        [...props.selectedContract.stateVariables, ...props.selectedContract.inheritedStateVariables]
                 .forEach((sv: Sol.ContractStateVariable, index: number) => this.call(sv, index));
     }
 
@@ -117,8 +119,7 @@ export class ContractStateVaribaleView extends React.Component<ContractStateVari
             this.setState({
                 resultMapping: [...this.state.resultMapping.slice(0, index),
                                 '',
-                                ...this.state.resultMapping.slice(index + 1)],
-                lastResult: ''
+                                ...this.state.resultMapping.slice(index + 1)]
 
             });
  
