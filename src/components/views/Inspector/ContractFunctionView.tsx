@@ -47,9 +47,8 @@ interface ContractFunctionViewState {
     
 }
 
-export class ContractFunctionView extends React.Component<ContractFunctionViewProps, {}> {
-    state: ContractFunctionViewState;
-
+export class ContractFunctionView extends React.Component<ContractFunctionViewProps, ContractFunctionViewState> {
+  
     constructor(props: ContractFunctionViewProps) {
         super(props);
         this.state = {
@@ -63,7 +62,6 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
             codeBoxIsShown: false,
             blockchainErrors: [],
             codeToShow: CodeToShow.Solidity
-  
         };
 
         this.showResultBox = this.showResultBox.bind(this);
@@ -91,12 +89,7 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
     }
 
     componentDidMount(): void {
-        const numberOfFunctions: number = 
-            this.props.selectedContract.functions.length + this.props.selectedContract.inheritedFunctions.length;
-        this.setState({
-            functionCollapsed: Array(numberOfFunctions).fill(false),
-            blockchainErrors: Array(numberOfFunctions).fill(null)
-        });
+        this.reset(this.props);
     }
 
     toogleCollapse(index: number): void {
@@ -107,15 +100,26 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
         });
     }
 
+    reset(props: ContractFunctionViewProps): void {
+        const numberOfFunctions: number = 
+                props.selectedContract.functions.length + props.selectedContract.inheritedFunctions.length;
+        this.setState({
+            functionCollapsed: Array(numberOfFunctions).fill(false),
+            blockchainErrors: Array(numberOfFunctions).fill(null),
+            lastResult: '',
+            lastResultName: '',
+            parameterMapping: [],
+            resultMapping: []
+        });
+    }
+
     componentWillReceiveProps(nextProps: ContractFunctionViewProps): void {
 
-        if (this.props.selectedContract.name !== nextProps.selectedContract.name) {
-            const numberOfFunctions: number = 
-                this.props.selectedContract.functions.length + this.props.selectedContract.inheritedFunctions.length;
-            this.setState({
-                functionCollapsed: Array(numberOfFunctions).fill(false),
-                blockchainErrors: Array(numberOfFunctions).fill(null)
-            });
+        if (this.props.selectedContract.name !== nextProps.selectedContract.name ||
+            this.props.selectedContract.deployedAt !== nextProps.selectedContract.deployedAt
+            
+        ) {
+            this.reset(nextProps);
         }
     }
 
@@ -239,7 +243,6 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
 
     initBlockchainOperation(name: string, theFunction: Sol.ContractFunction, functionIndex: number): void {
 
-        
         for (const index of Object.keys(theFunction.returnParams)) {
             this.setState((prevState: ContractFunctionViewState) => {
                 if (prevState.resultMapping[name]) {

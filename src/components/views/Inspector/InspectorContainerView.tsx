@@ -54,25 +54,24 @@ export class InspectorContainerView extends React.Component<InspectorContainerVi
     }
 
     componentDidMount(): void {
-       this.checkReadynessForInteractiveMode(this.props);
+       this.init(this.props);
     }
 
     componentWillReceiveProps(props: InspectorContainerViewProps): void {
-        this.checkReadynessForInteractiveMode(this.props);
+        this.init(this.props);
     }
 
-    checkReadynessForInteractiveMode(props: InspectorContainerViewProps): void {
+    init(props: InspectorContainerViewProps): void {
+
         if (
             props.selectedElement &&
             props.selectedElement.elementType === Sol.ElementType.Contract && 
-            (props.selectedElement as Sol.Contract).deployedAt &&
-            checkBlockchainConnection(this.props.blockchainConnection)
+            (props.selectedElement as Sol.Contract).deployedAt 
         ) {
             this.setState({
-                testMode: true,
-                editContractAddress: !((props.selectedElement as Sol.Contract).deployedAt)
+                testMode: checkBlockchainConnection(this.props.blockchainConnection)
             });
-        }
+        } 
     }
 
     toogleTestMode (): void {

@@ -234,10 +234,12 @@ class AppContainer extends React.Component<{}, {}> {
             const contractIndex: number = prevState.contracts.findIndex((c: Sol.Contract) => c.name === contractName);
             if (contractIndex !== -1) {
                 prevState.contracts[contractIndex].deployedAt = newContractAddress;
+                prevState.selectedElement = prevState.contracts[contractIndex];
             }
 
             return {
-                contracts: prevState.contracts
+                contracts: prevState.contracts,
+                selectedElement: prevState.selectedElement
             };
 
         });
