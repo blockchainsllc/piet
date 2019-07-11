@@ -11,10 +11,9 @@
 import * as React from 'react';
 import JSONTree from 'react-json-tree';
 import SplitPane from 'react-split-pane';
-import * as axios from 'axios';
-
-import { BlockchainConnection } from '../../../solidity-handler/BlockchainConnector';
-import { rpcMethods } from './RPCMethods';
+import { BlockchainConnection, sendJSONRpcQuery } from '../../../solidity-handler/BlockchainConnector';
+import { rpcMethods, RpcMethod, Param, JsonType } from './RPCMethods';
+import { validateRPCRequest } from 'in3/js/src/types/types';
 
 interface NodeDiagnosticsViewProps {
     blockchainConnection: BlockchainConnection;
@@ -24,11 +23,11 @@ interface NodeDiagnosticsViewProps {
 }
 
 export interface NodeDiagnosticsViewState {
-    selectedMethod: string;
+    selectedMethod: RpcMethod;
     rpcId: number;
     result: any;
-    rpcUrl: string;
-    block: string;
+    params: any[];
+
 }
 
 export class NodeDiagnosticsView extends React.Component<NodeDiagnosticsViewProps, NodeDiagnosticsViewState> {
@@ -39,72 +38,77 @@ export class NodeDiagnosticsView extends React.Component<NodeDiagnosticsViewProp
         this.state = {
             selectedMethod: rpcMethods[0],
             rpcId: 0,
-            result: null,
-            rpcUrl: null,
-            block: 'latest'
+            result: {},
+            params: []
         };
 
         this.onClickPlay = this.onClickPlay.bind(this);
         this.onMethodChange = this.onMethodChange.bind(this);
-        this.onUrlChange = this.onUrlChange.bind(this);
-        this.onBlockChange = this.onBlockChange.bind(this);
-        this.onGetBlock = this.onGetBlock.bind(this);
+        this.onParamChange = this.onParamChange.bind(this);
 
-    }
-
-    componentDidMount(): void {
-        this.setState({
-            rpcUrl: this.props.blockchainConnection.rpcUrl
-        });
-    }
-
-    onUrlChange(e: any): void {
-        e.persist();
-        this.setState({
-                rpcUrl: e.target.value
-        });
-    }
-
-    onBlockChange(e: any): void {
-        e.persist();
-        this.setState({
-                block: e.target.value
-        });
     }
 
     async onMethodChange(event: any): Promise<void> {
         event.persist();
-
+        const rpcMethod: RpcMethod = rpcMethods.find((value: RpcMethod) => value.name === event.target.value);
         this.setState({
-                selectedMethod: event.target.value
+            selectedMethod: rpcMethod,
+            params: rpcMethod.params ? Array(rpcMethod.params.length).fill(null) : []
+        });
+    }
+
+    onParamChange(event: any, index: number): void {
+        event.persist();
+        this.setState((prevState: NodeDiagnosticsViewState) => {
+            let value: any;
+            switch (this.state.selectedMethod.params[index].jsonType) {
+                case JsonType.Bool:
+                    value = event.target.value === 'true';
+                    break;
+                case JsonType.Number:
+                    value = parseInt(event.target.value, 10);
+                    break;
+                case JsonType.Json:
+                    try {
+                        value = JSON.parse(event.target.value);
+                    } catch {
+                        value = event.target.value;
+                    }
+                    break;
+                case JsonType.String:
+                default:
+                    value = event.target.value;
+            }
+
+            prevState.params[index] = value;
+            return {
+                params: prevState.params
+            };
         });
     }
 
     async onClickPlay(): Promise<void> {
         let error: any =  null;
-        const result: any = await (axios as any).post(this.state.rpcUrl, {
-            jsonrpc: '2.0',
-            method: this.state.selectedMethod, 
-            params: [], 
-            id: this.state.rpcId
-        }).catch((e: Error) => error = e);
-
         this.setState((prevState: NodeDiagnosticsViewState) => {
             return ({
-                result: error ? error : result.data,
-                rpcId: ++prevState.rpcId
+                result: {}
             });
         });
-    }
 
-    async onGetBlock(): Promise<void> {
-
-        const result: any = await this.props.blockchainConnection.web3.eth.getBlock(this.state.block as any);
+        const result: any = await sendJSONRpcQuery(
+            this.props.blockchainConnection, 
+            {
+                jsonrpc: '2.0',
+                method: this.state.selectedMethod.name, 
+                params: this.state.params, 
+                id: this.state.rpcId
+            }
+        ).catch((e: Error) => error = e);
 
         this.setState((prevState: NodeDiagnosticsViewState) => {
             return ({
-                result
-        
+                result: error ? error : result,
+                rpcId: ++prevState.rpcId
             });
         });
     }
@@ -132,7 +136,26 @@ export class NodeDiagnosticsView extends React.Component<NodeDiagnosticsViewProp
             base0F: '#cc6633'
         };
 
-        const methods: JSX.Element[] = rpcMethods.map((method: string) => <option value={method}>{method}</option>);
+        const methods: JSX.Element[] = rpcMethods.map((method: RpcMethod) => 
+            <option key={method.name} value={method.name}>{method.name}</option>
+        );
+        const paramInputs: JSX.Element[] = this.state.selectedMethod.params ? 
+            this.state.selectedMethod.params.map((value: Param, index: number) =>
+                <div key={value.name} className='form-group'>
+                    <small className='inputl-label'>{value.name}</small>
+                    <input 
+                        type='text'
+                        className='form-control form-control-sm dark-input rpc-url input-output'
+                        onChange={(e) => this.onParamChange(e, index)}
+                        placeholder={JsonType[value.jsonType]}
+                    >
+                    </input>
+                    { value.notice &&
+                        <small className='text-muted'><p><i>{value.notice}</i></p></small>
+                    }
+                </div>
+            ) :
+            [];
 
         return <SplitPane className='scrollable hide-resizer' split='horizontal' defaultSize={40} allowResize={false} >
                     <div className='h-100 w-100 toolbar'>
@@ -146,34 +169,28 @@ export class NodeDiagnosticsView extends React.Component<NodeDiagnosticsViewProp
                     >
                         <div></div>
                         <SplitPane 
-                            className='scrollable hide-resizer empty-first-pane' 
+                            className='scrollable hide-resizer empty-first-pane  toolbar-pane' 
                             split='vertical'  
-                            defaultSize={200} 
+                            defaultSize={300} 
                             allowResize={false}
                         >
+                            
                             <div className='h-100 w-100 toolbar'>
                                 <div className='form node-diagnostics-form'>
-                                    <div className='text-muted vertical-toolbar-headline'><small>RPC Methods</small></div>
-                                    <div className='form-group'>
-                                        <input 
-                                            type='url'
-                                            className='form-control form-control-sm dark-input rpc-url'
-                                            onChange={this.onUrlChange}
-                                            defaultValue={this.state.rpcUrl}
-                
-                                        >
-                                        </input>
-                                    </div>
                                     <div className='form-group'>
                          
                                         <select 
                                             onChange={this.onMethodChange} 
-                                            
                                             className='custom-select custom-select-sm rpc-method-select'
                                         >
                                             {methods}
                                         </select> 
                                     </div>
+                                    { this.state.selectedMethod && this.state.selectedMethod.notice &&
+                                        <small className='text-muted'><p><i>{this.state.selectedMethod.notice}</i></p></small>
+                                    }
+
+                                    {paramInputs}
                                    
                                     <button 
                                         className={'btn btn-sm btn-outline-info'}
@@ -183,42 +200,29 @@ export class NodeDiagnosticsView extends React.Component<NodeDiagnosticsViewProp
                                     </button>
                     
                                 </div>
-                                <hr />
-                                <div className='form node-diagnostics-form'>
-                                    <div className='text-muted vertical-toolbar-headline'><small>Block</small></div>
-                                    <div className='form-group'>
-                                        <input 
-                                            type='url'
-                                            className='form-control form-control-sm dark-input rpc-url'
-                                            onChange={this.onBlockChange}
-                                            defaultValue={this.state.block}
-                
-                                        >
-                                        </input>
-                                    </div>
-                                   
-                                    <button 
-                                        className={'btn btn-sm btn-outline-info'}
-                                        onClick={this.onGetBlock}
-                                    >
-                                        Get Block
-                                    </button>
-                    
-                                </div>
+                            
                             </div>
-                            <div>
-                        
-                                <div className='container-fluid'>
-                                    <div className='row'>
-                                        <div className='col-12'>
-                                            <small>
-                                                <JSONTree data={this.state.result} theme={theme} invertTheme={false}/> 
-                                            </small>
+                            <SplitPane 
+                                className='scrollable hide-resizer empty-first-pane  toolbar-pane' 
+                                split='vertical'  
+                                defaultSize={1} 
+                                allowResize={false}
+                            >
+                                <div></div>
+                                <div>
+                            
+                                    <div className='container-fluid'>
+                                        <div className='row'>
+                                            <div className='col-12'>
+                                                <small>
+                                                    <JSONTree data={this.state.result} theme={theme} invertTheme={false}/> 
+                                                </small>
+                                            </div>
                                         </div>
                                     </div>
+                            
                                 </div>
-                        
-                            </div>
+                            </SplitPane>
                         </SplitPane>
                             
                     </SplitPane>

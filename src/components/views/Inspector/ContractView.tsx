@@ -17,7 +17,7 @@ import { ContractModifierView } from './ContractModifierView';
 import { ContractFunctionView } from './ContractFunctionView';
 import { TabEntity, TabEntityType } from '../../View';
 import { UICreationHandling } from '../ui-creation/UIStructure';
-import { BlockchainConnection } from '../../../solidity-handler/BlockchainConnector';
+import { BlockchainConnection, checkBlockchainConnection } from '../../../solidity-handler/BlockchainConnector';
 interface ContractViewProps {
     selectedContract: Sol.Contract;
     contracts: Sol.Contract[];
@@ -32,6 +32,7 @@ interface ContractViewProps {
     toggleInheritance: Function;
     selectedTabTypeForView: TabEntityType[];
     uiCreationHandling: UICreationHandling;
+    weiBalance: string;
 }
 
 interface ContractViewState {
@@ -150,14 +151,15 @@ export class ContractView extends React.Component<ContractViewProps, ContractVie
                                     <a  href='#' 
                                         className='selected-list-item list-group-item list-group-item-action flex-column align-items-start'
                                     >
-                                        <strong>Deployed at</strong>
+                                        <strong>Address</strong>
                                         <div>
                                             {this.props.editContractAddress ?
                                             <div>
                                                 <input
                                                     placeholder={contract.deployedAt}
                                                     onChange={(e: any): void => this.onChangeContractAddress(e)}
-                                                    className='form-control form-control-sm' type='text'
+                                                    className='form-control form-control-sm input-output' 
+                                                    type='text'
                                                 />
                                                 <div className='text-right functionOperations'>
                                                 <button 
@@ -171,9 +173,26 @@ export class ContractView extends React.Component<ContractViewProps, ContractVie
                                                 </button>
                                                 </div>
                                             </div>
-                                            : <small>{contract.deployedAt}</small>}
+                                            : <span className='input-output'>{contract.deployedAt}</span>}
                                         </div>
                                     </a>
+                                    { this.props.weiBalance &&
+                                        <a  href='#' 
+                                            className='
+                                                selected-list-item
+                                                list-group-item
+                                                list-group-item-action
+                                                flex-column
+                                                align-items-start
+                                            '
+                                        >
+                                        <strong>Wei balance</strong>
+                                        <div>
+                                            <span className='input-output'>{this.props.weiBalance}</span>
+                                        </div>
+                                    </a>
+                                    }
+                                    
                                 </div>
                             </div>
                             : null

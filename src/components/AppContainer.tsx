@@ -70,7 +70,8 @@ class AppContainer extends React.Component<{}, {}> {
                 addAccount: this.addAccount,
                 addTransactionToHistory: this.addTransactionToHistory,
                 useDefaultAccount: true,
-                transactionHistory: []
+                transactionHistory: [],
+                netVersion: null
             },
             graph: null,
             graphToLoad: null,
@@ -582,15 +583,16 @@ class AppContainer extends React.Component<{}, {}> {
         }
 
         return  <div>
-                    <SplitPane split='vertical' minSize={300} defaultSize={500} >
+                    <SplitPane split='vertical' minSize={300} defaultSize={550} >
                     
-                        <SplitPane split='vertical'  defaultSize={60} allowResize={false} >
+                        <SplitPane split='vertical'  defaultSize={70} allowResize={false} >
                                 
                                 <Sidebar 
                                     addTabEntity={this.addTabEntity}
                                     isLoading={this.state.isLaoding} 
                                     submitFiles={this.updateContractNames} 
                                     changeActiveTab={this.changeActiveTab}
+                                    blockchainConnection={this.state.blockchainConnection}
                                 />
                                 <View
                                     setGraph={this.setGraph}

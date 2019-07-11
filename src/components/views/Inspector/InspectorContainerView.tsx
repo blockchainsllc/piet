@@ -14,7 +14,8 @@ import { SelectedView } from './SelectedView';
 import SplitPane from 'react-split-pane';
 import { TabEntity, TabEntityType } from '../../View';
 import { UICreationHandling } from '../ui-creation/UIStructure';
-import { BlockchainConnection, ConnectionType, checkBlockchainConnection } from '../../../solidity-handler/BlockchainConnector';
+import { BlockchainConnection, ConnectionType, checkBlockchainConnection, getWeiBalance } from '../../../solidity-handler/BlockchainConnector';
+import { timingSafeEqual } from 'crypto';
 
 interface InspectorContainerViewProps {
     blockchainConnection: BlockchainConnection;
@@ -32,6 +33,7 @@ interface InspectorContainerViewState {
     testMode: boolean;
     editContractAddress: boolean;
     showInheritedMembers: boolean;
+    weiBalance: string;
 
 }
 
@@ -42,7 +44,7 @@ export class InspectorContainerView extends React.Component<InspectorContainerVi
         this.state = {
             testMode: false,
             showInheritedMembers: false,
-    
+            weiBalance: null,
             editContractAddress: false
         };
 
@@ -61,17 +63,25 @@ export class InspectorContainerView extends React.Component<InspectorContainerVi
         this.init(this.props);
     }
 
-    init(props: InspectorContainerViewProps): void {
+    async init(props: InspectorContainerViewProps): Promise<void> {
 
         if (
             props.selectedElement &&
             props.selectedElement.elementType === Sol.ElementType.Contract && 
             (props.selectedElement as Sol.Contract).deployedAt 
         ) {
+            const weiBalance: string = checkBlockchainConnection(props.blockchainConnection) ?
+                await getWeiBalance(this.props.blockchainConnection, (props.selectedElement as Sol.Contract).deployedAt) :
+                null;
             this.setState({
-                testMode: checkBlockchainConnection(this.props.blockchainConnection)
+                testMode: checkBlockchainConnection(this.props.blockchainConnection),
+                weiBalance
             });
-        } 
+        } else {
+            this.setState({
+                weiBalance: null
+            });
+        }
     }
 
     toogleTestMode (): void {
@@ -165,6 +175,7 @@ export class InspectorContainerView extends React.Component<InspectorContainerVi
                             editContractAddress={this.state.editContractAddress}
                             changeContractAddress={this.submitNewContractAddress}
                             getEvents={this.props.getEvents}
+                            weiBalance={this.state.weiBalance}
                         />
                     </SplitPane>
                 </SplitPane>;

@@ -36,6 +36,7 @@ export interface BlockchainConnection {
     selectAccount: SelectAccount;
     useDefaultAccount: boolean;
     transactionHistory: any[];
+    netVersion: string;
 }
 
 type CheckBlockchainConnection = (blockchainConnection: BlockchainConnection) => boolean;
@@ -43,6 +44,29 @@ export const checkBlockchainConnection: CheckBlockchainConnection = (blockchainC
     return blockchainConnection &&
         blockchainConnection.connectionType !== ConnectionType.None &&
         blockchainConnection.web3;
+};
+
+type GetWeiBalance = (blockchainConnection: BlockchainConnection, address: string) => Promise<string>;
+export const getWeiBalance: GetWeiBalance = (blockchainConnection: BlockchainConnection, address: string): Promise<string> => {
+    return blockchainConnection.web3.eth.getBalance(address);
+};
+
+type SendJSONRpcQuery = (blockchainConnection: BlockchainConnection, data: any) => Promise<any>;
+export const sendJSONRpcQuery: SendJSONRpcQuery = (blockchainConnection: BlockchainConnection, data: any): Promise<any> => {
+    return new Promise((resolve: any, reject: any): void => {
+        const provider: any = blockchainConnection.web3.currentProvider;
+
+        provider.send(
+            data, 
+            (error: any, result: any) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(result);
+                }
+            }
+        );
+    });
 };
 
 export const resultToOutput: (result: any) => string = (result: any): string => {
@@ -54,6 +78,16 @@ export const resultToOutput: (result: any) => string = (result: any): string => 
     }
 };
 
+type GetNetVersion = (bC: BlockchainConnection) => Promise<string>
+const getNetVersion: GetNetVersion = (bC: BlockchainConnection): Promise<string> => {
+    return sendJSONRpcQuery(bC, {
+        jsonrpc: '2.0',
+        method: 'net_version', 
+        params: [], 
+        id: 0
+    });
+};
+
 type ChangeBlockchainConfiguration = (
     blockchainConnection: BlockchainConnection
 ) => Promise<BlockchainConnection>;
@@ -62,60 +96,75 @@ export const changeBlockchainConfiguration: ChangeBlockchainConfiguration = asyn
     blockchainConnection: BlockchainConnection
 ): Promise<BlockchainConnection> => {
 
-    const getFirstAccount: (web3: Web3) => Promise<string> = async (web3: Web3): Promise<string> =>  {
-        const accounts: string[] = await blockchainConnection.web3.eth.getAccounts();
-        if (blockchainConnection.useDefaultAccount) {
-            return null;
-        } else if (accounts.length > 0) {
-            return accounts[0];
-        } else {
-            return null;
-        }
-        
-    };
-
-    blockchainConnection.useDefaultAccount = true;
-
-    switch (blockchainConnection.connectionType) {
-        case ConnectionType.MainnetIncubed:
-            blockchainConnection.web3 = new Web3(new In3Client({
-                proof         : 'none',
-                signatureCount: 0,
-                requestCount  : 2,
-                chainId       : 'mainnet'
-            }).createWeb3Provider());
-            blockchainConnection.selectedAccount = null;
-            blockchainConnection.useDefaultAccount = true;
-            return blockchainConnection;
-        case ConnectionType.WebSocketRPC:
-            blockchainConnection.web3 = new Web3(new Web3.providers.WebsocketProvider(blockchainConnection.rpcUrl));
-            blockchainConnection.selectedAccount = await getFirstAccount(blockchainConnection.web3);
-            return blockchainConnection;
-
-        case ConnectionType.Rpc:
-        
-            blockchainConnection.web3 = new Web3(blockchainConnection.rpcUrl);
-            blockchainConnection.selectedAccount = await getFirstAccount(blockchainConnection.web3);
-            return blockchainConnection;
-
-        case ConnectionType.Injected:
-            if ((window as any).ethereum) {
-                blockchainConnection.web3 = new Web3((window as any).ethereum);
-                await (window as any).ethereum.enable();
-                blockchainConnection.selectedAccount = await getFirstAccount(blockchainConnection.web3);
-            } else if ((window as any).web3) {
-                blockchainConnection.web3 = new Web3((window as any).web3.currentProvider);
-                blockchainConnection.selectedAccount = await getFirstAccount(blockchainConnection.web3);
+    try {
+        const getFirstAccount: (web3: Web3) => Promise<string> = async (web3: Web3): Promise<string> =>  {
+            const accounts: string[] = await blockchainConnection.web3.eth.getAccounts();
+            if (blockchainConnection.useDefaultAccount) {
+                return null;
+            } else if (accounts.length > 0) {
+                return accounts[0];
             } else {
-                blockchainConnection.connectionType = ConnectionType.None;
-                blockchainConnection.selectedAccount = null;
-                blockchainConnection.web3 = new Web3();
+                return null;
             }
-            return blockchainConnection;
-        default:
-            blockchainConnection.web3 = new Web3();
-            return blockchainConnection;
+            
+        };
+
+        blockchainConnection.useDefaultAccount = true;
+    
+        switch (blockchainConnection.connectionType) {
+            case ConnectionType.MainnetIncubed:
+                blockchainConnection.web3 = new Web3(new In3Client({
+                    proof         : 'none',
+                    signatureCount: 0,
+                    requestCount  : 2,
+                    chainId       : 'mainnet'
+                }).createWeb3Provider());
+                blockchainConnection.selectedAccount = null;
+                blockchainConnection.useDefaultAccount = true;
+                blockchainConnection.netVersion = (await getNetVersion(blockchainConnection) as any).result;;
+                return blockchainConnection;
+            case ConnectionType.WebSocketRPC:
+                blockchainConnection.web3 = new Web3(new Web3.providers.WebsocketProvider(blockchainConnection.rpcUrl));
+                blockchainConnection.selectedAccount = await getFirstAccount(blockchainConnection.web3);
+                blockchainConnection.netVersion = (await getNetVersion(blockchainConnection) as any).result;;
+                return blockchainConnection;
+    
+            case ConnectionType.Rpc:
+            
+                blockchainConnection.web3 = new Web3(blockchainConnection.rpcUrl);
+                blockchainConnection.selectedAccount = await getFirstAccount(blockchainConnection.web3);
+                blockchainConnection.netVersion = (await getNetVersion(blockchainConnection) as any).result;;
+                return blockchainConnection;
+    
+            case ConnectionType.Injected:
+                if ((window as any).ethereum) {
+                    blockchainConnection.web3 = new Web3((window as any).ethereum);
+                    await (window as any).ethereum.enable();
+                    blockchainConnection.selectedAccount = await getFirstAccount(blockchainConnection.web3);
+                } else if ((window as any).web3) {
+                    blockchainConnection.web3 = new Web3((window as any).web3.currentProvider);
+                    blockchainConnection.selectedAccount = await getFirstAccount(blockchainConnection.web3);
+                } else {
+                    blockchainConnection.connectionType = ConnectionType.None;
+                    blockchainConnection.selectedAccount = null;
+                    blockchainConnection.web3 = new Web3();
+                }
+                blockchainConnection.netVersion = (await getNetVersion(blockchainConnection) as any).result;;
+                
+                return blockchainConnection;
+            case ConnectionType.None:
+            default:
+                blockchainConnection.web3 = new Web3();
+                blockchainConnection.connectionType = ConnectionType.None;
+                blockchainConnection.netVersion = null;
+                return blockchainConnection;
+        }
+    } catch (e) {
+        blockchainConnection.web3 = new Web3();
+        blockchainConnection.connectionType = ConnectionType.None;
+        return blockchainConnection;
     }
+    
 };
 
 type GetFunctionSignature = (blockchainConnection: BlockchainConnection, abi: any) => string;
@@ -163,7 +212,7 @@ export const initBlockchainConfiguration: InitBlockchainConfiguration = async (
         web3 = new Web3();
     }
     
-    return {
+    const blockchainConnection: BlockchainConnection = {
         rpcUrl: rpcUrl ? rpcUrl : 'http://localhost:8545',
         connectionType,
         web3,
@@ -173,8 +222,16 @@ export const initBlockchainConfiguration: InitBlockchainConfiguration = async (
         addTransactionToHistory,
         selectAccount: selectAccount,
         useDefaultAccount: true,
-        transactionHistory: []
+        transactionHistory: [],
+        netVersion: null
     };
+
+    if (connectionType !== ConnectionType.None) {
+        blockchainConnection.netVersion = (await getNetVersion(blockchainConnection) as any).result;
+
+    }
+
+    return blockchainConnection;
     
 };
 
