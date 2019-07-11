@@ -11,7 +11,12 @@
 import * as React from 'react';
 import * as Sol from '../../../solidity-handler/SolidityHandler';
 import SplitPane from 'react-split-pane';
-import { BlockchainConnection, ConnectionType, changeBlockchainConfiguration, checkBlockchainConnection } from '../../../solidity-handler/BlockchainConnector';
+import { 
+    BlockchainConnection,
+    ConnectionType,
+    changeBlockchainConfiguration,
+    checkBlockchainConnection 
+} from '../../../solidity-handler/BlockchainConnector';
 
 interface ConfigurationViewProps {
     blockchainConnection: BlockchainConnection;
@@ -28,7 +33,6 @@ interface ConfigurationViewState {
     accounts: string[];
     showAddUserView: boolean;
     newPrivateKey: string;
-    chainId: string;
 
 }
 
@@ -41,8 +45,7 @@ export class ConfigurationView extends React.Component<ConfigurationViewProps, C
             newBlockchainConnection: null,
             accounts: [],
             showAddUserView: false,
-            newPrivateKey: null,
-            chainId: null
+            newPrivateKey: null
         };
         this.onConnectionTypeChange = this.onConnectionTypeChange.bind(this);
         this.onUrlChange = this.onUrlChange.bind(this);
@@ -76,40 +79,27 @@ export class ConfigurationView extends React.Component<ConfigurationViewProps, C
         });
     } 
 
-    async componentDidMount(): Promise<void> {
-        this.updateChainId(this.props.blockchainConnection);
-        this.setState(
-            {newBlockchainConnection: this.props.blockchainConnection},
-            () => this.updateAccounts(this.props.blockchainConnection)
-        );
+    componentDidMount(): void {
+        this.update(this.props);
     }
 
-    async updateChainId(blockchainConnection: BlockchainConnection): Promise<string> {
-        let chainId: string = null;
-
-        try {
-            chainId = blockchainConnection.web3 ? 
-                await (blockchainConnection.web3.eth as any).net.getId() : null;
-        } catch (e) {
-            //TODO: error message
-        }
-        this.setState({
-            chainId
-        }); 
-        return chainId;     
+    componentWillReceiveProps(newProps: ConfigurationViewProps): void {
+        this.update(newProps);
     }
 
-    async componentWillReceiveProps(newProps: ConfigurationViewProps): Promise<void> {
+    update(props: ConfigurationViewProps): void {
+        
         this.setState(
-            {newBlockchainConnection: newProps.blockchainConnection},
-            () => this.updateAccounts(newProps.blockchainConnection)
+            {
+                newBlockchainConnection: props.blockchainConnection
+            },
+            () => this.updateAccounts(props.blockchainConnection)
         );
     }
 
     async updateAccounts(blockchainConnection: BlockchainConnection): Promise<void> {
         if (
-            checkBlockchainConnection(this.props.blockchainConnection) &&
-            await this.updateChainId
+            checkBlockchainConnection(this.props.blockchainConnection)
         ) {
             this.setState({
                 accounts: await blockchainConnection.web3.eth.getAccounts()
@@ -139,15 +129,11 @@ export class ConfigurationView extends React.Component<ConfigurationViewProps, C
     }
 
     async onSubmit(): Promise<void> {
-        try {
-            this.props.blockchainConnection.updateBlockchainConnection(
-                await changeBlockchainConfiguration(this.state.newBlockchainConnection)
-            );
-        } catch (e) {
-            //TODO error message
-        }
-        
-        this.updateChainId(this.state.newBlockchainConnection);
+       
+        this.props.blockchainConnection.updateBlockchainConnection(
+            await changeBlockchainConfiguration(this.state.newBlockchainConnection)
+        );
+
     }
 
     connectionTypeToLabel(connectionType: ConnectionType): string {
@@ -202,34 +188,21 @@ export class ConfigurationView extends React.Component<ConfigurationViewProps, C
         return <SplitPane className='scrollable hide-resizer' split='horizontal'  defaultSize={40} allowResize={false} >
                     <div className='h-100 w-100 toolbar'>
                     {this.state.newBlockchainConnection &&
-                            <div className='d-flex w-100 justify-content-between full-block'>
+                            <div className='d-flex w-100 justify-content-between'>
                                 <div className='form-inline'>
                                     <select 
                                         onChange={this.onConnectionTypeChange} 
-                                        defaultValue={this.props.blockchainConnection.connectionType}
+                                        value={this.props.blockchainConnection.connectionType}
                                         className='custom-select custom-select-sm conf-select'
                                     >
                                         {conntectionType}
                                     </select>
                                     &nbsp;
-
-                                    {(this.state.newBlockchainConnection.connectionType === ConnectionType.Rpc || 
-                                        this.state.newBlockchainConnection.connectionType === ConnectionType.WebSocketRPC
-                                    ) && 
-                                        
-                                            <input 
-                                                type='url'
-                                                className='form-control form-control-sm dark-input rpc-url'
-                                                onChange={this.onUrlChange}
-                                                defaultValue={this.state.newBlockchainConnection.rpcUrl}
-                    
-                                            >
-                                            </input>
-                                
-                                    }
                                         &nbsp;
                                         <button className='btn btn-sm btn-outline-info' onClick={this.onSubmit}>Connect</button>
-                                        &nbsp;&nbsp;&nbsp;
+                                  
+                                </div>
+                                <div className='form-inline'>
                                         <button 
                                             className={'btn btn-sm btn' + (this.state.showAddUserView ? '' : '-outline') + '-info'} 
                                             onClick={this.toggleUserView}
@@ -237,26 +210,40 @@ export class ConfigurationView extends React.Component<ConfigurationViewProps, C
                                             <i className='fas fa-user-plus'></i>
                                         </button>
                                 </div>
-                                <div 
-                                    className={'form-inline ' + (this.state.chainId ? 'connected' : 'text-muted')}
-                                    title={(this.state.chainId ? 'Connected to chain ' + this.state.chainId : 'Disconnected')}
-                                >
-                                    <i className='fas fa-network-wired'></i>
-                                </div>
                             </div>
+                        
+                           
                         }
                     </div>
                     <SplitPane className='scrollable hide-resizer empty-first-pane' split='horizontal'  defaultSize={1} allowResize={false}>
                         <div></div>
                         <div >
+                            
+                            {   this.state.newBlockchainConnection &&
+                                (this.state.newBlockchainConnection.connectionType === ConnectionType.Rpc ||
+                                this.state.newBlockchainConnection.connectionType === ConnectionType.WebSocketRPC) &&
+                                <div className='container user-add-container'>
+                                    <div className='form-inline'>
+                                    
+                                        <input 
+                                            type='url'
+                                            className='form-control form-control-sm dark-input rpc-url input-output w-100'
+                                            onChange={this.onUrlChange}
+                                            defaultValue={this.state.newBlockchainConnection.rpcUrl}
+                
+                                        >
+                                        </input>
+                                    </div>
+                                </div>
+                            }
                             {this.state.showAddUserView &&
                                 <div className='container user-add-container'>
                                     <div className='form-inline'>
                                     
                                         <input 
                                             type='text'
-                                            className='form-control form-control-sm dark-input'
-                                            defaultValue={this.state.newPrivateKey}
+                                            className='form-control form-control-sm dark-input input-output'
+                                            placeholder='Private key'
                                             onChange={this.onPrivateKeyChange}
                                         
                                         >

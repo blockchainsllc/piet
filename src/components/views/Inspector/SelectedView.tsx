@@ -31,6 +31,7 @@ interface SelectedViewProps {
     contracts: Sol.Contract[];
     selectedTabTypeForView: TabEntityType[];
     uiCreationHandling: UICreationHandling;
+    weiBalance: string;
 }
 
 export class SelectedView extends React.Component<SelectedViewProps, {}> {
@@ -58,6 +59,7 @@ export class SelectedView extends React.Component<SelectedViewProps, {}> {
                             editContractAddress={this.props.editContractAddress}
                             changeContractAddress={this.props.changeContractAddress}
                             getEvents={this.props.getEvents}
+                            weiBalance={this.props.weiBalance}
                         />;
                 break;
             case Sol.ElementType.Enum:

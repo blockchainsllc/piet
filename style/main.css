@@ -24,7 +24,7 @@
 }
 
 .conf-select {
-    width: 100px;
+    width: 200px;
     border-radius: 0rem;
     color: var(--text-highlight-color);
     background-color: var(--toolbar-color);
@@ -88,6 +88,31 @@
     color: var(--text-highlight-color);
     font-family: monospace;
     
+}
+
+.inputl-label {
+    color: var(--text-highlight-color);
+}
+
+.toolbar-pane.Pane1 {
+    background-color: var(--toolbar-color);
+}
+
+.sidebar .to-bottom {
+
+    position: absolute;
+    bottom: 0;
+    
+    
+
+}
+
+.connected-color {
+    color: #28a745;
+}
+
+.last-btn {
+    margin-left: 0px;
 }
 
 .migration-select {
@@ -299,6 +324,10 @@ a:hover {
 
 .sidebar {
     background-color: var(--sidebar-color)
+}
+
+.first-btn {
+    margin-top: 2rem !important;
 }
 
 .navbar-container {
@@ -598,9 +627,24 @@ body {
     margin-bottom: 0rem !important;
 }
 
+.connection-badge {
+    font-size: 8px;
+    border-radius: 0px;
+    color: #343a40;
+}
+
+.connection-badge-small {
+    font-size: 8px;
+    border-radius: 0px;
+    color: #343a40;
+}
+.Resizer.vertical.disabled {
+    width: 4px;
+}
 .sidebar-buttons-container {
     margin-top: 1rem;
-    margin-bottom: 1rem;
+    
+    margin-right: 3px;
 }
 
 .ui-creation-row {
@@ -628,6 +672,7 @@ body {
 .user-add-container {
     background-color: var(--toolbar-color);
     padding: 5px;
+    margin-bottom: 1px;
 }
 
 .dark-input {

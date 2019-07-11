@@ -11,26 +11,29 @@
 import * as React from 'react';
 import SVG  from 'react-inlinesvg';
 import { TabEntityType } from './View';
+import { checkBlockchainConnection, BlockchainConnection, ConnectionType } from '../solidity-handler/BlockchainConnector';
 
 export interface SidebarProps { 
     submitFiles: Function;
     changeActiveTab: Function;
     isLoading: boolean;
     addTabEntity: Function;
+    blockchainConnection: BlockchainConnection;
     
 }
 
 export interface SidebarState {
     loadContractFilesBoxIsShown: boolean;
+    isConnectedToChain: boolean;
 }
 
-export class Sidebar extends React.Component<SidebarProps, {}> {
-    state: SidebarState;
+export class Sidebar extends React.Component<SidebarProps, SidebarState> {
     
     constructor(props: SidebarProps) {
         super(props);
         this.state = { 
-            loadContractFilesBoxIsShown: false
+            loadContractFilesBoxIsShown: false,
+            isConnectedToChain: false
         };
 
         this.showLoadContractFilesBox = this.showLoadContractFilesBox.bind(this);
@@ -42,6 +45,20 @@ export class Sidebar extends React.Component<SidebarProps, {}> {
         this.showTransactionHistory = this.showTransactionHistory.bind(this);
         this.showDocumentation = this.showDocumentation.bind(this);
 
+    }
+
+    componentDidMount(): void {
+        this.checkConnection(this.props);
+    }
+
+    componentWillReceiveProps(props: SidebarProps): void {
+        this.checkConnection(props);
+    }
+
+    checkConnection(props: SidebarProps): void {
+        this.setState({
+            isConnectedToChain: checkBlockchainConnection(props.blockchainConnection)
+        });
     }
 
     showLoadContractFilesBox(show: boolean): void {
@@ -119,7 +136,7 @@ export class Sidebar extends React.Component<SidebarProps, {}> {
                 contentType: TabEntityType.Configuration,
                 name: 'Configuration',
                 content: null,
-                icon: 'cog',
+                icon: 'network-wired',
                 removable: true
             }, 
                                 0,
@@ -139,7 +156,31 @@ export class Sidebar extends React.Component<SidebarProps, {}> {
                                 false);
     }
 
+    
+
     render(): JSX.Element {
+
+        let connectionTypeText: string =  null;
+
+        if (this.state.isConnectedToChain) {
+            switch (this.props.blockchainConnection.connectionType) {
+                case ConnectionType.Injected:
+                    connectionTypeText = 'inj.';
+                    break;
+                case ConnectionType.MainnetIncubed:
+                    connectionTypeText = 'in3';
+                    break;
+                case ConnectionType.Rpc:
+                    connectionTypeText = 'RPC';
+                    break;
+                case ConnectionType.WebSocketRPC:
+                    connectionTypeText = 'wsRPC';
+                    break;
+                default:
+                    connectionTypeText = null;
+            }
+        }
+        
 
         return  <div className='sidebar h-100'>
                     <div className='row'>
@@ -170,7 +211,7 @@ export class Sidebar extends React.Component<SidebarProps, {}> {
                                 </a>
                             </div>
                         </div>
-                    </div>*/}
+                    </div>
 
                     <div className='sidebar-buttons-container'>
                         <div className='row'>
@@ -185,7 +226,7 @@ export class Sidebar extends React.Component<SidebarProps, {}> {
                             </div>
                         </div>
                     </div>
-                    {/*<div className='sidebar-buttons-container'>
+                    <div className='sidebar-buttons-container'>
                         <div className='row'>
                             <div className='col-sm text-center'>
                                 <a href='#' className='btn btn-outline-secondary btn-lg'>
@@ -202,7 +243,7 @@ export class Sidebar extends React.Component<SidebarProps, {}> {
                         </div>
                     </div>
                     */}
-                    <div className='sidebar-buttons-container'>
+                    <div className='first-btn sidebar-buttons-container'>
                         <div className='row'>
                             <div className='col-sm text-center'>
                             <a 
@@ -226,18 +267,7 @@ export class Sidebar extends React.Component<SidebarProps, {}> {
                             </div>
                         </div>
                     </div> 
-                    <div className='sidebar-buttons-container'>
-                        <div className='row'>
-                            <div className='col-sm text-center'>
-                            <a 
-                                title='Configuration'
-                                href='#' className='btn btn-outline-secondary btn-lg' 
-                                onClick={this.showConfiguration}
-                            >
-                                    <i className='fas fa-cog'></i></a>
-                            </div>
-                        </div>
-                    </div>
+  
                     <div className='sidebar-buttons-container'>
                         <div className='row'>
                             <div className='col-sm text-center'>
@@ -261,9 +291,46 @@ export class Sidebar extends React.Component<SidebarProps, {}> {
                                     <i className='fas fa-question-circle'></i></a>
                             </div>
                         </div>
-                    </div>
+                    </div>    
 
-                    </div>;
+                    <div className='to-bottom'>
+                        <div className='sidebar-buttons-container text-center'>
+                            <a 
+                                title='Configuration'
+                                href='#' 
+                                className={
+                                    'btn btn-outline-secondary btn-lg last-btn'  
+                                    + (this.state.isConnectedToChain ? ' connected-color' : '')
+                                }
+                                onClick={this.showConfiguration}
+                            >
+                                <i className={'fas fa-network-wired' }></i> 
+                            </a>
+                            {
+                                connectionTypeText ?
+                                <div className='w-100 badge badge-success connection-badge'>
+                                    {connectionTypeText}&nbsp;
+                                    {
+                                        this.props.blockchainConnection.netVersion ? 
+                                        '0x' + parseInt(this.props.blockchainConnection.netVersion).toString(16) :
+                                        '-'
+                                    } 
+                                    
+                                </div> :
+                                <div className='w-100 badge badge-warning connection-badge-small'>
+                                    Disconnected
+                                </div> 
+
+                            }
+                   
+                            
+                        </div>
+                        </div>
+                        <div>
+                            
+                        
+                    </div>   
+                </div>;
                                     
     }
 
