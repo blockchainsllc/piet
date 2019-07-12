@@ -181,6 +181,11 @@ export class Sidebar extends React.Component<SidebarProps, SidebarState> {
             }
         }
         
+        let netVersion: string = this.props.blockchainConnection.netVersion ? 
+        '0x' + (parseInt(this.props.blockchainConnection.netVersion).toString(16)) :
+        '-';
+
+        netVersion = netVersion.length >= 6 ? netVersion.substr(0, 3) + '..' + netVersion.substr(netVersion.length - 2) : netVersion;
 
         return  <div className='sidebar h-100'>
                     <div className='row'>
@@ -309,12 +314,7 @@ export class Sidebar extends React.Component<SidebarProps, SidebarState> {
                             {
                                 connectionTypeText ?
                                 <div className='w-100 badge badge-success connection-badge'>
-                                    {connectionTypeText}&nbsp;
-                                    {
-                                        this.props.blockchainConnection.netVersion ? 
-                                        '0x' + parseInt(this.props.blockchainConnection.netVersion).toString(16) :
-                                        '-'
-                                    } 
+                                    {connectionTypeText + ' ' + netVersion} 
                                     
                                 </div> :
                                 <div className='w-100 badge badge-warning connection-badge-small'>
