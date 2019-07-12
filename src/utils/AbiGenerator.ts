@@ -67,9 +67,9 @@ export const getStateVariableAbi: (theFunction: Sol.ContractFunction, contracts:
             inputs: getInAndOutputs(theFunction.params, contracts, contextContract),
             outputs: getInAndOutputs(theFunction.returnParams, contracts, contextContract)
         };
-        if (functionAbi.outputs[0].type && functionAbi.outputs[0].type === 'tuple') {
-            functionAbi.outputs = functionAbi.outputs[0].components;
-        } 
+        // if (functionAbi.outputs[0].type && functionAbi.outputs[0].type === 'tuple') {
+        //     functionAbi.outputs = functionAbi.outputs[0].components;
+        // } 
         
         return [functionAbi];
     };
