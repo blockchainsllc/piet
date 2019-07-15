@@ -24,7 +24,6 @@ import * as ReactDOM from 'react-dom';
 import * as SolidityHandler from '../../../solidity-handler/SolidityHandler';
 import * as JointElements from './JointElements';
 import { Graph, graphGenerator, getDefaultGraph, GraphViewType, extractElementsFromGraph } from './GraphGenerator';
-import { StringFormatDefinition } from 'ajv';
 
 interface GraphViewProps {
     contracts: SolidityHandler.Contract[];
@@ -49,6 +48,7 @@ export class GraphView extends React.Component<GraphViewProps, {}> {
 
         this.scale = this.scale.bind(this);
         this.storeGraph = this.storeGraph.bind(this);
+        this.highlightContract = this.highlightContract.bind(this);
         
     }
 
@@ -169,20 +169,16 @@ export class GraphView extends React.Component<GraphViewProps, {}> {
         }
         
         if (
-            (!this.props.graph && newProps.graph) || 
             (newProps.contracts.length > 0 && !newProps.graph) ||
-            (
-                (newProps.graph && this.props.graph) &&
-                (newProps.loadedPietFileName !== this.props.loadedPietFileName)
-            )
+            (newProps.loadedPietFileName !== this.props.loadedPietFileName)
         ) {
             this.update(newProps);
         }
         
     }
 
-    storeGraph(): void {
-        this.props.setGraph({ 
+    storeGraph(props: GraphViewProps): void {
+        props.setGraph({ 
             graph: this.model.toJSON(),
             inheritanceLinks: this.inheritanceLinks,
             otherLinks: this.otherLinks,
@@ -193,6 +189,7 @@ export class GraphView extends React.Component<GraphViewProps, {}> {
     update(props: GraphViewProps): void {
         
         const defaultGraph: Graph = getDefaultGraph();
+        this.paper = null;
     
         this.paper = new joint.dia.Paper(
             {
@@ -226,10 +223,10 @@ export class GraphView extends React.Component<GraphViewProps, {}> {
         });
 
         this.paper.on('element:pointerup', (cellView: any, evt: any, x: any, y: any) => { 
-            this.storeGraph();
+            this.storeGraph(props);
         });
 
-        this.props.setGraph({ 
+        props.setGraph({ 
             graph: graph.graph.toJSON(),
             inheritanceLinks: graph.inheritanceLinks,
             otherLinks: graph.otherLinks,

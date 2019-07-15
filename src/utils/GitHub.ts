@@ -20,18 +20,18 @@
 
 import * as axios from 'axios';
 
-export const getContracts: (githubUrl: string, cb: Function, subDirPath: string) => Promise<void> =
-async (githubUrl: string, cb: (list: any[], error?: Error) => void, subDirPath: string): Promise<void> => {
-  
+export const getContracts: (user: string, repo: string, cb: Function, subDirPath: string) => Promise<void> =
+async (user: string, repo: string, cb: (list: any[], error?: Error) => void, subDirPath: string): Promise<void> => {  
     let fileList: any[];
 
-    try {
-        fileList = await getFileList(githubUrl, [], subDirPath);
-        Promise.all(fileList.map((file: any) => (axios as any).get(file.url)))
-        .then((list: any) => cb(
+    try {        
+        fileList = await getFileList(`https://api.github.com/repos/${user}/${repo}`, [], subDirPath);
+        Promise.all(fileList.map((file: any) => 
+            (axios as any).get(`https://api.github.com/repos/${user}/${repo}/git/blobs/${file.sha}`)  
+        )).then((list: any) => cb(
             list.map((content: any, index: number) => ({
                 fileName: fileList[index].name,
-                content: content.data
+                content: atob(content.data.content)
             }))
         )).catch((error: Error) => {
             
@@ -43,9 +43,19 @@ async (githubUrl: string, cb: (list: any[], error?: Error) => void, subDirPath: 
     
 };
 
+export const getPietContainer: (user: string, repo: string, cb: Function, sha: string) => Promise<void> =
+async (user: string, repo: string, cb: (file: any, name: string) => void, sha: string): Promise<void> => {  
+
+    const file: any = await (axios as any).get(`https://api.github.com/repos/${user}/${repo}/git/blobs/${sha}`); 
+    cb(
+        JSON.parse(atob(file.data.content)),
+        sha + '.piet.json'
+    );
+};
+
 const getFileList: (githubUrl: string, fileList: any[], subDirPath?: string) => Promise<any[]> = 
 async (githubUrl: string, fileList: any[], subDirPath?: string): Promise<any[]> => {
-  
+
     const data: any = (await (axios as any).get(githubUrl + '/contents/' + (subDirPath ? subDirPath : ''))).data;
 
     for (let i = 0; i < data.length; i++) {
@@ -56,15 +66,13 @@ async (githubUrl: string, fileList: any[], subDirPath?: string): Promise<any[]> 
         } else if (node.type === 'file') {
             const splitedName: string = node.name.split('.').reverse();
             
-            if (splitedName.length > 0 && splitedName[0] === 'sol') {
-                fileList.push({
-                    name: node.name,
-                    url: node.download_url
-                });
+            if (splitedName.length > 0 && (splitedName[0] === 'sol' || splitedName[0] === 'json')) {
+                fileList.push(node);
             }
- 
+
         }
     }
+
   
     return fileList;
     
