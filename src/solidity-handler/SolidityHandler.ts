@@ -553,7 +553,7 @@ export const parseContent: (fileContents: any) => Contract[] = (fileContents: an
                 return contracts;
         }
 
-        const sourceUnit: any = parser.parse(source, {loc: true, range: true});
+        const sourceUnit: any = parser.parse(source, {loc: true, range: true, tolerant: true});
         parser.visit(sourceUnit, {
             ContractDefinition: (node: any): void => {
 
