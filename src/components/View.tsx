@@ -92,6 +92,7 @@ interface ViewProps {
     graph: Graph;
     setGraph: Function;
     graphViewType: GraphViewType;
+    loadedPietFileName: string;
     
 }
 
@@ -128,6 +129,7 @@ export class View extends React.Component<ViewProps, {}> {
                                 changeGraphView={this.props.changeGraphView}
                                 graph={this.props.graph}
                                 setGraph={this.props.setGraph}
+                                loadedPietFileName={this.props.loadedPietFileName}
                             />;
                 break;
 

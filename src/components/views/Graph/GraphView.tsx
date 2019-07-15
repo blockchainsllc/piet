@@ -24,6 +24,7 @@ import * as ReactDOM from 'react-dom';
 import * as SolidityHandler from '../../../solidity-handler/SolidityHandler';
 import * as JointElements from './JointElements';
 import { Graph, graphGenerator, getDefaultGraph, GraphViewType, extractElementsFromGraph } from './GraphGenerator';
+import { StringFormatDefinition } from 'ajv';
 
 interface GraphViewProps {
     contracts: SolidityHandler.Contract[];
@@ -34,6 +35,7 @@ interface GraphViewProps {
     graph: Graph;
     setGraph: Function;
     graphViewType: GraphViewType;
+    loadedPietFileName: string;
 }
 export class GraphView extends React.Component<GraphViewProps, {}> {
     paper: any;
@@ -171,7 +173,7 @@ export class GraphView extends React.Component<GraphViewProps, {}> {
             (newProps.contracts.length > 0 && !newProps.graph) ||
             (
                 (newProps.graph && this.props.graph) &&
-                ((newProps.graph as any).pietFileName !== (this.props.graph as any).pietFileName)
+                (newProps.loadedPietFileName !== this.props.loadedPietFileName)
             )
         ) {
             this.update(newProps);

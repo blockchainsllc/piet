@@ -37,6 +37,7 @@ interface GraphContainerViewProps {
     changeGraphView: Function;
     setGraph: Function;
     graphViewType: GraphViewType;
+    loadedPietFileName: string;
 }
 
 interface GraphContainerViewState {
@@ -129,6 +130,7 @@ export class GraphContainerView extends React.Component<GraphContainerViewProps,
                             selectedContractName={this.props.selectedContractName} 
                             graph={this.props.graph}
                             graphViewType={this.props.graphViewType}
+                            loadedPietFileName={this.props.loadedPietFileName}
                         />
                     </SplitPane>
                 </SplitPane>;
