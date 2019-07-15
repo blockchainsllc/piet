@@ -25,7 +25,7 @@ import { Sidebar } from './Sidebar';
 import { View, TabEntity, TabEntityType } from './View';
 import * as $ from 'jquery';
 import SplitPane from 'react-split-pane';
-import { getContracts } from '../utils/GitHub';
+import { getContracts, getPietContainer } from '../utils/GitHub';
 import { withRouter } from 'react-router-dom';
 import * as axios from 'axios';
 import { UIStructure, UICreationHandling, Element } from './views/ui-creation/UIStructure';
@@ -33,7 +33,6 @@ import { UICreationView } from './views/ui-creation/UICreationView';
 import { BlockchainConnection, ConnectionType, initBlockchainConfiguration } from '../solidity-handler/BlockchainConnector';
 import { Graph, GraphViewType } from './views/Graph/GraphGenerator';
 import * as PromiseFileReader from 'promise-file-reader';
-import { string } from 'prop-types';
 
 interface AppContainerState {
     contracts: Sol.Contract[];
@@ -113,6 +112,7 @@ class AppContainer extends React.Component<{}, {}> {
         this.addTransactionToHistory = this.addTransactionToHistory.bind(this);
         this.changeGraphView = this.changeGraphView.bind(this);
         this.setGraph = this.setGraph.bind(this);
+        this.loadFromConatinerFile = this.loadFromConatinerFile.bind(this);
 
     }
 
@@ -308,14 +308,31 @@ class AppContainer extends React.Component<{}, {}> {
                 this.addError(new Error('Can not get https://eth.slock.it/api/file/' + params.solFile));
             }
             
+        } else if (params.containerSha) {
+            this.setIsLoading(true);
+            await getPietContainer(
+                (params.gitHubUser as string),
+                (params.gitHubRepo as string),
+                this.loadFromConatinerFile, 
+                params.containerSha as string
+            );
+
         } else if (params.gitHubRepo) {
             
             this.setIsLoading(true);
             await getContracts(
-                'https://api.github.com/repos/' + (params.gitHubRepo as string),
-                this.gotContractsFromGithub, params.subDir as string);
-            // await getContracts('https://api.github.com/repos/slockit/usn-mvp', this.gotContractsFromGithub, 'contracts')
-        }
+                (params.gitHubUser as string),
+                (params.gitHubRepo as string),
+                this.gotContractsFromGithub, 
+                params.subDir as string
+            );
+            
+        } else if (params.container) {
+            this.setIsLoading(true);
+            const file: any = await (axios as any).get(params.container);
+            this.loadFromConatinerFile(file.data, params.container);
+
+        } 
 
         setTimeout(() => { 
 
@@ -361,17 +378,31 @@ class AppContainer extends React.Component<{}, {}> {
 
     }
 
-    async updateContractNames(selectorFiles: FileList): Promise<void> {
-        if (selectorFiles.length === 1 && selectorFiles[0].name.endsWith('.piet.json')) {
-            const file: any = JSON.parse(await PromiseFileReader.readAsText(selectorFiles[0]));
-   
-            this.setState({
+    loadFromConatinerFile(file: any, name: string): void {
+
+        this.setState(
+            {
                 contracts: file.contracts,
                 graph: file.graph,
                 selectedElement: file.selectedElement,
-                loadedPietFileName: file.graph ? file.graph : null
-            });
-            this.changeActiveTab(0, 1);
+                loadedPietFileName: name
+            }, 
+            () => {
+                this.setIsLoading(false);
+                this.removeTabEntity('About');
+                this.changeActiveTab(0, 1);
+          
+            }
+            
+        );
+        
+    }
+
+    async updateContractNames(selectorFiles: FileList): Promise<void> {
+        if (selectorFiles.length === 1 && selectorFiles[0].name.endsWith('.piet.json')) {
+            const file: any = JSON.parse(await PromiseFileReader.readAsText(selectorFiles[0]));
+            this.loadFromConatinerFile(file, selectorFiles[0].name);
+   
         } else {
             this.setState({selectedElement: null});
             this.setIsLoading(true);
@@ -382,12 +413,13 @@ class AppContainer extends React.Component<{}, {}> {
                 contracts,
                 graph: null,
                 loadedPietFileName: null
-            }));    
+            }));
+            this.setIsLoading(false);
+            this.removeTabEntity('About');    
+            this.changeActiveTab(0, 1);
 
         }
-        this.setIsLoading(false);
-        this.removeTabEntity('About');
-
+    
     }
 
     removeTabEntity(tabName: string): void {
