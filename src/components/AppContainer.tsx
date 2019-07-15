@@ -344,12 +344,10 @@ class AppContainer extends React.Component<{}, {}> {
     }
 
     addError(error: any): void {
-        this.setState((prevState: AppContainerState) => {
-            prevState.globalErrors.push(error);
-            return {
-                globalErrors: prevState.globalErrors
-            };
-        });
+        this.setState((prevState: AppContainerState) => ({
+                globalErrors: [error]
+        }));
+        this.setIsLoading(false);
     }
 
     gotContractsFromGithub(files: any, error?: Error): void {
@@ -358,19 +356,25 @@ class AppContainer extends React.Component<{}, {}> {
             this.addError(error);
     
         } else {
-            const contracts: Sol.Contract[] = Sol.parseContent(files);
-            const params: any = queryString.parse((this.props as any).location.search);
-            const contractName: string = params.contract ? params.contract.toString() : null;
-            const selectedContract: Sol.Contract = contracts.find((contract: Sol.Contract) => contract.name === contractName);
-            if (selectedContract) {
-                selectedContract.deployedAt = params.contractAddress ? params.contractAddress as string : selectedContract.deployedAt;
-            }
+            try {
+                const contracts: Sol.Contract[] = Sol.parseContent(files);
+            
+            
+                const params: any = queryString.parse((this.props as any).location.search);
+                const contractName: string = params.contract ? params.contract.toString() : null;
+                const selectedContract: Sol.Contract = contracts.find((contract: Sol.Contract) => contract.name === contractName);
+                if (selectedContract) {
+                    selectedContract.deployedAt = params.contractAddress ? params.contractAddress as string : selectedContract.deployedAt;
+                }
 
-            this.setState({
-                contractToSelect: selectedContract ? selectedContract.name : null,
-                contracts: contracts
-            });
-            this.removeTabEntity('About');
+                this.setState({
+                    contractToSelect: selectedContract ? selectedContract.name : null,
+                    contracts: contracts
+                });
+                this.removeTabEntity('About');
+            }  catch (e) {
+                this.addError(e);
+            }
             
         }
 
@@ -404,19 +408,23 @@ class AppContainer extends React.Component<{}, {}> {
             this.loadFromConatinerFile(file, selectorFiles[0].name);
    
         } else {
-            this.setState({selectedElement: null});
-            this.setIsLoading(true);
+            try {
+                this.setState({selectedElement: null});
+                this.setIsLoading(true);
 
-            const contracts: Sol.Contract[] = await Sol.pushFiles(selectorFiles);
+                const contracts: Sol.Contract[] = await Sol.pushFiles(selectorFiles);
 
-            this.setState((prev: AppContainerState) => ({
-                contracts,
-                graph: null,
-                loadedPietFileName: null
-            }));
-            this.setIsLoading(false);
-            this.removeTabEntity('About');    
-            this.changeActiveTab(0, 1);
+                this.setState((prev: AppContainerState) => ({
+                    contracts,
+                    graph: null,
+                    loadedPietFileName: null
+                }));
+                this.setIsLoading(false);
+                this.removeTabEntity('About');    
+                this.changeActiveTab(0, 1);
+            }  catch (e) {
+                this.addError(e);
+            }
 
         }
     
