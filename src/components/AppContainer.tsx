@@ -351,7 +351,9 @@ class AppContainer extends React.Component<{}, {}> {
     async updateContractNames(selectorFiles: FileList): Promise<void> {
         if (selectorFiles.length === 1 && selectorFiles[0].name.endsWith('.piet.json')) {
             const file: any = JSON.parse(await PromiseFileReader.readAsText(selectorFiles[0]));
-    
+            if (file.graph) {
+                file.graph.pietFileName = selectorFiles[0].name;
+            }
             this.setState({
                 contracts: file.contracts,
                 graph: file.graph,
