@@ -142,11 +142,28 @@ export class GraphView extends React.Component<GraphViewProps, {}> {
             this.scale(newProps.graphScale);
         }
 
-        if (newProps.contracts.length === 0) {
-            this.paper = null;
+        if ((this.props.graph && !newProps.graph) || newProps.contracts.length === 0) {
+            const defaultGraph: Graph = getDefaultGraph();
+            this.paper = new joint.dia.Paper(
+                {
+                    el: ReactDOM.findDOMNode(this.refs.placeholder),
+                    width: '100%',
+                    height: 2000,
+                    model: defaultGraph,
+                    gridSize: 20
+                    
+                } as any
+            );
         }
         
-        if (newProps.contracts.length > 0 && !newProps.graph) {
+        if (
+            (!this.props.graph && newProps.graph) || 
+            (newProps.contracts.length > 0 && !newProps.graph) ||
+            (
+                (newProps.graph && this.props.graph) &&
+                ((newProps.graph as any).pietFileName !== (this.props.graph as any).pietFileName)
+            )
+        ) {
             this.update(newProps);
         }
         
