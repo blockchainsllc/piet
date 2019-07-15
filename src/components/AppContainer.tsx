@@ -33,6 +33,7 @@ import { UICreationView } from './views/ui-creation/UICreationView';
 import { BlockchainConnection, ConnectionType, initBlockchainConfiguration } from '../solidity-handler/BlockchainConnector';
 import { Graph, GraphViewType } from './views/Graph/GraphGenerator';
 import * as PromiseFileReader from 'promise-file-reader';
+import { string } from 'prop-types';
 
 interface AppContainerState {
     contracts: Sol.Contract[];
@@ -48,6 +49,7 @@ interface AppContainerState {
     graph: Graph;
     graphToLoad: Graph;
     graphViewType: GraphViewType;
+    loadedPietFileName: string;
 }
 
 class AppContainer extends React.Component<{}, {}> {
@@ -83,6 +85,7 @@ class AppContainer extends React.Component<{}, {}> {
                 transactionHistory: [],
                 netVersion: null
             },
+            loadedPietFileName: null,
             graph: null,
             graphToLoad: null,
             graphViewType: GraphViewType.Inheritance
@@ -361,13 +364,12 @@ class AppContainer extends React.Component<{}, {}> {
     async updateContractNames(selectorFiles: FileList): Promise<void> {
         if (selectorFiles.length === 1 && selectorFiles[0].name.endsWith('.piet.json')) {
             const file: any = JSON.parse(await PromiseFileReader.readAsText(selectorFiles[0]));
-            if (file.graph) {
-                file.graph.pietFileName = selectorFiles[0].name;
-            }
+   
             this.setState({
                 contracts: file.contracts,
                 graph: file.graph,
-                selectedElement: file.selectedElement
+                selectedElement: file.selectedElement,
+                loadedPietFileName: file.graph ? file.graph : null
             });
             this.changeActiveTab(0, 1);
         } else {
@@ -378,7 +380,8 @@ class AppContainer extends React.Component<{}, {}> {
 
             this.setState((prev: AppContainerState) => ({
                 contracts,
-                graph: null
+                graph: null,
+                loadedPietFileName: null
             }));    
 
         }
@@ -607,6 +610,7 @@ class AppContainer extends React.Component<{}, {}> {
                                     blockchainConnection={this.state.blockchainConnection}
                                 />
                                 <View
+                                    loadedPietFileName={this.state.loadedPietFileName}
                                     setGraph={this.setGraph}
                                     graph={this.state.graph}
                                     changeGraphView={this.changeGraphView}
@@ -637,6 +641,7 @@ class AppContainer extends React.Component<{}, {}> {
                         </SplitPane>
                     
                             <View
+                                loadedPietFileName={this.state.loadedPietFileName}
                                 graphViewType={this.state.graphViewType}
                                 setGraph={this.setGraph}
                                 graph={this.state.graph}
