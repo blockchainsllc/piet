@@ -56,9 +56,19 @@ export class About extends React.Component<{}, {}> {
                                 <div className='col-md-8 help-text-container'>
                                     <h1 className='help-text text-muted'>Piet</h1>
                                     <p><small className='help-text text-muted'>
-                                        Click <strong>"Load"</strong> to get started.
+                                        
+                                        <span className='badge badge-light'>
+                                            <i className='fas fa-exclamation-triangle'></i> Not for poductive use
+
+                                        </span>
+                                        <br />
+                                        Be aware that Piet has not yet undergone in-depth testing yet and may contain severe bugs.
                                     </small></p>
-                                    <p><small className='help-text text-muted'>This is a beta release.</small></p>
+                                    <p><small className='help-text text-muted'>
+                                        <strong>Getting started:</strong>&nbsp;
+                                        Click <strong>"Load"</strong> to and select solidity files, truffle build files or a piet file.
+                                    </small></p>
+                                    
                                     <p>
                                         <small className='help-text text-muted'>
                                             <strong>Author:</strong> Heiko Burkhardt&nbsp;
@@ -70,6 +80,21 @@ export class About extends React.Component<{}, {}> {
                                             >
                                                 <i className='fas fa-external-link-square-alt'></i>
                                             </a>
+                                            
+                                        </small>
+                                    </p>
+                                    <p>
+                                    <small className='help-text text-muted'>
+                                            
+                                            <a 
+                                                className='text-muted'
+                                                href='https://slock.it'
+                                                target='_blank'
+                                                rel='noopener noreferrer'
+                                            >
+                                                Slock.it GmbH
+                                            </a>
+                                            
                                         </small>
                                     </p>
                                 </div>
