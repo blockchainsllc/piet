@@ -49,6 +49,7 @@ interface ContractFunctionViewState {
     blockchainErrors: string[];
     lastResultName: string;
     parameterMapping: any[];
+    valueMapping: string[];
     resultMapping: any[];
     functionCollapsed: boolean[];
     codeBoxIsShown: boolean;
@@ -66,6 +67,7 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
             lastResult: '',
             lastResultName: '',
             parameterMapping: [],
+            valueMapping: [],
             resultMapping: [],
             functionCollapsed: [],
             selectedFunction: null,
@@ -76,6 +78,7 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
 
         this.showResultBox = this.showResultBox.bind(this);
         this.parameterChange = this.parameterChange.bind(this);
+        this.valueChange = this.valueChange.bind(this);
         this.callFunction = this.callFunction.bind(this);
         this.send = this.send.bind(this);
         this.toogleCollapse = this.toogleCollapse.bind(this);
@@ -119,6 +122,7 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
             lastResult: '',
             lastResultName: '',
             parameterMapping: [],
+            valueMapping: [],
             resultMapping: []
         });
     }
@@ -147,6 +151,15 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
 
     }
 
+    valueChange(wei: string, contractFunction: Sol.ContractFunction): void {
+ 
+        this.setState((prevState: ContractFunctionViewState) => {
+            prevState.valueMapping[getFunctionId(this.props.selectedContract, this.props.blockchainConnection, contractFunction)] = wei;
+            return {valueMapping: prevState.valueMapping};
+        });
+
+    }
+
     getOperationButton(contract: Sol.Contract, contractFunction: Sol.ContractFunction): JSX.Element {
         if (!this.props.testMode || !contract.deployedAt) {
             return null;
@@ -164,13 +177,27 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
                     </button>;
                  
         } else {
-            return  <button 
-                        type='button'
-                        className='function-operation-button btn btn-outline-primary btn-sm' 
-                        onClick={() => this.send(contractFunction)}
-                    >
-                            Send
-                    </button>;
+            return  (
+                <div>  
+                    <div className='input-group'>
+                        <input 
+                            type='text'
+                            className='form-control form-control-sm input-output no-border-radius'
+                            placeholder='Wei'
+                            size={10}
+                            onChange={(e) => this.valueChange(e.target.value, contractFunction)}
+                        />
+                        <div className='input-group-append'>
+                        <button 
+                                type='button'
+                                className='btn btn-outline-primary btn-sm no-border-radius'
+                                onClick={() => this.send(contractFunction)}
+                            >
+                                Send
+                            </button>
+                        </div>
+                    </div>
+                </div>);
                     
         }
         
@@ -266,7 +293,6 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
             });
         }
         
-        
         this.setState((prevState: ContractFunctionViewState) => {
             prevState.blockchainErrors[functionIndex] = null;
             return {
@@ -294,7 +320,8 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
                     this.props.blockchainConnection,
                     this.props.selectedContract.deployedAt,
                     getFunctionAbi(theFunction, this.props.contracts, this.props.selectedContract),
-                    this.state.parameterMapping[name]
+                    this.state.parameterMapping[name],
+                    this.state.valueMapping[getFunctionId(this.props.selectedContract, this.props.blockchainConnection, contractFunction)]
                 );
           
             } catch (e) {
@@ -502,25 +529,27 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
                                                 </div>
                                              : null}
                                             
-                                            <div className='text-right functionOperations'>
-                                                <button 
-                                                    type='button'
-                                                    className='function-operation-button btn btn-outline-secondary btn-sm'
-                                                    data-toggle='modal' 
-                                                    data-target={'.codeModal'}
-                                                    onClick={() => this.onShowCode(contractFunction, CodeToShow.Abi)}
-                                                >
-                                                    ABI
-                                                </button>
-                                                <button 
-                                                    type='button'
-                                                    className='function-operation-button btn btn-outline-secondary btn-sm'
-                                                    data-toggle='modal' 
-                                                    data-target={'.codeModal'}
-                                                    onClick={() => this.onShowCode(contractFunction, CodeToShow.Solidity)}
-                                                >
-                                                    Code
-                                                </button>
+                                            <div className='functionOperations d-flex w-100 justify-content-between full-block'>
+                                                <div>
+                                                    <button 
+                                                        type='button'
+                                                        className='function-operation-button btn btn-outline-secondary btn-sm'
+                                                        data-toggle='modal' 
+                                                        data-target={'.codeModal'}
+                                                        onClick={() => this.onShowCode(contractFunction, CodeToShow.Abi)}
+                                                    >
+                                                        ABI
+                                                    </button>
+                                                    <button 
+                                                        type='button'
+                                                        className='function-operation-button btn btn-outline-secondary btn-sm'
+                                                        data-toggle='modal' 
+                                                        data-target={'.codeModal'}
+                                                        onClick={() => this.onShowCode(contractFunction, CodeToShow.Solidity)}
+                                                    >
+                                                        Code
+                                                    </button>
+                                                </div>
                                                 {this.getOperationButton(contract, contractFunction)}
                                            
                                             </div>

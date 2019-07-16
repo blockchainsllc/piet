@@ -136,7 +136,8 @@ export class FunctionModal extends React.Component<FunctionModalProps, FunctionM
                         this.props.blockchainConnection,
                         this.props.selectedElement.contractAddress,
                         this.props.selectedElement.abi,
-                        this.state.parameterMapping
+                        this.state.parameterMapping,
+                        null
                     )
                 });
                 this.props.updateAll();

@@ -153,7 +153,8 @@ export class MigrationAssistent extends React.Component<MigrationAssistentProps,
                 this.props.blockchainConnection, 
                 migrationFunction.selectedContract.deployedAt, 
                 migrationFunction.selectedContract.meta.abi,
-                params
+                params,
+                null
             );
             this.addOutputMessage('Tx successfully send: ' + migrationFunction.selectedFunction.name);
         } catch (e) {
