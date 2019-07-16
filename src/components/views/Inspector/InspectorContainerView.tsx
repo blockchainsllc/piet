@@ -22,10 +22,11 @@ import * as React from 'react';
 import * as Sol from '../../../solidity-handler/SolidityHandler';
 import { SelectedView } from './SelectedView';
 import SplitPane from 'react-split-pane';
-import { TabEntity, TabEntityType } from '../../View';
+import { TabEntityType } from '../../View';
 import { UICreationHandling } from '../ui-creation/UIStructure';
-import { BlockchainConnection, ConnectionType, checkBlockchainConnection, getWeiBalance } from '../../../solidity-handler/BlockchainConnector';
-import { timingSafeEqual } from 'crypto';
+import { BlockchainConnection, checkBlockchainConnection, getWeiBalance } from '../../../solidity-handler/BlockchainConnector';
+import { ContractCodeBox } from '../CodeBox/ContractCodeBox';
+
 
 interface InspectorContainerViewProps {
     blockchainConnection: BlockchainConnection;
@@ -37,6 +38,7 @@ interface InspectorContainerViewProps {
     getEvents: Function;
     selectedTabTypeForView: TabEntityType[];
     uiCreationHandling: UICreationHandling;
+    
 }
 
 interface InspectorContainerViewState {
@@ -44,6 +46,7 @@ interface InspectorContainerViewState {
     editContractAddress: boolean;
     showInheritedMembers: boolean;
     weiBalance: string;
+    codeBoxIsShown: boolean;
 
 }
 
@@ -55,14 +58,36 @@ export class InspectorContainerView extends React.Component<InspectorContainerVi
             testMode: false,
             showInheritedMembers: false,
             weiBalance: null,
-            editContractAddress: false
+            editContractAddress: false,
+            codeBoxIsShown: false
         };
 
         this.toogleTestMode = this.toogleTestMode.bind(this);
         this.toogleShowInheritedMembers = this.toogleShowInheritedMembers.bind(this);
         this.toogleEditContractAddress = this.toogleEditContractAddress.bind(this);
-
         this.submitNewContractAddress = this.submitNewContractAddress.bind(this);
+        this.showDocumentation = this.showDocumentation.bind(this);
+        this.showCodeBox = this.showCodeBox.bind(this);
+
+    }
+
+    showDocumentation(): void {
+        this.props.addTabEntity(
+            {
+                active: true,
+                contentType: TabEntityType.DocGenerator,
+                name: 'Documentation',
+                content: null,
+                icon: 'book-open',
+                removable: true
+            }, 
+            1,
+            false
+        );
+    }
+
+    showCodeBox(show: boolean): void {
+        this.setState({codeBoxIsShown: show});
     }
 
     componentDidMount(): void {
@@ -139,30 +164,61 @@ export class InspectorContainerView extends React.Component<InspectorContainerVi
                     allowResize={false} 
                 >
                     <div className='h-100 w-100 toolbar'>
-                        <button 
-                            title={this.state.showInheritedMembers ? 'Hide Inherited Members' : 'Show Inherited Members' } 
-                            className={'btn btn-sm btn' + (this.state.showInheritedMembers ? '' : '-outline') + '-info'}
-                            onClick={() => this.toogleShowInheritedMembers()}
-                        >
-                            <i className='fas fa-sitemap'></i>
-                        </button>
-                        &nbsp;
-                        <button 
-                            title={this.state.testMode ? 'Deactivate Ineractive Mode' : 'Activate Ineractive Mode' } 
-                            className={'btn btn-sm btn' + (this.state.testMode ? '' : '-outline') + '-info'}
-                            onClick={() => this.toogleTestMode()}
-                        >
-                            <i className='fas fa-handshake'></i>
-                        </button>
-                        &nbsp;
-                        <a 
-                            title={this.state.editContractAddress ? 'Submit New Contract Address' : 'Edit Contract Address' } 
-                            href='#meta'
-                            className={'btn btn-sm btn' + (this.state.editContractAddress ? '' : '-outline') + '-info'}
-                            onClick={() => this.toogleEditContractAddress()}
-                        >
-                            <i className='fas fa-edit'></i>
-                        </a>
+                        { this.props.selectedElement.elementType === Sol.ElementType.Contract &&
+                            <ContractCodeBox 
+                                blockchainConnection={this.props.blockchainConnection}
+                                codeBoxIsShown={this.state.codeBoxIsShown}
+                                showContractCodeBox={this.showCodeBox}
+                                contract={this.props.selectedElement as Sol.Contract}
+                            />
+                        }
+                        
+                        <div className='d-flex w-100 justify-content-between full-block'>
+                            <div>
+                                <button 
+                                    title={this.state.showInheritedMembers ? 'Hide Inherited Members' : 'Show Inherited Members' } 
+                                    className={'btn btn-sm btn' + (this.state.showInheritedMembers ? '' : '-outline') + '-info'}
+                                    onClick={() => this.toogleShowInheritedMembers()}
+                                >
+                                    <i className='fas fa-sitemap'></i>
+                                </button>
+                                &nbsp;
+                                <button 
+                                    title={this.state.testMode ? 'Deactivate Ineractive Mode' : 'Activate Ineractive Mode' } 
+                                    className={'btn btn-sm btn' + (this.state.testMode ? '' : '-outline') + '-info'}
+                                    onClick={() => this.toogleTestMode()}
+                                >
+                                    <i className='fas fa-handshake'></i>
+                                </button>
+                                &nbsp;
+                                <button 
+                                    title={'Generate documentation' } 
+                                    className={'btn btn-sm btn-outline-info'}
+                                    onClick={this.showDocumentation}
+                                >
+                                    <i className='fas fa-book-open'></i>
+                                </button>
+                                &nbsp;
+                                <button 
+                                    title={'Show Contract Code'} 
+                                    className={'btn btn-sm btn-outline-info'}
+                                    onClick={() => this.showCodeBox(true)}
+                                    data-toggle='modal' 
+                                    data-target={'.contractCodeModal'}
+                                >
+                                    <i className='fas fa-file-code'></i>
+                                </button>
+                            </div>
+                        
+                            <a 
+                                title={this.state.editContractAddress ? 'Submit New Contract Address' : 'Edit Contract Address' } 
+                                href='#meta'
+                                className={'btn btn-sm btn' + (this.state.editContractAddress ? '' : '-outline') + '-info'}
+                                onClick={() => this.toogleEditContractAddress()}
+                            >
+                                <i className='fas fa-edit'></i> Instance Address
+                            </a>
+                        </div>
                     </div>
                     <SplitPane 
                         className='scrollable hide-resizer empty-first-pane' 

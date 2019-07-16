@@ -20,7 +20,6 @@
 
 import * as React from 'react';
 import * as Sol from '../../../solidity-handler/SolidityHandler';
-import { CodeBox, CodeToShow } from '../../CodeBox';
 import { TabEntityType } from '../../View';
 import { getFunctionAbi, getFunctionId } from '../../../utils/AbiGenerator';
 import { UICreationHandling } from '../ui-creation/UIStructure';
@@ -29,6 +28,7 @@ import { ActionTool } from '../ui-creation/InspectorTools/ActionTool';
 import { InputFunctionParams } from '../../shared-elements/InputFunctionParams';
 import { OutputFunctionParams } from '../../shared-elements/OutputFunctionParams';
 import { callFunction, sendFunction, BlockchainConnection, getAccounts } from '../../../solidity-handler/BlockchainConnector';
+import { FunctionCodeBox, CodeToShow } from '../CodeBox/FunctionCodeBox';
 
 interface ContractFunctionViewProps {
     selectedContract: Sol.Contract;
@@ -580,12 +580,12 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
         return  <div>
                     {/* <ResultBox resultBoxIsShown={this.state.resultBoxIsShown} name={this.state.lastResultName}
                     showResultBox={this.showResultBox} result={this.state.lastResult} id={'Function' + this.props.selectedContract.name} /> */}
-                    <CodeBox 
+                    <FunctionCodeBox 
                         codeToShow={this.state.codeToShow}
                         blockchainConnection={this.props.blockchainConnection}
                         contracts={this.props.contracts}
                         codeBoxIsShown={this.state.codeBoxIsShown}
-                        showCodeBox={this.showCodeBox}
+                        showFunctionCodeBox={this.showCodeBox}
                         selectedFunction={this.state.selectedFunction}
                         contextContract={this.props.selectedContract}
                     />
