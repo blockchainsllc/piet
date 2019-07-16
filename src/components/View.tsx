@@ -211,6 +211,7 @@ export class View extends React.Component<ViewProps, {}> {
                                 submitFiles={this.props.submitFiles}
                                 contracts={this.props.contracts}
                                 loading={this.props.loading}
+                                changeSelectedElement={this.props.changeSelectedElement}
                             />;
                 break;
 

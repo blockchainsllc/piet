@@ -599,9 +599,11 @@ class AppContainer extends React.Component<{}, {}> {
 
     changeSelectedElement(selectedElement: Sol.NodeElement): void {
         this.changeActiveTab(0, 1);
+        this.changeActiveTab(1, 0);
 
         this.setState({
-            selectedElement: selectedElement
+            selectedElement: selectedElement,
+            contractToSelect: selectedElement.name
         });
     }
 

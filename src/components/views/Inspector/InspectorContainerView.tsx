@@ -164,7 +164,7 @@ export class InspectorContainerView extends React.Component<InspectorContainerVi
                     allowResize={false} 
                 >
                     <div className='h-100 w-100 toolbar'>
-                        { this.props.selectedElement.elementType === Sol.ElementType.Contract &&
+                        { this.props.selectedElement && this.props.selectedElement.elementType === Sol.ElementType.Contract &&
                             <ContractCodeBox 
                                 blockchainConnection={this.props.blockchainConnection}
                                 codeBoxIsShown={this.state.codeBoxIsShown}
