@@ -136,7 +136,8 @@ export class FunctionModal extends React.Component<FunctionModalProps, FunctionM
                         this.props.blockchainConnection,
                         this.props.selectedElement.contractAddress,
                         this.props.selectedElement.abi,
-                        this.state.parameterMapping
+                        this.state.parameterMapping,
+                        null
                     )
                 });
                 this.props.updateAll();
@@ -162,7 +163,7 @@ export class FunctionModal extends React.Component<FunctionModalProps, FunctionM
                 <InputFunctionParams 
                     key={'param' + this.props.selectedElement.contractAddress + this.props.selectedElement.functionName + param.name}
                     contractAddress={this.props.selectedElement.contractAddress}
-                    contractFunctionName={this.props.selectedElement.functionName}
+                    contractFunction={null}
                     index={index}
                     inputParameterChange={this.parameterChange}
                     interactiveMode={true}

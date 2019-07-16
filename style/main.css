@@ -19,6 +19,10 @@
     padding-top: 0rem;
 }
 
+.no-border-radius {
+    border-radius: 0px;
+}
+
 .conf-container {
     margin-top: 1rem;
 }
@@ -594,7 +598,7 @@ body {
 }
 
 .functionOperations {
-    margin-top: 0.5rem
+    margin-top: 1rem
 }
 
 .function-operation-button {

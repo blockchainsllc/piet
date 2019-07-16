@@ -342,7 +342,8 @@ type SendFunction = (
     blockchainConnection: BlockchainConnection,
     contractAddress: string,
     abi: any,
-    parameterMapping: any[]
+    parameterMapping: any[],
+    value: string
 ) => Promise<any>;
 
 export const sendFunction: SendFunction =  async (
@@ -350,7 +351,8 @@ export const sendFunction: SendFunction =  async (
     blockchainConnection: BlockchainConnection,
     contractAddress: string,
     abi: any,
-    parameterMapping: any[]
+    parameterMapping: any[],
+    value: string
 ): Promise<any> => {
 
     const name: string = contractFunction.name;
@@ -370,7 +372,8 @@ export const sendFunction: SendFunction =  async (
     const gas: number = result = await contract.methods[name](...changedParamMapping).estimateGas({from: ethAccount });
     result = await contract.methods[name](...changedParamMapping).send({
         from: ethAccount,
-        gas: Math.floor(gas * 1.5)
+        gas: Math.floor(gas * 1.5),
+        value
     });
 
     blockchainConnection.addTransactionToHistory({
