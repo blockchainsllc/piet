@@ -508,6 +508,11 @@ body {
 
 .link-tools .tool-remove { display: none }
 
+.marker-arrowheads { display: none }
+
+.connection-wrap { display: none }
+
+
 .selected-card {
     border-bottom-right-radius: 0rem;
     border-bottom-left-radius: 0rem;
@@ -658,6 +663,10 @@ body {
 .btn:not(.sv-call) {
     border-radius: 0rem;
     border-width: 0rem;
+    
+}
+.sv-call {
+    font-size: 0.7rem;
 }
 
 .state-varibale-result-container {

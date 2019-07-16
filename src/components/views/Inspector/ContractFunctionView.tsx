@@ -387,7 +387,7 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
             contractFunction.params.forEach((param: Sol.ContractFunctionParam, index: number) => {
                 params.push(
                     <InputFunctionParams 
-                        key={'param' + contract.name + functionId + param.name}
+                        key={'param' + contract.name + functionId + (param.name ? param.name : index)}
                         index={index}
                         contractFunction={contractFunction}
                         contractAddress={contract.deployedAt}

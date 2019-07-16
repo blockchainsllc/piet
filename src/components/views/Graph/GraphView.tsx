@@ -170,7 +170,8 @@ export class GraphView extends React.Component<GraphViewProps, {}> {
         
         if (
             (newProps.contracts.length > 0 && !newProps.graph) ||
-            (newProps.loadedPietFileName !== this.props.loadedPietFileName)
+            (newProps.loadedPietFileName !== this.props.loadedPietFileName) ||
+            (newProps.selectedContractName !== this.props.selectedContractName)
         ) {
             this.update(newProps);
         }
@@ -234,6 +235,7 @@ export class GraphView extends React.Component<GraphViewProps, {}> {
         });
 
         this.scale(props.graphScale);
+        this.highlightContract(null, props.selectedContractName);
     
     }
 

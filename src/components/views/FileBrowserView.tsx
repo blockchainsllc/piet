@@ -25,6 +25,7 @@ import SplitPane from 'react-split-pane';
 import { Graph } from './Graph/GraphGenerator';
 import { saveAs } from 'file-saver';
 import { BlockchainConnection } from '../../solidity-handler/BlockchainConnector';
+import { Contract } from '../../solidity-handler/SolidityHandler';
 
 interface FileBrowserViewProps {
     blockchainConnection: BlockchainConnection;
@@ -37,6 +38,7 @@ interface FileBrowserViewProps {
     globalErrors: Error[];
     selectedElement: Sol.NodeElement;
     graph: Graph;
+    changeSelectedElement: Function;
 
 }
 
@@ -190,6 +192,14 @@ export class FileBrowserView extends React.Component<FileBrowserViewProps, FileB
         if (node.children) {
             node.toggled = toggled;
         }
+
+        if (node.className === 'contract-icon') {
+            const selectedContract: Contract = this.props.contracts.find((contract: Contract) => contract.name === node.name);
+            if (selectedContract) {
+                this.props.changeSelectedElement(selectedContract);
+            }
+        }
+
         this.setState({ cursor: node });
     }
 
