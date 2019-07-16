@@ -19,14 +19,14 @@
  */
 
 import * as React from 'react';
-import { ContractFunctionParam, Contract } from '../../solidity-handler/SolidityHandler';
+import { ContractFunctionParam, Contract, ContractFunction } from '../../solidity-handler/SolidityHandler';
 import { BlockchainConnection, utf8ToHex } from '../../solidity-handler/BlockchainConnector';
 
-export type InputParameterChange = (input: string, index: number, contractFunctionName: string) => void;
+export type InputParameterChange = (input: string, index: number, contractFunction: ContractFunction) => void;
 
 export interface InputFunctionParamsProps {
     contractAddress: string;
-    contractFunctionName: string;
+    contractFunction: ContractFunction;
     parameter: ContractFunctionParam;
     interactiveMode: boolean;
     inputParameterChange: InputParameterChange;
@@ -46,7 +46,7 @@ export class InputFunctionParams extends React.Component<InputFunctionParamsProp
 
     onHexChange(e: any): void {
         e.persist();
-        this.props.inputParameterChange(e.target.value, this.props.index, this.props.contractFunctionName);
+        this.props.inputParameterChange(e.target.value, this.props.index, this.props.contractFunction);
     }
 
     onUTF8Change(e: any): void {
@@ -54,7 +54,7 @@ export class InputFunctionParams extends React.Component<InputFunctionParamsProp
         this.props.inputParameterChange(
             utf8ToHex(this.props.blockchainConnection, e.target.value),
             this.props.index,
-            this.props.contractFunctionName
+            this.props.contractFunction
         );
     }
 

@@ -137,14 +137,15 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
         }
     }
 
-    parameterChange(input: string, index: number, functionName: string): void {
+    parameterChange(input: string, index: number, contractFunction: Sol.ContractFunction): void {
+        const functionId: string = getFunctionId(this.props.selectedContract, this.props.blockchainConnection, contractFunction);
  
         this.setState((prevState: ContractFunctionViewState) => {
-            if (prevState.parameterMapping[functionName]) {
-                prevState.parameterMapping[functionName][index] = input;
+            if (prevState.parameterMapping[functionId]) {
+                prevState.parameterMapping[functionId][index] = input;
             } else {
-                prevState.parameterMapping[functionName] = [];
-                prevState.parameterMapping[functionName][index] = input;
+                prevState.parameterMapping[functionId] = [];
+                prevState.parameterMapping[functionId][index] = input;
             }
             return {parameterMapping: prevState.parameterMapping};
         });
@@ -244,6 +245,7 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
        
         const functionIndex: number = this.getFunctionIndex(contractFunction);
         const theFunction: Sol.ContractFunction = this.getFunctionForIndex(functionIndex);
+        const functionId: string = getFunctionId(this.props.selectedContract, this.props.blockchainConnection, contractFunction);
 
         this.initBlockchainOperation(name, theFunction, functionIndex);
 
@@ -254,7 +256,7 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
             this.props.blockchainConnection,
             this.props.selectedContract.deployedAt,
             getFunctionAbi(theFunction, this.props.contracts, this.props.selectedContract),
-            this.state.parameterMapping[theFunction.name]
+            this.state.parameterMapping[functionId]
         );
 
         this.setState((prevState: ContractFunctionViewState) => {
@@ -306,6 +308,7 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
         const functionIndex: number = this.getFunctionIndex(contractFunction);
         const theFunction: Sol.ContractFunction = this.getFunctionForIndex(functionIndex);
         const name: string = contractFunction.name;
+        const functionId: string = getFunctionId(this.props.selectedContract, this.props.blockchainConnection, contractFunction);
 
         this.initBlockchainOperation(name, theFunction, functionIndex);
         const accounts: any[] = await getAccounts(this.props.blockchainConnection);
@@ -320,8 +323,8 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
                     this.props.blockchainConnection,
                     this.props.selectedContract.deployedAt,
                     getFunctionAbi(theFunction, this.props.contracts, this.props.selectedContract),
-                    this.state.parameterMapping[name],
-                    this.state.valueMapping[getFunctionId(this.props.selectedContract, this.props.blockchainConnection, contractFunction)]
+                    this.state.parameterMapping[functionId],
+                    this.state.valueMapping[functionId]
                 );
           
             } catch (e) {
@@ -380,12 +383,13 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
         return functions.map((contractFunction: Sol.ContractFunction, functionIndex: number) => {
 
             const params: JSX.Element[] = [];
+            const functionId: string = getFunctionId(this.props.selectedContract, this.props.blockchainConnection, contractFunction);
             contractFunction.params.forEach((param: Sol.ContractFunctionParam, index: number) => {
                 params.push(
                     <InputFunctionParams 
-                        key={'param' + contract.name + param.name}
+                        key={'param' + contract.name + functionId + param.name}
                         index={index}
-                        contractFunctionName={contractFunction.name}
+                        contractFunction={contractFunction}
                         contractAddress={contract.deployedAt}
                         inputParameterChange={this.parameterChange}
                         interactiveMode={this.props.testMode}
@@ -401,7 +405,7 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
                         contractAddress={contract.deployedAt}
                         key={'returnParam' 
                             + contract.name 
-                            + contractFunction.name 
+                            + functionId
                             + param.name 
                             + index
                         }
