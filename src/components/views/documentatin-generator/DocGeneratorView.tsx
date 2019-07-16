@@ -32,7 +32,7 @@ interface DocGeneratorViewProps {
 }
 
 interface DocGeneratorViewState {
-    showPreview: boolean;
+    showCode: boolean;
 }
 
 export class DocGeneratorView extends React.Component<DocGeneratorViewProps, DocGeneratorViewState> {
@@ -41,7 +41,7 @@ export class DocGeneratorView extends React.Component<DocGeneratorViewProps, Doc
         super(props);
      
         this.state = {
-            showPreview: false
+            showCode: false
         };
         this.togglePreview = this.togglePreview.bind(this);
         this.save = this.save.bind(this);
@@ -50,7 +50,7 @@ export class DocGeneratorView extends React.Component<DocGeneratorViewProps, Doc
 
     togglePreview(): void {
         this.setState((prevState: DocGeneratorViewState) => ({
-            showPreview: !prevState.showPreview
+            showCode: !prevState.showCode
         }));
     }
 
@@ -62,16 +62,18 @@ export class DocGeneratorView extends React.Component<DocGeneratorViewProps, Doc
 
     render(): JSX.Element {
 
-        const markdown: string = this.props.content ? this.props.content : 'Select a contract to generate its documentation.';
+        const markdown: string = this.props.content ? 
+        this.props.content :
+        'Select a contract in the graph view to generate its documentation.';
 
         return <SplitPane className='scrollable hide-resizer' split='horizontal'  defaultSize={40} allowResize={false} >
                     <div className='h-100 w-100 toolbar'>
                         <button 
-                            className={'btn btn-sm btn' + (this.state.showPreview ? '' : '-outline') + '-info'} 
+                            className={'btn btn-sm btn' + (this.state.showCode ? '' : '-outline') + '-info'} 
                             onClick={this.togglePreview}
                             title='Show preview'
                         >
-                            Preview
+                            Markdown Code
                         </button>
                         &nbsp;&nbsp;&nbsp;
                         <button 
@@ -84,7 +86,7 @@ export class DocGeneratorView extends React.Component<DocGeneratorViewProps, Doc
                         </button>
                     </div>
                     <SplitPane 
-                        className={'scrollable hide-resizer empty-first-pane' + (this.state.showPreview ? ' markdown-preview' : '')}
+                        className={'scrollable hide-resizer empty-first-pane' + (!this.state.showCode ? ' markdown-preview' : '')}
                         split='horizontal'
                         defaultSize={1}
                         allowResize={false}
@@ -94,7 +96,7 @@ export class DocGeneratorView extends React.Component<DocGeneratorViewProps, Doc
                             <div className='row'>
                                 <div className='col-12'>
                                     {
-                                        this.state.showPreview ?
+                                        !this.state.showCode ?
                                             <ReactMarkdown source={markdown} /> :
                                      
                                             <pre className='markdown-code'>

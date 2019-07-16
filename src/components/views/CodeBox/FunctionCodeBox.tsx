@@ -19,20 +19,20 @@
  */
 
 import * as React from 'react';
-import * as Sol from '../solidity-handler/SolidityHandler';
+import * as Sol from '../../../solidity-handler/SolidityHandler';
 import * as Hljs from 'highlight.js';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/styles/hljs';
-import { getFunctionAbi } from '../utils/AbiGenerator';
+import { getFunctionAbi } from '../../../utils/AbiGenerator';
 import * as jsonFormat from 'json-format';
 import { spawnSync } from 'child_process';
-import { BlockchainConnection, getFunctionSignature } from '../solidity-handler/BlockchainConnector';
+import { BlockchainConnection, getFunctionSignature } from '../../../solidity-handler/BlockchainConnector';
 
-export interface CodeBoxProps {
+export interface FunctionCodeBoxProps {
     contextContract: Sol.Contract;
     selectedFunction: Sol.ContractFunction;
     codeBoxIsShown: boolean;
-    showCodeBox: Function;
+    showFunctionCodeBox: Function;
     blockchainConnection: BlockchainConnection; 
     contracts: Sol.Contract[];
     codeToShow: CodeToShow;
@@ -44,12 +44,12 @@ export enum CodeToShow {
     Abi
 }
 
-export class CodeBox extends React.Component<CodeBoxProps, {}> {
+export class FunctionCodeBox extends React.Component<FunctionCodeBoxProps, {}> {
 
-    constructor(props: CodeBoxProps) {
+    constructor(props: FunctionCodeBoxProps) {
         super(props);
 
-        this.hideCodeBox = this.hideCodeBox.bind(this);
+        this.hideFunctionCodeBox = this.hideFunctionCodeBox.bind(this);
     }
 
     componentDidMount(): void {
@@ -58,8 +58,8 @@ export class CodeBox extends React.Component<CodeBoxProps, {}> {
 
     }
 
-    hideCodeBox(): void {
-        this.props.showCodeBox(false);
+    hideFunctionCodeBox(): void {
+        this.props.showFunctionCodeBox(false);
     }
 
     render(): JSX.Element {
@@ -84,7 +84,7 @@ export class CodeBox extends React.Component<CodeBoxProps, {}> {
                                 <h5 className='modal-title'>
                                     {this.props.selectedFunction.name}() 
                                 </h5>
-                                <button type='button' onClick={this.hideCodeBox} 
+                                <button type='button' onClick={this.hideFunctionCodeBox} 
                                     className='close' data-dismiss='modal' aria-label='Close'>
                                     <span aria-hidden='true'>&times;</span>
                                 </button>
@@ -120,7 +120,7 @@ export class CodeBox extends React.Component<CodeBoxProps, {}> {
 
                             <div className='modal-footer'>
                             
-                                <button type='button' onClick={this.hideCodeBox} 
+                                <button type='button' onClick={this.hideFunctionCodeBox} 
                                     className='btn btn-secondary' data-dismiss='modal'>
                                     Close
                                 </button>

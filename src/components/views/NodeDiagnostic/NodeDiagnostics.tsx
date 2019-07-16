@@ -23,7 +23,6 @@ import JSONTree from 'react-json-tree';
 import SplitPane from 'react-split-pane';
 import { BlockchainConnection, sendJSONRpcQuery } from '../../../solidity-handler/BlockchainConnector';
 import { rpcMethods, RpcMethod, Param, JsonType } from './RPCMethods';
-import { validateRPCRequest } from 'in3/js/src/types/types';
 
 interface NodeDiagnosticsViewProps {
     blockchainConnection: BlockchainConnection;
@@ -84,6 +83,11 @@ export class NodeDiagnosticsView extends React.Component<NodeDiagnosticsViewProp
                     } catch {
                         value = event.target.value;
                     }
+                    break;
+                case JsonType.StringOrNumber:
+                    value = parseInt(event.target.value) ? 
+                        parseInt(event.target.value) :
+                        event.target.value;
                     break;
                 case JsonType.String:
                 default:
