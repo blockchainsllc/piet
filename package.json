@@ -48,7 +48,7 @@
     "file-saver": "^2.0.2",
     "highlight.js": "^9.12.0",
     "in3": "^1.1.43",
-    "jointjs": "^2.2.1",
+    "jointjs": "^3.0.2",
     "jquery": "^3.3.1",
     "json-format": "^1.0.1",
     "popper.js": "^1.15.0",

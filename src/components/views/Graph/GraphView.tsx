@@ -36,7 +36,11 @@ interface GraphViewProps {
     graphViewType: GraphViewType;
     loadedPietFileName: string;
 }
-export class GraphView extends React.Component<GraphViewProps, {}> {
+
+interface GraphViewState {
+    selectedNodeId: string;
+}
+export class GraphView extends React.Component<GraphViewProps, GraphViewState> {
     paper: any;
     model: any;
     inheritanceLinks: any;
@@ -46,10 +50,18 @@ export class GraphView extends React.Component<GraphViewProps, {}> {
     constructor(props: GraphViewProps) {
         super(props);
 
+        this.state = {
+            selectedNodeId: null
+        };
+
         this.scale = this.scale.bind(this);
         this.storeGraph = this.storeGraph.bind(this);
         this.highlightContract = this.highlightContract.bind(this);
-        
+        this.unHightlightNode = this.unHightlightNode.bind(this);
+        this.hightlightNode = this.hightlightNode.bind(this);
+        this.findNodeElement = this.findNodeElement.bind(this);
+        this.update = this.update.bind(this);
+
     }
 
     componentDidMount(): void {
@@ -57,7 +69,7 @@ export class GraphView extends React.Component<GraphViewProps, {}> {
         this.update(this.props);
 
         if (this.props.selectedContractName) {
-            this.highlightContract(null, this.props.selectedContractName);
+            this.highlightContract(null, this.props.selectedContractName, this.props);
             this.props.removeContractToSelect();
         }
 
@@ -79,33 +91,40 @@ export class GraphView extends React.Component<GraphViewProps, {}> {
         }
     }
 
-    highlightContract(cellView: any, contratName: any): void {
-
-        const nodenodeIdNamePair: JointElements.NodeNameIdPair = this.nodeIdNamePairs
-            .find((item: JointElements.NodeNameIdPair) =>
-                cellView ? item.jointjsNode.id.toString() === cellView.model.id : item.nodeElement.name === contratName);
-        const nodeName: string =  nodenodeIdNamePair ? nodenodeIdNamePair.nodeElement.name : undefined;
-        const slectedNodeElement: SolidityHandler.NodeElement = this.findNodeElement(nodeName);
-        if (slectedNodeElement) {
-            this.inheritanceLinks.forEach((link: any) => { link.attr(JointElements.inheritanceLinkNotHighlighted); });
-            this.otherLinks.forEach((link: any) => { link.attr(JointElements.otherLinkNotHighlighted); });
-            this.props.changeSelectedElement(slectedNodeElement);
-            
-            this.nodeIdNamePairs.forEach((nodeIdNamePair: JointElements.NodeNameIdPair) =>
-            this.unHightlightNode(nodeIdNamePair.nodeElement, nodeIdNamePair.jointjsNode));
-
-            this.hightlightNode(slectedNodeElement, nodenodeIdNamePair.jointjsNode);
-            
-            nodenodeIdNamePair.inheritanceLinks.forEach((link: any) => { 
-                link.attr(JointElements.inheritanceLinkHighlighted);
-                link.toFront();
+    highlightContract(cellView: any, contratName: any, props: GraphViewProps): void {
+        if (cellView && cellView.model && (!this.state.selectedNodeId || this.state.selectedNodeId !== cellView.model.id)) {
+            this.setState({
+                selectedNodeId: cellView.model.id
             });
-            nodenodeIdNamePair.otherLinks.forEach((link: any) => { 
-                link.attr(JointElements.otherLinkHighlighted);
-                link.toFront();
+
+            const nodenodeIdNamePair: JointElements.NodeNameIdPair = this.nodeIdNamePairs
+                .find((item: JointElements.NodeNameIdPair) =>
+                    cellView ? item.jointjsNode.id.toString() === cellView.model.id : item.nodeElement.name === contratName);
+            const nodeName: string =  nodenodeIdNamePair ? nodenodeIdNamePair.nodeElement.name : undefined;
+            const slectedNodeElement: SolidityHandler.NodeElement = this.findNodeElement(nodeName);
+            if (slectedNodeElement) {
                 
-            });
+                this.inheritanceLinks.forEach((link: any) => { link.attr(JointElements.inheritanceLinkNotHighlighted); });
+                this.otherLinks.forEach((link: any) => { link.attr(JointElements.otherLinkNotHighlighted); });
+                
+                props.changeSelectedElement(slectedNodeElement);               
+                
+                this.nodeIdNamePairs.forEach((nodeIdNamePair: JointElements.NodeNameIdPair) =>
+                this.unHightlightNode(nodeIdNamePair.nodeElement, nodeIdNamePair.jointjsNode));
+
+                this.hightlightNode(slectedNodeElement, nodenodeIdNamePair.jointjsNode);
+                
+                nodenodeIdNamePair.inheritanceLinks.forEach((link: any) => { 
+                    link.attr(JointElements.inheritanceLinkHighlighted);
+                    link.toFront();
+                });
+                nodenodeIdNamePair.otherLinks.forEach((link: any) => { 
+                    link.attr(JointElements.otherLinkHighlighted);
+                    link.toFront();
                     
+                });
+                        
+            }
         }
         
     }
@@ -170,10 +189,12 @@ export class GraphView extends React.Component<GraphViewProps, {}> {
         
         if (
             (newProps.contracts.length > 0 && !newProps.graph) ||
-            (newProps.loadedPietFileName !== this.props.loadedPietFileName) ||
-            (newProps.selectedContractName !== this.props.selectedContractName)
+            (newProps.loadedPietFileName !== this.props.loadedPietFileName) 
         ) {
+            
             this.update(newProps);
+        } else if (newProps.selectedContractName !== this.props.selectedContractName) {
+            this.highlightContract(null, newProps.selectedContractName, newProps);
         }
         
     }
@@ -219,11 +240,13 @@ export class GraphView extends React.Component<GraphViewProps, {}> {
         this.inheritanceLinks = graph.inheritanceLinks;
         this.otherLinks = graph.otherLinks;
 
-        this.paper.on('cell:pointerdown', (cellView: any, evt: any, x: any, y: any) => { 
-            this.highlightContract(cellView, null);
+        this.paper.on('element:text:pointerdown', (cellView: any, evt: any, x: any, y: any) => { 
+            evt.stopPropagation();
+            this.highlightContract(cellView, null, props);
         });
 
         this.paper.on('element:pointerup', (cellView: any, evt: any, x: any, y: any) => { 
+            evt.stopPropagation();
             this.storeGraph(props);
         });
 
@@ -235,8 +258,7 @@ export class GraphView extends React.Component<GraphViewProps, {}> {
         });
 
         this.scale(props.graphScale);
-        this.highlightContract(null, props.selectedContractName);
-    
+   
     }
 
     scale(factor: number): void {
