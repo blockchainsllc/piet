@@ -31,12 +31,22 @@ const defaultRouterName: string = 'manhattan'; // manhattan, metro, oneSide, ort
 export const iconRect: any = joint.shapes.basic.Rect.extend({
 
     markup: '<g class="rotatable"><g class="scalable"><rect /></g><g class="scalable"><image></image></g><text/></g>',
-    defaults: joint.util.deepSupplement({
-        attrs: {
-            text: {'ref-x': 30, 'x-alignment': 'left', ref: 'rect'},
-            image: {color: '#ffffff', 'ref-x': 6, 'ref-y': 10, ref: 'rect', width: 20, height: 20}
-        }
-    },                                  joint.shapes.basic.Rect.prototype.defaults)
+    defaults: joint.util.deepSupplement(
+        {
+            attrs: {
+                text: {
+                    event: 'element:text:pointerdown',
+                    'ref-x': 30,
+                    'x-alignment': 'left',
+                    ref: 'rect',
+               
+                cursor: 'pointer'
+                },
+                image: {color: '#ffffff', 'ref-x': 6, 'ref-y': 10, ref: 'rect', width: 20, height: 20}
+            }
+        },                                  
+        joint.shapes.basic.Rect.prototype.defaults
+    )
 
 });
 
@@ -62,7 +72,9 @@ export const otherLinkNotHighlighted: any = {
 
 export const contractNodeHighlighted: (contract: any) => any = (contract: any): any => ({ 
     rect: { 
-        class: 'contract-node node-highlighted'
+        class: 'contract-node node-highlighted',
+        rx: 1,
+        ry: 2
 
     },
     text: { 
@@ -79,7 +91,9 @@ export const contractNodeHighlighted: (contract: any) => any = (contract: any): 
 
 export const contractNodeNotHighlighted: (contract: any) => any = (contract: any): any => ({ 
     rect: { 
-        class: 'contract-node'
+        class: 'contract-node',
+        rx: 1,
+        ry: 2
     },
     text: { 
         class: 'node-text' + (contract.source ? '' : ' node-text-error'),
@@ -95,7 +109,9 @@ export const contractNodeNotHighlighted: (contract: any) => any = (contract: any
 
 export const enumNotHighlighted: (enumName: string) => any = (enumName: string): any => ({ 
     rect: { 
-        class: 'enum-node'
+        class: 'enum-node',
+        rx: 5,
+        ry: 10
     },
     text: { 
         text: cutText(enumName),
@@ -111,7 +127,9 @@ export const enumNotHighlighted: (enumName: string) => any = (enumName: string):
 
 export const enumHighlighted: (enumName: string) => any = (enumName: string): any => ({ 
     rect: { 
-        class: 'enum-node node-highlighted'
+        class: 'enum-node node-highlighted',
+        rx: 5,
+        ry: 10
 
     },
     text: { 
@@ -128,7 +146,9 @@ export const enumHighlighted: (enumName: string) => any = (enumName: string): an
 
 export const structNotHighlighted: (structName: string) => any = (structName: string): any => ({ 
     rect: { 
-        class: 'struct-node'
+        class: 'struct-node',
+        rx: 5,
+        ry: 10
 
     },
     text: { 
@@ -144,7 +164,9 @@ export const structNotHighlighted: (structName: string) => any = (structName: st
 
 export const structHighlighted: (structName: string) => any = (structName: string): any => ({  
     rect: { 
-        class: 'struct-node node-highlighted'
+        class: 'struct-node node-highlighted',
+        rx: 5,
+        ry: 10
     },
     text: { 
         text: cutText(structName),

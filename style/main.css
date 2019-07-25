@@ -235,6 +235,17 @@
 .node-text {
     fill: var(--text-highlight-color);
     
+    
+}
+
+.node-text:hover {
+    fill: var(--muted-text-color);
+    
+    
+}
+
+.other-node-text {
+    fill: var(--muted-text-color);
 }
 
 .node-text-error {
