@@ -25,7 +25,7 @@ import SplitPane from 'react-split-pane';
 import { Graph } from './Graph/GraphGenerator';
 import { saveAs } from 'file-saver';
 import { BlockchainConnection } from '../../solidity-handler/BlockchainConnector';
-import { Contract } from '../../solidity-handler/SolidityHandler';
+import { ErrorInfoBox, ErrorHandling } from '../shared-elements/ErrorInfoBox';
 
 interface FileBrowserViewProps {
     blockchainConnection: BlockchainConnection;
@@ -35,7 +35,7 @@ interface FileBrowserViewProps {
     submitFiles: Function;
     contracts: Sol.Contract[];
     loading: boolean;
-    globalErrors: Error[];
+    globalErrorHandling: ErrorHandling;
     selectedElement: Sol.NodeElement;
     graph: Graph;
     changeSelectedElement: Function;
@@ -194,7 +194,7 @@ export class FileBrowserView extends React.Component<FileBrowserViewProps, FileB
         }
 
         if (node.className === 'contract-icon') {
-            const selectedContract: Contract = this.props.contracts.find((contract: Contract) => contract.name === node.name);
+            const selectedContract: Sol.Contract = this.props.contracts.find((contract: Sol.Contract) => contract.name === node.name);
             if (selectedContract) {
                 this.props.changeSelectedElement(selectedContract);
             }
@@ -226,12 +226,6 @@ export class FileBrowserView extends React.Component<FileBrowserViewProps, FileB
             base0F: '#cc6633'
           };
 
-        const errorsToShow: JSX.Element[] = this.props.globalErrors.map((error: Error) =>  
-            <div key={error.message + error.name} className='file-browser-alert alert alert-danger' role='alert'>   
-                <small><i className='fas fa-exclamation-circle'></i> <strong>Error:</strong> {error.message}</small>
-             </div> 
-        );
-
         return <SplitPane className='scrollable hide-resizer' split='horizontal'  defaultSize={40} allowResize={false} >
                     <div className='h-100 w-100 toolbar'>
                     
@@ -257,10 +251,8 @@ export class FileBrowserView extends React.Component<FileBrowserViewProps, FileB
                     <SplitPane className='scrollable hide-resizer empty-first-pane' split='horizontal'  defaultSize={1} allowResize={false}>
                         <div></div>
                         <div>
-                            { this.props.globalErrors.length > 0 &&
-                                errorsToShow
-                            }   
-                            {this.props.globalErrors.length === 0  && this.props.loading ? 
+                            <ErrorInfoBox errorHandling={this.props.globalErrorHandling}/>
+                            {this.props.globalErrorHandling.errors.length === 0  && this.props.loading ? 
                                 <div className='file-browser-alert alert alert-warning' role='alert'>
                                     <small><i className='fas fa-info-circle'></i> Parsing Code: This may take a while...</small>
                                 </div> :   

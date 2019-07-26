@@ -458,6 +458,10 @@ body {
     cursor: col-resize;
 }
 
+.error-message {
+    padding-top: 0.2rem;
+}
+
 .Resizer.vertical:hover {
     border-left: 2px solid rgba(0, 0, 0, 0.5);
     border-right: 2px solid rgba(0, 0, 0, 0.5);
@@ -479,6 +483,10 @@ body {
 .markdown-code {
     color: var(--text-highlight-color);
     font-family: monospace;
+}
+
+.not-last-alert {
+    margin-bottom: 1px;
 }
 
 .tabs-container ul li {
