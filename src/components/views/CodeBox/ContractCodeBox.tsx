@@ -51,7 +51,7 @@ export class ContractCodeBox extends React.Component<ContractCodeBoxProps, {}> {
     }
 
     render(): JSX.Element {
-        if (!this.props.contract) {
+        if (!this.props.contract || !this.props.contract.source) {
             return null;
         } 
             

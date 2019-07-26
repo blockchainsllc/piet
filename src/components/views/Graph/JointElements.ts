@@ -19,7 +19,7 @@
  */
 
 import * as joint from 'jointjs';
-import { Contract, NodeElement } from '../../../solidity-handler/SolidityHandler';
+import { Contract, NodeElement, SolidityAnnotation } from '../../../solidity-handler/SolidityHandler';
 
 // const link = joint.dia.Link.extend({
 //     markup: '<path class="connection"/><path class="marker-target"/><g class="labels" />'
@@ -72,21 +72,22 @@ export const otherLinkNotHighlighted: any = {
 
 export const contractNodeHighlighted: (contract: any) => any = (contract: any): any => ({ 
     rect: { 
-        class: (contract.isAbstract || contract.isInterface ? 'interface-node' : 'contract-node') + ' node-highlighted',
+        class: (!contract.source ? 'error-node' :
+        contract.isAbstract || contract.isInterface ? 'interface-node' : 'contract-node') + ' node-highlighted',
         rx: 1,
         ry: 2
 
     },
     text: { 
-        class: 'node-text' + (contract.source ? '' : ' node-text-error'),
+        class: 'node-text',
         text: cutText(contract.name),
-        // 'font-family': 'monospace',
         'font-size': 12
     }, 
     image: {
-        'xlink:href': contract.kind === 'library' ? 'assets/book-solid.svg' :
-            contract.kind === 'contract' && contract.isAbstract ? 'assets/file.svg' : 
-                (contract.kind === 'interface' ? 'assets/file-alt.svg' : 'assets/file-contract-solid.svg')
+        'xlink:href': !contract.source ? 'assets/exclamation-circle-solid.svg' :
+            contract.kind === 'library' ? 'assets/book-solid.svg' :
+                contract.kind === 'contract' && contract.isAbstract ? 'assets/file.svg' : 
+                    (contract.kind === 'interface' ? 'assets/file-alt.svg' : 'assets/file-contract-solid.svg')
     }
 
 });
@@ -94,21 +95,22 @@ export const contractNodeHighlighted: (contract: any) => any = (contract: any): 
 export const contractNodeNotHighlighted: (contract: any) => any = (contract: any): any => ({
    
     rect: { 
-        class: contract.isAbstract || contract.isInterface ? 'interface-node' : 'contract-node',
+        class: !contract.source ? 'error-node' :
+            (contract.isAbstract || contract.isInterface ? 'interface-node' : 'contract-node'),
         rx: 1,
         ry: 2
     },
     text: { 
-        class: 'node-text' + (contract.source ? '' : ' node-text-error'),
+        class: 'node-text',
         text: cutText(contract.name),
-        // 'font-family': 'monospace',
         'font-size': 12
 
     }, 
     image: {
-        'xlink:href': contract.kind === 'library' ? 'assets/book-solid.svg' :
-            contract.kind === 'contract' && contract.isAbstract ? 'assets/file.svg' : 
-                (contract.kind === 'interface' ? 'assets/file-alt.svg' : 'assets/file-contract-solid.svg')
+        'xlink:href': !contract.source ? 'assets/exclamation-circle-solid.svg' :
+            contract.kind === 'library' ? 'assets/book-solid.svg' :
+                contract.kind === 'contract' && contract.isAbstract ? 'assets/file.svg' : 
+                    (contract.kind === 'interface' ? 'assets/file-alt.svg' : 'assets/file-contract-solid.svg')
     }
 });
 
