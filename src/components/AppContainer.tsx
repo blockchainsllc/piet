@@ -33,6 +33,7 @@ import { UICreationView } from './views/ui-creation/UICreationView';
 import { BlockchainConnection, ConnectionType, initBlockchainConfiguration } from '../solidity-handler/BlockchainConnector';
 import { Graph, GraphViewType } from './views/Graph/GraphGenerator';
 import * as PromiseFileReader from 'promise-file-reader';
+import { ErrorHandling } from './shared-elements/ErrorInfoBox';
 
 interface AppContainerState {
     contracts: Sol.Contract[];
@@ -42,7 +43,7 @@ interface AppContainerState {
     isLaoding: boolean;
     tabEntities: TabEntity[][];
     activeTab: number[];
-    globalErrors: Error[];
+    globalErrorHandling: ErrorHandling;
     createdUIStructure: UIStructure;
     blockchainConnection: BlockchainConnection;
     graph: Graph;
@@ -57,13 +58,42 @@ class AppContainer extends React.Component<{}, {}> {
     constructor(props: any) {
         super(props);
 
+        this.updateContractNames = this.updateContractNames.bind(this);
+        this.changeSelectedElement = this.changeSelectedElement.bind(this);
+        this.setIsLoading = this.setIsLoading.bind(this);
+        this.addTabEntity = this.addTabEntity.bind(this);
+        this.changeActiveTab = this.changeActiveTab.bind(this);
+        this.markCode = this.markCode.bind(this);
+        this.changeContractAddress = this.changeContractAddress.bind(this);
+        this.getEvents = this.getEvents.bind(this);
+        this.contentChange = this.contentChange.bind(this);
+        this.removeTabEntity = this.removeTabEntity.bind(this);
+        this.gotContractsFromGithub = this.gotContractsFromGithub.bind(this);
+        this.removeContractToSelect = this.removeContractToSelect.bind(this);
+        this.setUIStructure = this.setUIStructure.bind(this);
+        this.addRow = this.addRow.bind(this);
+        this.addElementToRow = this.addElementToRow.bind(this);
+        this.addElementToAction = this.addElementToAction.bind(this);
+        this.updateBlockchainConnection = this.updateBlockchainConnection.bind(this);
+        this.addAccount = this.addAccount.bind(this);
+        this.selectAccount = this.selectAccount.bind(this);
+        this.addTransactionToHistory = this.addTransactionToHistory.bind(this);
+        this.changeGraphView = this.changeGraphView.bind(this);
+        this.setGraph = this.setGraph.bind(this);
+        this.loadFromConatinerFile = this.loadFromConatinerFile.bind(this);
+        this.removeError = this.removeError.bind(this);
+
         this.state = {
             contracts: [],
             selectedElement: null,
             contractToSelect: null,
             contractToSelectAddress: null,
             isLaoding: false,
-            globalErrors: [],
+            globalErrorHandling: {
+                errors: [],
+                removeError: this.removeError
+
+            },
             tabEntities: [[], []],
             activeTab: [null, null],
             createdUIStructure: {
@@ -89,36 +119,23 @@ class AppContainer extends React.Component<{}, {}> {
             graphToLoad: null,
             graphViewType: GraphViewType.Inheritance
         };
-        
-        this.updateContractNames = this.updateContractNames.bind(this);
-        this.changeSelectedElement = this.changeSelectedElement.bind(this);
-        this.setIsLoading = this.setIsLoading.bind(this);
-        this.addTabEntity = this.addTabEntity.bind(this);
-        this.changeActiveTab = this.changeActiveTab.bind(this);
-        this.markCode = this.markCode.bind(this);
-        this.changeContractAddress = this.changeContractAddress.bind(this);
-        this.getEvents = this.getEvents.bind(this);
-        this.contentChange = this.contentChange.bind(this);
-        this.removeTabEntity = this.removeTabEntity.bind(this);
-        this.gotContractsFromGithub = this.gotContractsFromGithub.bind(this);
-        this.removeContractToSelect = this.removeContractToSelect.bind(this);
-        this.setUIStructure = this.setUIStructure.bind(this);
-        this.addRow = this.addRow.bind(this);
-        this.addElementToRow = this.addElementToRow.bind(this);
-        this.addElementToAction = this.addElementToAction.bind(this);
-        this.updateBlockchainConnection = this.updateBlockchainConnection.bind(this);
-        this.addAccount = this.addAccount.bind(this);
-        this.selectAccount = this.selectAccount.bind(this);
-        this.addTransactionToHistory = this.addTransactionToHistory.bind(this);
-        this.changeGraphView = this.changeGraphView.bind(this);
-        this.setGraph = this.setGraph.bind(this);
-        this.loadFromConatinerFile = this.loadFromConatinerFile.bind(this);
 
     }
 
     setGraph(graph: Graph): void {
         this.setState({
             graph
+        });
+    }
+
+    removeError(index: number): void {
+        this.setState((prevState: AppContainerState) => {
+            prevState.globalErrorHandling.errors.splice(index, 1);
+
+            return {
+                globalErrorHandling: prevState.globalErrorHandling
+            };
+
         });
     }
 
@@ -343,10 +360,19 @@ class AppContainer extends React.Component<{}, {}> {
 
     }
 
-    addError(error: any): void {
-        this.setState((prevState: AppContainerState) => ({
-                globalErrors: [error]
-        }));
+    addError(error: Error, operation?: string): void {
+        this.setState((prevState: AppContainerState) => {
+                prevState.globalErrorHandling.errors.push({
+                    name: error.name,
+                    message: error.message,
+                    timestamp: Date.now().toString(),
+                    operation: operation
+                });
+
+                return {
+                    globalErrorHandling: prevState.globalErrorHandling
+                };
+        });
         this.setIsLoading(false);
     }
 
@@ -408,7 +434,9 @@ class AppContainer extends React.Component<{}, {}> {
             this.loadFromConatinerFile(file, selectorFiles[0].name);
    
         } else {
+ 
             try {
+                
                 this.setState({selectedElement: null});
                 this.setIsLoading(true);
 
@@ -423,7 +451,7 @@ class AppContainer extends React.Component<{}, {}> {
                 this.removeTabEntity('About');    
                 this.changeActiveTab(0, 1);
             }  catch (e) {
-                this.addError(e);
+                this.addError(e, 'Loading file');
             }
 
         }
@@ -658,7 +686,7 @@ class AppContainer extends React.Component<{}, {}> {
                                     changeGraphView={this.changeGraphView}
                                     uiCreationHandling={uiCreationHandling}
                                     selectedTabTypeForView={selectedTabTypeForView}
-                                    globalErrors={this.state.globalErrors}
+                                    globalErrorHandling={this.state.globalErrorHandling}
                                     removeContractToSelect={this.removeContractToSelect}
                                     selectedContractName={this.state.contractToSelect}
                                     removeTabEntity={this.removeTabEntity}
@@ -690,7 +718,7 @@ class AppContainer extends React.Component<{}, {}> {
                                 changeGraphView={this.changeGraphView}
                                 uiCreationHandling={uiCreationHandling}
                                 selectedTabTypeForView={selectedTabTypeForView}
-                                globalErrors={this.state.globalErrors}
+                                globalErrorHandling={this.state.globalErrorHandling}
                                 removeContractToSelect={this.removeContractToSelect}
                                 selectedContractName={this.state.contractToSelect}
                                 removeTabEntity={this.removeTabEntity}

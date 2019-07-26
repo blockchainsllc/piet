@@ -27,6 +27,7 @@ import {
     changeBlockchainConfiguration,
     checkBlockchainConnection 
 } from '../../../solidity-handler/BlockchainConnector';
+import { ErrorHandling, ErrorInfoBox } from '../../shared-elements/ErrorInfoBox';
 
 interface ConfigurationViewProps {
     blockchainConnection: BlockchainConnection;
@@ -43,6 +44,7 @@ interface ConfigurationViewState {
     accounts: string[];
     showAddUserView: boolean;
     newPrivateKey: string;
+    errorHandling: ErrorHandling;
 
 }
 
@@ -50,13 +52,7 @@ export class ConfigurationView extends React.Component<ConfigurationViewProps, C
 
     constructor(props: ConfigurationViewProps) {
         super(props);
-     
-        this.state = {
-            newBlockchainConnection: null,
-            accounts: [],
-            showAddUserView: false,
-            newPrivateKey: null
-        };
+        
         this.onConnectionTypeChange = this.onConnectionTypeChange.bind(this);
         this.onUrlChange = this.onUrlChange.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
@@ -64,6 +60,31 @@ export class ConfigurationView extends React.Component<ConfigurationViewProps, C
         this.toggleUserView = this.toggleUserView.bind(this);
         this.addAccount = this.addAccount.bind(this);
         this.onPrivateKeyChange = this.onPrivateKeyChange.bind(this);
+        this.removeError = this.removeError.bind(this);
+        this.addError = this.addError.bind(this);
+     
+        this.state = {
+            newBlockchainConnection: null,
+            accounts: [],
+            showAddUserView: false,
+            newPrivateKey: null,
+            errorHandling: {
+                errors: [],
+                removeError: this.removeError
+            }
+        };
+
+    }
+
+    removeError(index: number): void {
+        this.setState((prevState: ConfigurationViewState) => {
+            prevState.errorHandling.errors.splice(index, 1);
+
+            return {
+                errorHandling: prevState.errorHandling
+            };
+
+        });
     }
 
     onPrivateKeyChange(event: any): void {
@@ -138,12 +159,31 @@ export class ConfigurationView extends React.Component<ConfigurationViewProps, C
         });
     }
 
-    async onSubmit(): Promise<void> {
-       
-        this.props.blockchainConnection.updateBlockchainConnection(
-            await changeBlockchainConfiguration(this.state.newBlockchainConnection)
-        );
+    addError(error: Error, operation?: string): void {
+        this.setState((prevState: ConfigurationViewState) => {
+                prevState.errorHandling.errors.push({
+                    name: error.name,
+                    message: error.message,
+                    timestamp: Date.now().toString(),
+                    operation: operation
+                });
 
+                return {
+                    errorHandling: prevState.errorHandling
+                };
+        });
+    }
+
+    async onSubmit(): Promise<void> {
+
+            const blockchainConnetctionOrError: {blockchainConnection: BlockchainConnection; error: any} =
+                 await changeBlockchainConfiguration(this.state.newBlockchainConnection);
+
+            this.props.blockchainConnection.updateBlockchainConnection(blockchainConnetctionOrError.blockchainConnection);
+            if (blockchainConnetctionOrError.error) {
+                this.addError(blockchainConnetctionOrError.error);
+            }
+            
     }
 
     connectionTypeToLabel(connectionType: ConnectionType): string {
@@ -264,7 +304,7 @@ export class ConfigurationView extends React.Component<ConfigurationViewProps, C
                                     </div>
                                 </div>
                             }
-                    
+                            <ErrorInfoBox errorHandling={this.state.errorHandling}/>
                             <div className='container'>
                                 <small>
                                     <div className='list-group list-group-flush account-list'>

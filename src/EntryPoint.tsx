@@ -19,19 +19,29 @@
  */
 
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { BrowserRouter } from 'react-router-dom';
-import { EntryPoint } from './EntryPoint';
-
+import { App } from './components/AppContainer';
 import * as Sentry from '@sentry/browser';
 
-Sentry.init({
-    dsn: 'https://bed0f0a54f70456b8b83c5da0d8b5c56@sentry.slock.it/9'
-});
+export class EntryPoint extends React.Component<{}, {}> {
 
-ReactDOM.render(
-    <BrowserRouter>
-        <EntryPoint />
-    </BrowserRouter>,
-    document.getElementById('example')
-);
+    constructor(props: any) {
+        super(props);
+        this.state = { error: null, eventId: null };
+    }
+
+    componentDidCatch(error: any, info: any): void {
+    
+        Sentry.withScope((scope: Sentry.Scope) => {
+            scope.setExtras(info);
+            Sentry.captureException(error);
+        });
+  
+      }
+
+    render(): JSX.Element {
+   
+        return  <App />;
+
+    }
+
+}

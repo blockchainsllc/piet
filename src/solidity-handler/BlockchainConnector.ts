@@ -100,11 +100,11 @@ const getNetVersion: GetNetVersion = (bC: BlockchainConnection): Promise<string>
 
 type ChangeBlockchainConfiguration = (
     blockchainConnection: BlockchainConnection
-) => Promise<BlockchainConnection>;
+) => Promise<{blockchainConnection: BlockchainConnection; error: any}>;
 
 export const changeBlockchainConfiguration: ChangeBlockchainConfiguration = async (
     blockchainConnection: BlockchainConnection
-): Promise<BlockchainConnection> => {
+): Promise<{blockchainConnection: BlockchainConnection; error: any}> => {
 
     try {
         const getFirstAccount: (web3: Web3) => Promise<string> = async (web3: Web3): Promise<string> =>  {
@@ -131,20 +131,20 @@ export const changeBlockchainConfiguration: ChangeBlockchainConfiguration = asyn
                 }).createWeb3Provider());
                 blockchainConnection.selectedAccount = null;
                 blockchainConnection.useDefaultAccount = true;
-                blockchainConnection.netVersion = (await getNetVersion(blockchainConnection) as any).result;;
-                return blockchainConnection;
+                blockchainConnection.netVersion = (await getNetVersion(blockchainConnection) as any).result;
+                return {blockchainConnection, error: null};
             case ConnectionType.WebSocketRPC:
                 blockchainConnection.web3 = new Web3(new Web3.providers.WebsocketProvider(blockchainConnection.rpcUrl));
                 blockchainConnection.selectedAccount = await getFirstAccount(blockchainConnection.web3);
-                blockchainConnection.netVersion = (await getNetVersion(blockchainConnection) as any).result;;
-                return blockchainConnection;
+                blockchainConnection.netVersion = (await getNetVersion(blockchainConnection) as any).result;
+                return {blockchainConnection, error: null};
     
             case ConnectionType.Rpc:
             
                 blockchainConnection.web3 = new Web3(blockchainConnection.rpcUrl);
                 blockchainConnection.selectedAccount = await getFirstAccount(blockchainConnection.web3);
-                blockchainConnection.netVersion = (await getNetVersion(blockchainConnection) as any).result;;
-                return blockchainConnection;
+                blockchainConnection.netVersion = (await getNetVersion(blockchainConnection) as any).result;
+                return {blockchainConnection, error: null};
     
             case ConnectionType.Injected:
                 if ((window as any).ethereum) {
@@ -159,20 +159,20 @@ export const changeBlockchainConfiguration: ChangeBlockchainConfiguration = asyn
                     blockchainConnection.selectedAccount = null;
                     blockchainConnection.web3 = new Web3();
                 }
-                blockchainConnection.netVersion = (await getNetVersion(blockchainConnection) as any).result;;
+                blockchainConnection.netVersion = (await getNetVersion(blockchainConnection) as any).result;
                 
-                return blockchainConnection;
+                return {blockchainConnection, error: null};
             case ConnectionType.None:
             default:
                 blockchainConnection.web3 = new Web3();
                 blockchainConnection.connectionType = ConnectionType.None;
                 blockchainConnection.netVersion = null;
-                return blockchainConnection;
+                return {blockchainConnection, error: null};
         }
     } catch (e) {
         blockchainConnection.web3 = new Web3();
         blockchainConnection.connectionType = ConnectionType.None;
-        return blockchainConnection;
+        return {blockchainConnection, error: e};
     }
     
 };

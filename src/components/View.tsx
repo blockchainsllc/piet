@@ -40,6 +40,7 @@ import { GraphView } from './views/Graph/GraphView';
 import { Graph, GraphViewType } from './views/Graph/GraphGenerator';
 import { DocGeneratorView } from './views/documentatin-generator/DocGeneratorView';
 import { generateMarkdownDoc } from '../utils/DocGenerator';
+import { ErrorHandling } from './shared-elements/ErrorInfoBox';
 
 export enum TabEntityType {
     Structure,
@@ -85,7 +86,7 @@ interface ViewProps {
     removeTabEntity: Function;
     selectedContractName: string;
     removeContractToSelect: Function;
-    globalErrors: Error[];
+    globalErrorHandling: ErrorHandling;
     selectedTabTypeForView: TabEntityType[];
     uiCreationHandling: UICreationHandling;
     changeGraphView: Function;
@@ -202,7 +203,7 @@ export class View extends React.Component<ViewProps, {}> {
                 content =   <FileBrowserView 
                                 selectedElement={this.props.selectedElement}
                                 graph={this.props.graph}
-                                globalErrors={this.props.globalErrors}
+                                globalErrorHandling={this.props.globalErrorHandling}
                                 key={'eventCatcher' + this.props.activeTab[this.props.viewId] }
                                 viewId={this.props.viewId}
                                 tabId={this.props.activeTab[this.props.viewId]}
