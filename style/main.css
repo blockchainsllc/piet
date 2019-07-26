@@ -230,6 +230,12 @@
     stroke: #ffffff;
 } 
 
+.error-node {
+    fill: var(--error-red);
+    stroke-width: 0;
+    stroke: #ffffff;
+} 
+
 .struct-node {
     fill: var(--struct-color);
     stroke-width: 0;
