@@ -71,7 +71,9 @@ export class ContractView extends React.Component<ContractViewProps, ContractVie
     render(): JSX.Element {
 
         const contract: Sol.Contract = this.props.selectedContract as Sol.Contract;
-        const subtitle: string = this.props.selectedContract.kind;
+        const subtitle: string = this.props.selectedContract.kind === 'contract' && this.props.selectedContract.isAbstract ? 
+            'abstract contract' : 
+            this.props.selectedContract.kind;
 
         const tabEntity: TabEntity = {
             active: true,
@@ -91,7 +93,9 @@ export class ContractView extends React.Component<ContractViewProps, ContractVie
             .find((annotation: Sol.SolidityAnnotation) => annotation.name === 'notice');
         return  <div className='card selected-card h-100'>
                    
-                    <div className='card-body selected-card contract-card'>
+                    <div className=
+                        {'card-body selected-card ' + (contract.isAbstract  ? 'abstract-contract-inspector' : 'contract-inspector')}
+                    >
                         <div className='text-center'>
                             {/* <h3>
                                  <a 

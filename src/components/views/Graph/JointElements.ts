@@ -72,7 +72,7 @@ export const otherLinkNotHighlighted: any = {
 
 export const contractNodeHighlighted: (contract: any) => any = (contract: any): any => ({ 
     rect: { 
-        class: 'contract-node node-highlighted',
+        class: (contract.isAbstract || contract.isInterface ? 'interface-node' : 'contract-node') + ' node-highlighted',
         rx: 1,
         ry: 2
 
@@ -84,14 +84,17 @@ export const contractNodeHighlighted: (contract: any) => any = (contract: any): 
         'font-size': 12
     }, 
     image: {
-        'xlink:href': contract.isAbstract || contract.isInterface ? 'assets/file.svg' : 'assets/file-alt.svg'
+        'xlink:href': contract.kind === 'library' ? 'assets/book-solid.svg' :
+            contract.kind === 'contract' && contract.isAbstract ? 'assets/file.svg' : 
+                (contract.kind === 'interface' ? 'assets/file-alt.svg' : 'assets/file-contract-solid.svg')
     }
 
 });
 
-export const contractNodeNotHighlighted: (contract: any) => any = (contract: any): any => ({ 
+export const contractNodeNotHighlighted: (contract: any) => any = (contract: any): any => ({
+   
     rect: { 
-        class: 'contract-node',
+        class: contract.isAbstract || contract.isInterface ? 'interface-node' : 'contract-node',
         rx: 1,
         ry: 2
     },
@@ -103,7 +106,9 @@ export const contractNodeNotHighlighted: (contract: any) => any = (contract: any
 
     }, 
     image: {
-        'xlink:href': contract.isAbstract || contract.isInterface ? 'assets/file.svg' : 'assets/file-alt.svg'
+        'xlink:href': contract.kind === 'library' ? 'assets/book-solid.svg' :
+            contract.kind === 'contract' && contract.isAbstract ? 'assets/file.svg' : 
+                (contract.kind === 'interface' ? 'assets/file-alt.svg' : 'assets/file-contract-solid.svg')
     }
 });
 
@@ -158,7 +163,7 @@ export const structNotHighlighted: (structName: string) => any = (structName: st
         class: 'node-text'
     }, 
     image: {
-        'xlink:href': 'assets/archive.svg'
+        'xlink:href': 'assets/stream-solid.svg'
     }
 });
 
@@ -175,7 +180,7 @@ export const structHighlighted: (structName: string) => any = (structName: strin
         class: 'node-text'
     }, 
     image: {
-        'xlink:href': 'assets/archive.svg'
+        'xlink:href': 'assets/stream-solid.svg'
     }
 });
 

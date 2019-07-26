@@ -47,41 +47,47 @@ interface SelectedViewProps {
 export class SelectedView extends React.Component<SelectedViewProps, {}> {
   
     render(): JSX.Element {
+        let view: JSX.Element;
 
         if (!this.props.selectedElement) {
-            return null;
+            view = <small className='text-center text-muted inspector-info'>
+                Click on the name of an element in the graph view. 
+            </small>;
+        } else {
+            switch (this.props.selectedElement.elementType) {
+                case Sol.ElementType.Contract:
+                    view = <ContractView 
+                                uiCreationHandling={this.props.uiCreationHandling}
+                                selectedTabTypeForView={this.props.selectedTabTypeForView}
+                                toggleInheritance={this.props.toggleInheritance}
+                                contracts={this.props.contracts}
+                                addTabEntity={this.props.addTabEntity}
+                                markCode={this.props.markCode}
+                                testMode={this.props.testMode} 
+                                blockchainConnection={this.props.blockchainConnection}
+                                showInheritedMembers={this.props.showInheritedMembers} 
+                                selectedContract={this.props.selectedElement as Sol.Contract} 
+                                editContractAddress={this.props.editContractAddress}
+                                changeContractAddress={this.props.changeContractAddress}
+                                getEvents={this.props.getEvents}
+                                weiBalance={this.props.weiBalance}
+                            />;
+                    break;
+                case Sol.ElementType.Enum:
+                    view = <EnumView selectedEnum={this.props.selectedElement as Sol.ContractEnumeration} />;
+                    break;
+                case Sol.ElementType.Struct:
+                    view = <StructView selectedStruct={this.props.selectedElement as Sol.ContractStruct} />;
+                    break;
+                default:
+                    view = <small className='text-center text-muted inspector-info'>
+                        Unsupported element type. 
+                    </small> ;
+    
+            }
         }
 
-        let view: JSX.Element;
-        switch (this.props.selectedElement.elementType) {
-            case Sol.ElementType.Contract:
-                view = <ContractView 
-                            uiCreationHandling={this.props.uiCreationHandling}
-                            selectedTabTypeForView={this.props.selectedTabTypeForView}
-                            toggleInheritance={this.props.toggleInheritance}
-                            contracts={this.props.contracts}
-                            addTabEntity={this.props.addTabEntity}
-                            markCode={this.props.markCode}
-                            testMode={this.props.testMode} 
-                            blockchainConnection={this.props.blockchainConnection}
-                            showInheritedMembers={this.props.showInheritedMembers} 
-                            selectedContract={this.props.selectedElement as Sol.Contract} 
-                            editContractAddress={this.props.editContractAddress}
-                            changeContractAddress={this.props.changeContractAddress}
-                            getEvents={this.props.getEvents}
-                            weiBalance={this.props.weiBalance}
-                        />;
-                break;
-            case Sol.ElementType.Enum:
-                view = <EnumView selectedEnum={this.props.selectedElement as Sol.ContractEnumeration} />;
-                break;
-            case Sol.ElementType.Struct:
-                view = <StructView selectedStruct={this.props.selectedElement as Sol.ContractStruct} />;
-                break;
-            default:
-                view = null;
 
-        }
         
         return  <div className='h-100'>
 

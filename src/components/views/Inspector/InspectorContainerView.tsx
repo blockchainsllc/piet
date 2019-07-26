@@ -141,7 +141,8 @@ export class InspectorContainerView extends React.Component<InspectorContainerVi
         if (this.props.selectedElement) {
             switch (this.props.selectedElement.elementType) {
                 case Sol.ElementType.Contract:
-                    return 'contract-inspector';
+                    const contract: Sol.Contract = (this.props.selectedElement as Sol.Contract);
+                    return  contract.isAbstract  ? 'abstract-contract-inspector' : 'contract-inspector';
                 
                 case Sol.ElementType.Struct:
                     return 'struct-inspector';
@@ -192,7 +193,7 @@ export class InspectorContainerView extends React.Component<InspectorContainerVi
                                 </button>
                                 &nbsp;
                                 <button 
-                                    title={'Generate documentation' } 
+                                    title={'Generate Documentation' } 
                                     className={'btn btn-sm btn-outline-info'}
                                     onClick={this.showDocumentation}
                                 >
