@@ -8984,7 +8984,7 @@
           "subAnnotation": null
         }
       ],
-      "deployedAt": "0xb6029EA3B2c51D09a50B53CA8012FeEB05bDa35A",
+      "deployedAt": "0xAfC2F2D803479A2AF3A72022D54cc0901a0ec0d6",
       "meta": null,
       "modifiers": [],
       "events": [
@@ -13505,10 +13505,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -13532,10 +13534,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -13559,10 +13563,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -13586,10 +13592,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -13613,10 +13621,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/archive.svg"
+              "xlink:href": "assets/stream-solid.svg"
             },
             "rect": {
-              "class": "struct-node"
+              "class": "struct-node",
+              "rx": 5,
+              "ry": 10
             }
           }
         },
@@ -13624,7 +13634,7 @@
           "type": "basic.Rect",
           "position": {
             "x": 180,
-            "y": 820
+            "y": 660
           },
           "size": {
             "width": 150,
@@ -13640,18 +13650,20 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
         {
           "type": "basic.Rect",
           "position": {
-            "x": 180,
-            "y": 540
+            "x": 600,
+            "y": 660
           },
           "size": {
             "width": 150,
@@ -13670,7 +13682,9 @@
               "xlink:href": "assets/file.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "interface-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -13694,10 +13708,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file.svg"
+              "xlink:href": "assets/file-alt.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "interface-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -13721,10 +13737,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file.svg"
+              "xlink:href": "assets/file-alt.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "interface-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -13748,10 +13766,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file.svg"
+              "xlink:href": "assets/file-alt.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "interface-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -13778,7 +13798,9 @@
               "xlink:href": "assets/file.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "interface-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -13802,10 +13824,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -13829,10 +13853,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -13856,10 +13882,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -13883,10 +13911,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -13910,10 +13940,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -13937,10 +13969,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -13964,10 +13998,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node node-highlighted"
+              "class": "contract-node node-highlighted",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -13991,10 +14027,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -14018,10 +14056,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -14045,10 +14085,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -14072,18 +14114,20 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
         {
           "type": "basic.Rect",
           "position": {
-            "x": 180,
-            "y": 660
+            "x": 600,
+            "y": 720
           },
           "size": {
             "width": 150,
@@ -14099,18 +14143,20 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
         {
           "type": "basic.Rect",
           "position": {
-            "x": 0,
-            "y": 540
+            "x": 400,
+            "y": 720
           },
           "size": {
             "width": 150,
@@ -14126,10 +14172,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -14137,7 +14185,7 @@
           "type": "basic.Rect",
           "position": {
             "x": 0,
-            "y": 600
+            "y": 660
           },
           "size": {
             "width": 150,
@@ -14153,10 +14201,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/book-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -14180,10 +14230,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -14207,10 +14259,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -14234,10 +14288,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -14261,18 +14317,20 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
         {
           "type": "basic.Rect",
           "position": {
-            "x": 0,
-            "y": 660
+            "x": 180,
+            "y": 720
           },
           "size": {
             "width": 150,
@@ -14288,10 +14346,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -14299,7 +14359,7 @@
           "type": "basic.Rect",
           "position": {
             "x": 180,
-            "y": 740
+            "y": 600
           },
           "size": {
             "width": 150,
@@ -14315,10 +14375,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -14326,7 +14388,7 @@
           "type": "basic.Rect",
           "position": {
             "x": 0,
-            "y": 740
+            "y": 600
           },
           "size": {
             "width": 150,
@@ -14345,7 +14407,9 @@
               "xlink:href": "assets/list-ol.svg"
             },
             "rect": {
-              "class": "enum-node"
+              "class": "enum-node",
+              "rx": 5,
+              "ry": 10
             }
           }
         },
@@ -14353,7 +14417,7 @@
           "type": "basic.Rect",
           "position": {
             "x": 0,
-            "y": 820
+            "y": 720
           },
           "size": {
             "width": 150,
@@ -14369,10 +14433,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -14704,63 +14770,6 @@
         {
           "type": "link",
           "source": {
-            "id": "8d82547d-4f7f-400c-8f3d-4466100db110"
-          },
-          "target": {
-            "id": "88da52e4-5066-4ed9-b0df-1067654a7a79"
-          },
-          "router": {
-            "name": "manhattan"
-          },
-          "connector": {
-            "name": "normal"
-          },
-          "id": "56142520-ba1d-48cb-99e6-08f5f39c3b70",
-          "z": 691,
-          "attrs": {
-            ".marker-target": {
-              "stroke": "#8e8e8e",
-              "fill": "#8e8e8e",
-              "d": "M 10 0 L 0 5 L 10 10 z"
-            },
-            ".connection": {
-              "stroke-width": 2,
-              "stroke": "#8e8e8e"
-            }
-          }
-        },
-        {
-          "type": "link",
-          "source": {
-            "id": "0233c937-4fe2-47e2-9ec4-b979c3caf1b7"
-          },
-          "target": {
-            "id": "8d82547d-4f7f-400c-8f3d-4466100db110"
-          },
-          "router": {
-            "name": "manhattan",
-            "args": {}
-          },
-          "connector": {
-            "name": "normal"
-          },
-          "id": "c7b6a43f-fba8-4e2a-be75-56d7db788ec0",
-          "z": 692,
-          "attrs": {
-            ".marker-target": {
-              "stroke": "#8e8e8e",
-              "fill": "#8e8e8e",
-              "d": "M 10 0 L 0 5 L 10 10 z"
-            },
-            ".connection": {
-              "stroke-width": 2,
-              "stroke": "#8e8e8e"
-            }
-          }
-        },
-        {
-          "type": "link",
-          "source": {
             "id": "d1a3e944-d79a-4e2e-bc93-35971ca644b0"
           },
           "target": {
@@ -14950,6 +14959,63 @@
         {
           "type": "link",
           "source": {
+            "id": "8d82547d-4f7f-400c-8f3d-4466100db110"
+          },
+          "target": {
+            "id": "88da52e4-5066-4ed9-b0df-1067654a7a79"
+          },
+          "router": {
+            "name": "manhattan"
+          },
+          "connector": {
+            "name": "normal"
+          },
+          "id": "56142520-ba1d-48cb-99e6-08f5f39c3b70",
+          "z": 732,
+          "attrs": {
+            ".marker-target": {
+              "stroke": "#8e8e8e",
+              "fill": "#8e8e8e",
+              "d": "M 10 0 L 0 5 L 10 10 z"
+            },
+            ".connection": {
+              "stroke-width": 2,
+              "stroke": "#8e8e8e"
+            }
+          }
+        },
+        {
+          "type": "link",
+          "source": {
+            "id": "0233c937-4fe2-47e2-9ec4-b979c3caf1b7"
+          },
+          "target": {
+            "id": "8d82547d-4f7f-400c-8f3d-4466100db110"
+          },
+          "router": {
+            "name": "manhattan",
+            "args": {}
+          },
+          "connector": {
+            "name": "normal"
+          },
+          "id": "c7b6a43f-fba8-4e2a-be75-56d7db788ec0",
+          "z": 733,
+          "attrs": {
+            ".marker-target": {
+              "stroke": "#8e8e8e",
+              "fill": "#8e8e8e",
+              "d": "M 10 0 L 0 5 L 10 10 z"
+            },
+            ".connection": {
+              "stroke-width": 2,
+              "stroke": "#8e8e8e"
+            }
+          }
+        },
+        {
+          "type": "link",
+          "source": {
             "id": "0cee3cc4-79ac-444f-abc4-7d7061639e88"
           },
           "target": {
@@ -14962,7 +15028,7 @@
             "name": "normal"
           },
           "id": "aee603d1-cb09-41f1-8720-ca0f54742ae2",
-          "z": 725,
+          "z": 734,
           "attrs": {
             ".marker-target": {
               "stroke": "#fe8550",
@@ -14990,7 +15056,7 @@
             "name": "normal"
           },
           "id": "c98a5075-441f-4e8a-bce2-f8db8a0e9ae3",
-          "z": 726,
+          "z": 735,
           "attrs": {
             ".marker-target": {
               "stroke": "#fe8550",
@@ -15018,7 +15084,7 @@
             "name": "normal"
           },
           "id": "9d5bce7d-ca0a-4a8c-9935-c91b6ec62d96",
-          "z": 727,
+          "z": 736,
           "attrs": {
             ".marker-target": {
               "stroke": "#fe8550",
@@ -15046,7 +15112,7 @@
             "name": "normal"
           },
           "id": "d37e35b4-5bc3-473e-9462-bf025bf56fa2",
-          "z": 728,
+          "z": 737,
           "attrs": {
             ".marker-target": {
               "stroke": "#fe8550",
@@ -15074,7 +15140,7 @@
             "name": "normal"
           },
           "id": "025a4bdb-ff6d-43ce-b261-65d688fb31a3",
-          "z": 729,
+          "z": 738,
           "vertices": [
             {
               "x": 480,
@@ -15108,7 +15174,7 @@
             "name": "normal"
           },
           "id": "a71c058e-516b-456e-84e5-df3bf0f04cef",
-          "z": 730,
+          "z": 739,
           "vertices": [
             {
               "x": 480,
@@ -15142,7 +15208,7 @@
             "name": "normal"
           },
           "id": "7fc99869-c3d0-4d0c-8391-84c0ed89ef38",
-          "z": 731,
+          "z": 740,
           "attrs": {
             ".marker-target": {
               "stroke": "#fe8550",
@@ -15291,7 +15357,7 @@
           "name": "normal"
         },
         "id": "56142520-ba1d-48cb-99e6-08f5f39c3b70",
-        "z": 691,
+        "z": 732,
         "attrs": {
           ".marker-target": {
             "stroke": "#8e8e8e",
@@ -15559,7 +15625,7 @@
           "name": "normal"
         },
         "id": "aee603d1-cb09-41f1-8720-ca0f54742ae2",
-        "z": 725,
+        "z": 734,
         "attrs": {
           ".marker-target": {
             "stroke": "#fe8550",
@@ -15587,7 +15653,7 @@
           "name": "normal"
         },
         "id": "c98a5075-441f-4e8a-bce2-f8db8a0e9ae3",
-        "z": 726,
+        "z": 735,
         "attrs": {
           ".marker-target": {
             "stroke": "#fe8550",
@@ -15615,7 +15681,7 @@
           "name": "normal"
         },
         "id": "9d5bce7d-ca0a-4a8c-9935-c91b6ec62d96",
-        "z": 727,
+        "z": 736,
         "attrs": {
           ".marker-target": {
             "stroke": "#fe8550",
@@ -15643,7 +15709,7 @@
           "name": "normal"
         },
         "id": "d37e35b4-5bc3-473e-9462-bf025bf56fa2",
-        "z": 728,
+        "z": 737,
         "attrs": {
           ".marker-target": {
             "stroke": "#fe8550",
@@ -15671,7 +15737,7 @@
           "name": "normal"
         },
         "id": "025a4bdb-ff6d-43ce-b261-65d688fb31a3",
-        "z": 729,
+        "z": 738,
         "vertices": [
           {
             "x": 480,
@@ -15705,7 +15771,7 @@
           "name": "normal"
         },
         "id": "a71c058e-516b-456e-84e5-df3bf0f04cef",
-        "z": 730,
+        "z": 739,
         "vertices": [
           {
             "x": 480,
@@ -15739,7 +15805,7 @@
           "name": "normal"
         },
         "id": "7fc99869-c3d0-4d0c-8391-84c0ed89ef38",
-        "z": 731,
+        "z": 740,
         "attrs": {
           ".marker-target": {
             "stroke": "#fe8550",
@@ -15897,7 +15963,7 @@
           "name": "normal"
         },
         "id": "c7b6a43f-fba8-4e2a-be75-56d7db788ec0",
-        "z": 692,
+        "z": 733,
         "attrs": {
           ".marker-target": {
             "stroke": "#8e8e8e",
@@ -16889,10 +16955,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -17565,10 +17633,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -18543,10 +18613,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -19312,10 +19384,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -19335,7 +19409,7 @@
               "name": "normal"
             },
             "id": "56142520-ba1d-48cb-99e6-08f5f39c3b70",
-            "z": 691,
+            "z": 732,
             "attrs": {
               ".marker-target": {
                 "stroke": "#8e8e8e",
@@ -19366,7 +19440,7 @@
               "name": "normal"
             },
             "id": "c7b6a43f-fba8-4e2a-be75-56d7db788ec0",
-            "z": 692,
+            "z": 733,
             "attrs": {
               ".marker-target": {
                 "stroke": "#8e8e8e",
@@ -19440,10 +19514,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/archive.svg"
+              "xlink:href": "assets/stream-solid.svg"
             },
             "rect": {
-              "class": "struct-node"
+              "class": "struct-node",
+              "rx": 5,
+              "ry": 10
             }
           }
         },
@@ -19465,7 +19541,7 @@
               "name": "normal"
             },
             "id": "c7b6a43f-fba8-4e2a-be75-56d7db788ec0",
-            "z": 692,
+            "z": 733,
             "attrs": {
               ".marker-target": {
                 "stroke": "#8e8e8e",
@@ -20032,7 +20108,7 @@
           "type": "basic.Rect",
           "position": {
             "x": 180,
-            "y": 820
+            "y": 660
           },
           "size": {
             "width": 150,
@@ -20048,10 +20124,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -20145,8 +20223,8 @@
         "jointjsNode": {
           "type": "basic.Rect",
           "position": {
-            "x": 180,
-            "y": 540
+            "x": 600,
+            "y": 660
           },
           "size": {
             "width": 150,
@@ -20165,7 +20243,9 @@
               "xlink:href": "assets/file.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "interface-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -20311,10 +20391,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file.svg"
+              "xlink:href": "assets/file-alt.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "interface-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -20484,10 +20566,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file.svg"
+              "xlink:href": "assets/file-alt.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "interface-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -20759,10 +20843,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file.svg"
+              "xlink:href": "assets/file-alt.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "interface-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -20940,7 +21026,9 @@
               "xlink:href": "assets/file.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "interface-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -20960,7 +21048,7 @@
               "name": "normal"
             },
             "id": "a71c058e-516b-456e-84e5-df3bf0f04cef",
-            "z": 730,
+            "z": 739,
             "vertices": [
               {
                 "x": 480,
@@ -21487,10 +21575,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -22434,10 +22524,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -22519,7 +22611,7 @@
               "name": "normal"
             },
             "id": "c98a5075-441f-4e8a-bce2-f8db8a0e9ae3",
-            "z": 726,
+            "z": 735,
             "attrs": {
               ".marker-target": {
                 "stroke": "#fe8550",
@@ -22733,10 +22825,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -22784,7 +22878,7 @@
               "name": "normal"
             },
             "id": "7fc99869-c3d0-4d0c-8391-84c0ed89ef38",
-            "z": 731,
+            "z": 740,
             "attrs": {
               ".marker-target": {
                 "stroke": "#fe8550",
@@ -23170,10 +23264,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -23975,10 +24071,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -24026,7 +24124,7 @@
               "name": "normal"
             },
             "id": "9d5bce7d-ca0a-4a8c-9935-c91b6ec62d96",
-            "z": 727,
+            "z": 736,
             "attrs": {
               ".marker-target": {
                 "stroke": "#fe8550",
@@ -24260,10 +24358,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -24367,7 +24467,7 @@
               "name": "normal"
             },
             "id": "56142520-ba1d-48cb-99e6-08f5f39c3b70",
-            "z": 691,
+            "z": 732,
             "attrs": {
               ".marker-target": {
                 "stroke": "#8e8e8e",
@@ -28392,10 +28492,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node node-highlighted"
+              "class": "contract-node node-highlighted",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -28415,7 +28517,7 @@
               "name": "normal"
             },
             "id": "aee603d1-cb09-41f1-8720-ca0f54742ae2",
-            "z": 725,
+            "z": 734,
             "attrs": {
               ".marker-target": {
                 "stroke": "#fe8550",
@@ -28443,7 +28545,7 @@
               "name": "normal"
             },
             "id": "c98a5075-441f-4e8a-bce2-f8db8a0e9ae3",
-            "z": 726,
+            "z": 735,
             "attrs": {
               ".marker-target": {
                 "stroke": "#fe8550",
@@ -28471,7 +28573,7 @@
               "name": "normal"
             },
             "id": "9d5bce7d-ca0a-4a8c-9935-c91b6ec62d96",
-            "z": 727,
+            "z": 736,
             "attrs": {
               ".marker-target": {
                 "stroke": "#fe8550",
@@ -28499,7 +28601,7 @@
               "name": "normal"
             },
             "id": "d37e35b4-5bc3-473e-9462-bf025bf56fa2",
-            "z": 728,
+            "z": 737,
             "attrs": {
               ".marker-target": {
                 "stroke": "#fe8550",
@@ -28527,7 +28629,7 @@
               "name": "normal"
             },
             "id": "025a4bdb-ff6d-43ce-b261-65d688fb31a3",
-            "z": 729,
+            "z": 738,
             "vertices": [
               {
                 "x": 480,
@@ -28561,7 +28663,7 @@
               "name": "normal"
             },
             "id": "a71c058e-516b-456e-84e5-df3bf0f04cef",
-            "z": 730,
+            "z": 739,
             "vertices": [
               {
                 "x": 480,
@@ -28595,7 +28697,7 @@
               "name": "normal"
             },
             "id": "7fc99869-c3d0-4d0c-8391-84c0ed89ef38",
-            "z": 731,
+            "z": 740,
             "attrs": {
               ".marker-target": {
                 "stroke": "#fe8550",
@@ -28777,10 +28879,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -29161,10 +29265,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -29537,10 +29643,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -29817,10 +29925,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -29968,8 +30078,8 @@
         "jointjsNode": {
           "type": "basic.Rect",
           "position": {
-            "x": 180,
-            "y": 660
+            "x": 600,
+            "y": 720
           },
           "size": {
             "width": 150,
@@ -29985,10 +30095,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -30161,8 +30273,8 @@
         "jointjsNode": {
           "type": "basic.Rect",
           "position": {
-            "x": 0,
-            "y": 540
+            "x": 400,
+            "y": 720
           },
           "size": {
             "width": 150,
@@ -30178,10 +30290,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -30508,7 +30622,7 @@
           "type": "basic.Rect",
           "position": {
             "x": 0,
-            "y": 600
+            "y": 660
           },
           "size": {
             "width": 150,
@@ -30524,10 +30638,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/book-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -30810,10 +30926,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -30867,7 +30985,7 @@
               "name": "normal"
             },
             "id": "d37e35b4-5bc3-473e-9462-bf025bf56fa2",
-            "z": 728,
+            "z": 737,
             "attrs": {
               ".marker-target": {
                 "stroke": "#fe8550",
@@ -30944,10 +31062,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -31227,10 +31347,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -31250,7 +31372,7 @@
               "name": "normal"
             },
             "id": "025a4bdb-ff6d-43ce-b261-65d688fb31a3",
-            "z": 729,
+            "z": 738,
             "vertices": [
               {
                 "x": 480,
@@ -31464,10 +31586,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -31525,7 +31649,7 @@
               "name": "normal"
             },
             "id": "aee603d1-cb09-41f1-8720-ca0f54742ae2",
-            "z": 725,
+            "z": 734,
             "attrs": {
               ".marker-target": {
                 "stroke": "#fe8550",
@@ -31635,8 +31759,8 @@
         "jointjsNode": {
           "type": "basic.Rect",
           "position": {
-            "x": 0,
-            "y": 660
+            "x": 180,
+            "y": 720
           },
           "size": {
             "width": 150,
@@ -31652,10 +31776,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -31723,7 +31849,7 @@
           "type": "basic.Rect",
           "position": {
             "x": 180,
-            "y": 740
+            "y": 600
           },
           "size": {
             "width": 150,
@@ -31739,10 +31865,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -31784,7 +31912,7 @@
           "type": "basic.Rect",
           "position": {
             "x": 0,
-            "y": 740
+            "y": 600
           },
           "size": {
             "width": 150,
@@ -31803,7 +31931,9 @@
               "xlink:href": "assets/list-ol.svg"
             },
             "rect": {
-              "class": "enum-node"
+              "class": "enum-node",
+              "rx": 5,
+              "ry": 10
             }
           }
         },
@@ -32060,7 +32190,7 @@
           "type": "basic.Rect",
           "position": {
             "x": 0,
-            "y": 820
+            "y": 720
           },
           "size": {
             "width": 150,
@@ -32076,10 +32206,12 @@
               "class": "node-text"
             },
             "image": {
-              "xlink:href": "assets/file-alt.svg"
+              "xlink:href": "assets/file-contract-solid.svg"
             },
             "rect": {
-              "class": "contract-node"
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
             }
           }
         },
@@ -33964,7 +34096,7 @@
         "subAnnotation": null
       }
     ],
-    "deployedAt": "0xb6029EA3B2c51D09a50B53CA8012FeEB05bDa35A",
+    "deployedAt": "0xAfC2F2D803479A2AF3A72022D54cc0901a0ec0d6",
     "meta": null,
     "modifiers": [],
     "events": [

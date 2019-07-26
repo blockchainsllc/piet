@@ -6,13 +6,18 @@
     --toolbar-color: #4c4b4b;
     --element-color: #e4e4e4;
     --text-highlight-color: #ececec;
-    --contract-color: #355e88;
+    --contract-color: #315173;
+    --abstract-color: #5f7996;
     --struct-color: #715454;
-    --enum-color: #327746;
+    --enum-color: #406d4d;
     --link-color: #ffffff;
     --muted-text-color: #adadad;
     --error-red: #dc3545;
 
+}
+
+.inspector-info {
+    margin: 1rem;
 }
 
 .code-modal-signature {
@@ -53,6 +58,10 @@
 
 .contract-inspector {
     background-color: var(--contract-color);
+}
+
+.abstract-contract-inspector {
+    background-color: var(--abstract-color);
 }
 
 .struct-inspector {
@@ -211,6 +220,12 @@
 
 .contract-node {
     fill: var(--contract-color);
+    stroke-width: 0;
+    stroke: #ffffff;
+} 
+
+.interface-node {
+    fill: var(--abstract-color);
     stroke-width: 0;
     stroke: #ffffff;
 } 
@@ -488,10 +503,6 @@ body {
     padding: 0rem
 }
 
-.contract-card {
-    background-color: var(--contract-color);
-
-}
 
 .load-ui-file-container {
     margin-top: 5rem;

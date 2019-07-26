@@ -62,41 +62,55 @@ export class About extends React.Component<{}, {}> {
 
                                         </span>
                                         <br />
-                                        Be aware that Piet has not yet undergone in-depth testing yet and may contain severe bugs.
+                                        Be aware that Piet has not yet undergone in-depth testing and may contain severe bugs.
                                     </small></p>
+                                    <br />
+                                    <h5 className='help-text text-muted'>Getting started</h5> 
                                     <p><small className='help-text text-muted'>
-                                        <strong>Getting started:</strong>&nbsp;
-                                        Click <strong>"Load"</strong> to and select solidity files, truffle build files or a piet file.
+                                        
+                                     
+                                        Click <strong>"Load"</strong> and select solidity files, truffle build files or a piet file.
+                                        <br />
+                                        You can also load the&nbsp;
+                                        <strong>
+                                            <a 
+                                                className='text-muted' 
+                                                href='/?container=examples%2Fexport1562664060589.piet.json'
+                                            >
+                                                example
+                                            </a>
+                                        </strong>
+                                        .
                                     </small></p>
-                                    
+                                    <br />
+
                                     <p>
-                                        <small className='help-text text-muted'>
-                                            <strong>Author:</strong> Heiko Burkhardt&nbsp;
-                                            <a 
-                                                className='text-muted'
-                                                href='https://github.com/hai-ko'
-                                                target='_blank'
-                                                rel='noopener noreferrer'
-                                            >
-                                                <i className='fas fa-external-link-square-alt'></i>
-                                            </a>
-                                            
+                                        <small>
+                                            <small className='help-text text-muted'>
+                                                
+                                                <a 
+                                                    className='text-muted'
+                                                    href='https://github.com/hai-ko'
+                                                    target='_blank'
+                                                    rel='noopener noreferrer'
+                                                >
+                                                    Heiko Burkhardt
+                                                </a>
+                                                &nbsp;-&nbsp;
+                                                <a 
+                                                    className='text-muted'
+                                                    href='https://slock.it'
+                                                    target='_blank'
+                                                    rel='noopener noreferrer'
+                                                >
+                                                    Slock.it GmbH
+                                                </a>
+                                                
+                                            </small>
                                         </small>
                                     </p>
-                                    <p>
-                                    <small className='help-text text-muted'>
-                                            
-                                            <a 
-                                                className='text-muted'
-                                                href='https://slock.it'
-                                                target='_blank'
-                                                rel='noopener noreferrer'
-                                            >
-                                                Slock.it GmbH
-                                            </a>
-                                            
-                                        </small>
-                                    </p>
+                   
+
                                 </div>
                                 <div className='col-md-2'> </div> 
                             </div>

@@ -640,7 +640,7 @@ class AppContainer extends React.Component<{}, {}> {
         }
 
         return  <div>
-                    <SplitPane split='vertical' minSize={300} defaultSize={550} >
+                    <SplitPane split='vertical' minSize={400} defaultSize={550} >
                     
                         <SplitPane split='vertical'  defaultSize={70} allowResize={false} >
                                 
