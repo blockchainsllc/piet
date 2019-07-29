@@ -724,6 +724,10 @@ body {
     margin-bottom: 1px;
 }
 
+.user-add-warning {
+    background-color: var(--toolbar-color);
+    padding: 5px;
+}
 .dark-input {
     border-radius: 0rem;
     border-width: 1px;

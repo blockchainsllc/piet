@@ -41,7 +41,6 @@ export const generateMarkdownDoc: GenerateMarkdownDoc = (nodeElement: Sol.NodeEl
                     .reduce((prev: string, current: string) => (prev + current), '') +
                 (contractFunction.annotations.filter((annotation: Sol.SolidityAnnotation) => annotation.name === 'dev')
                     .length > 0 ? '\n**Development notice:**\n' : '') +
-
                 contractFunction.annotations
                     .filter((annotation: Sol.SolidityAnnotation) => annotation.name === 'dev')
                     .map((annotation: Sol.SolidityAnnotation) => '*' + annotation.value.trim() + '*\n\n')
@@ -54,7 +53,7 @@ export const generateMarkdownDoc: GenerateMarkdownDoc = (nodeElement: Sol.NodeEl
                                 functionAnnotation.name === 'param' &&  functionAnnotation.subAnnotation.name === param.name
                             );
                         return '* ' + (param.name ? param.name + ' `' + param.solidityType.name + '`' : '`' + param.solidityType.name + '`')
-                            + (paramAnnotation ? ': *' + paramAnnotation.subAnnotation.value.trim() : '') + '*\n';
+                            + (paramAnnotation ? ': *' + paramAnnotation.subAnnotation.value.trim() + '*' : '') + '\n';
                     }).reduce((prev: string, current: string) => (prev + current), '') +
                 (contractFunction.params.length > 0 ? '\n' : '') +
                 (contractFunction.returnParams.length > 0 ? '**Return Parameters:**\n' : '') +
@@ -62,12 +61,9 @@ export const generateMarkdownDoc: GenerateMarkdownDoc = (nodeElement: Sol.NodeEl
                     .map((param: Sol.ContractFunctionParam) => 
                     '* ' + (param.name ? param.name + ' `' + param.solidityType.name + '`' : '`' + param.solidityType.name + '`') + '\n'
                 ).reduce((prev: string, current: string) => (prev + current), '')
-            
             ).reduce((prev: string, current: string) => prev + current);
-
         return output;
     } else {
         return null;
     }
-    
 };

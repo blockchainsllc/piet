@@ -193,13 +193,6 @@ export class FileBrowserView extends React.Component<FileBrowserViewProps, FileB
             node.toggled = toggled;
         }
 
-        if (node.className === 'contract-icon') {
-            const selectedContract: Sol.Contract = this.props.contracts.find((contract: Sol.Contract) => contract.name === node.name);
-            if (selectedContract) {
-                this.props.changeSelectedElement(selectedContract);
-            }
-        }
-
         this.setState({ cursor: node });
     }
 
