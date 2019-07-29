@@ -113,7 +113,7 @@ export class FunctionCodeBox extends React.Component<FunctionCodeBoxProps, {}> {
                                     <small>
                                         <small className='text-muted'>
                                             Signature: {getFunctionSignature(this.props.blockchainConnection, abi)}
-                                        s</small>
+                                        </small>
                                     </small>
                                 }                                
                             </div>

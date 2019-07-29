@@ -287,20 +287,32 @@ export class ConfigurationView extends React.Component<ConfigurationViewProps, C
                                 </div>
                             }
                             {this.state.showAddUserView &&
-                                <div className='container user-add-container'>
-                                    <div className='form-inline'>
-                                    
-                                        <input 
-                                            type='text'
-                                            className='form-control form-control-sm dark-input input-output'
-                                            placeholder='Private key'
-                                            onChange={this.onPrivateKeyChange}
-                                        
-                                        >
-                                        
-                                        </input>
-                                        &nbsp;
-                                        <button className='btn btn-sm btn-outline-info' onClick={this.addAccount}>Add</button>
+                                <div>
+                                    <div className='container user-add-warning'>
+                                        <small>
+                                            <span className='badge badge-light'>
+                                                <i className='fas fa-exclamation-triangle'></i>&nbsp;
+                                                Only enter private keys which are exclusively used for test purposes. 
+
+                                            </span>
+                                        </small>
+                                    </div>
+                                    <div className='container user-add-container'>
+                       
+                                        <div className='form-inline input-group'>
+                                            
+                                            <input 
+                                                type='text'
+                                                className='form-control form-control-sm dark-input input-output'
+                                                placeholder='Private key'
+                                                onChange={this.onPrivateKeyChange}
+                                            >
+                                                
+                                            </input>
+                                            <div className='input-group-append'>
+                                                <button className='btn btn-sm btn-outline-info' onClick={this.addAccount}>Add</button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             }
