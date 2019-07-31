@@ -42,6 +42,7 @@ export enum ElementType {
 
 export interface NodeElement {
     name: string;
+    shortName?: string;
     elementType: ElementType;
 }
 

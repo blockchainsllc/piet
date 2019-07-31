@@ -292,7 +292,7 @@ export class ConfigurationView extends React.Component<ConfigurationViewProps, C
                                         <small>
                                             <span className='badge badge-light'>
                                                 <i className='fas fa-exclamation-triangle'></i>&nbsp;
-                                                Only enter private keys which are exclusively used for test purposes. 
+                                                Only enter private keys which are exclusively used for testing purposes. 
 
                                             </span>
                                         </small>
