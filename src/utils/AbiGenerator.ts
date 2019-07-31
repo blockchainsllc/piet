@@ -20,6 +20,7 @@
 
 import * as Sol from '../solidity-handler/SolidityHandler';
 import { BlockchainConnection} from '../solidity-handler/BlockchainConnector';
+import { contractElementLink } from '../components/views/Graph/JointElements';
 
 export const isSameFunction = 
     (firstFunctionAbi: any[], secondFunctionAbi: any[], blockchainConnection: BlockchainConnection): boolean => {
@@ -64,7 +65,6 @@ export const getFunctionAbi: GetFunctionAbi  = (
             inputs: getInAndOutputs(theFunction.params, contracts, contextContract),
             outputs: getInAndOutputs(theFunction.returnParams, contracts, contextContract)
         };
-        
         return [functionAbi];
     };
 
@@ -91,7 +91,12 @@ const evaluateStruct = (theStruct: Sol.ContractStruct, contracts: Sol.Contract[]
             theStruct.fields.map((field: Sol.ContractStateVariable) => {
                 const solType: string = checkType(field.solidityType, contracts, contextContract);
                 if (solType === 'tuple') {
-                    const childStruct: Sol.ContractStruct = getStructForTuple(field.solidityType, contracts, contextContract);
+                    const childStruct: Sol.ContractStruct = searchContractMember<Sol.ContractStruct>(
+                        'structs',
+                        field.solidityType,
+                        contextContract,
+                        contracts
+                    );
                     return evaluateStruct(childStruct, contracts, contextContract, field.name, solType);
                 } 
                 return {
@@ -112,7 +117,12 @@ const getInAndOutputs = (params: Sol.ContractFunctionParam[], contracts: Sol.Con
         const solType: string = checkType(param.solidityType, contracts, contextContract);
         if (solType === 'tuple') {
             
-            const theStruct: Sol.ContractStruct = getStructForTuple(param.solidityType, contracts, contextContract);
+            const theStruct: Sol.ContractStruct = searchContractMember<Sol.ContractStruct>(
+                'structs',
+                param.solidityType,
+                contextContract,
+                contracts
+            );
 
             return evaluateStruct(theStruct, contracts, contextContract, param.name, solType);
         } 
@@ -144,20 +154,56 @@ export const getEventAbi = (
         return [eventAbi];
     };
 
+const searchContractMember = <T extends Sol.NodeElement> (
+    propertyKey: keyof Sol.Contract,
+    solidityType: Sol.SolidityType,
+    contextContract: Sol.Contract,
+    contracts: Sol.Contract[]
+): T => {
+    const name: string = solidityType.isArray ? solidityType.name.slice(0, solidityType.name.length - 2)  : solidityType.name;
+    
+    let member: T = 
+        contextContract[propertyKey].find((theMember: T) => theMember.shortName === name);
+    if (member) {
+        return member;
+    }
+
+    contextContract.baseContracts.forEach((contractName: string) => {
+        const theMember: T = searchContractMember<T>(
+            propertyKey,
+            solidityType,
+            contracts.find((aContract: Sol.Contract) => aContract.name === contractName),
+            contracts
+        );
+        member = theMember ? theMember : member;
+    });
+    if (member) {
+        return member;
+    }
+
+    contracts.forEach((aContract: Sol.Contract) => {
+        const theMember: T = aContract[propertyKey].find((aMember: T) => aMember.name === name);
+        member = theMember ? theMember : member;
+    });
+    if (member) {
+        return member;
+    }
+    return null;
+
+};
+
 const checkType: (solidityType: Sol.SolidityType, contracts: Sol.Contract[], contextContract: Sol.Contract, resolveArray?: boolean) => string =
     (solidityType: Sol.SolidityType, contracts: Sol.Contract[], contextContract: Sol.Contract, resolveArray?: boolean): string => {
         if (solidityType.userDefined) {
-            if (contracts.find((contract: Sol.Contract) => contract.name === solidityType.name)) {
-                return 'address';
-            } else if (contracts.find((contract: Sol.Contract) => 
-                contract.enumerations.find((enumeration: Sol.ContractEnumeration) => 
-                    enumeration.name === solidityType.name || enumeration.name === contract.name + '.' + solidityType.name
-                    ) !== undefined)
-            ) {
-                return 'uint8';
-            } else {   
+            if (searchContractMember<Sol.ContractStruct>('structs', solidityType, contextContract, contracts)) {
                 return 'tuple';
-                // throw Error('User defined types are not yet supported.');
+            } else if (searchContractMember<Sol.ContractEnumeration>('enumerations', solidityType, contextContract, contracts)) {
+                return 'uint8';
+            } else if (contracts.find((contract: Sol.Contract) => contract.name === solidityType.name)) {
+                return 'address';
+            }  else {   
+                console.log('ERROR' + solidityType.name);
+                throw Error('Unknow Type');
             }
 
         } else {
@@ -173,23 +219,3 @@ const checkType: (solidityType: Sol.SolidityType, contracts: Sol.Contract[], con
         }
 
     };
-
-const getStructForTuple = (solidityType: Sol.SolidityType, contracts: Sol.Contract[], contextContract: Sol.Contract): Sol.ContractStruct => {
-    const namePath: string[] = solidityType.name.split('.');
-    let definedInContract: Sol.Contract = null;
-
-    switch (namePath.length) {
-        case 1:
-            definedInContract = contextContract;
-            break;
-        case 2:
-            definedInContract = contracts.find((contract: Sol.Contract) => contract.name === namePath[0]);
-            break;
-        default: 
-            throw Error('Name path error');
-    }
-
-    return definedInContract.structs.find((contractStruct: Sol.ContractStruct) => 
-        contractStruct.shortName === (solidityType.pureName ? solidityType.pureName : solidityType.name));
-
-}
