@@ -197,6 +197,31 @@ export const getAccounts: GetAccounts = (blockchainConnection: BlockchainConnect
     return blockchainConnection.web3.eth.getAccounts();
 };
 
+type GetDefaultBlockchainConnection = (
+    updateBlockchainConnection: UpdateBlockchainConnection,
+    addAccount: AddAccount,
+    addTransactionToHistory: AddTransactionToHistory
+) => BlockchainConnection;
+export const getDefaultBlockchainConnection: GetDefaultBlockchainConnection = (
+    updateBlockchainConnection: UpdateBlockchainConnection,
+    addAccount: AddAccount,
+    addTransactionToHistory: AddTransactionToHistory
+): BlockchainConnection => {
+    return {
+        rpcUrl: null,
+        connectionType: ConnectionType.None,
+        web3: new Web3(),
+        updateBlockchainConnection,
+        selectedAccount: null,
+        addAccount,
+        addTransactionToHistory,
+        selectAccount: null,
+        useDefaultAccount: true,
+        transactionHistory: [],
+        netVersion: null
+    };
+};
+
 type InitBlockchainConfiguration = (
     rpcUrl: string, 
     updateBlockchainConnection: UpdateBlockchainConnection,
@@ -211,8 +236,9 @@ export const initBlockchainConfiguration: InitBlockchainConfiguration = async (
     selectAccount: SelectAccount,
     addTransactionToHistory: AddTransactionToHistory
 ): Promise<BlockchainConnection> => {
-    let web3: Web3;
+    let web3: Web3 = new Web3();
     let connectionType: ConnectionType = ConnectionType.None;
+
     if (rpcUrl) {
         web3 = new Web3(rpcUrl);
         connectionType = ConnectionType.Rpc;
@@ -223,9 +249,7 @@ export const initBlockchainConfiguration: InitBlockchainConfiguration = async (
     } else if ((window as any).web3) {
         web3 = new Web3(web3.currentProvider);
         connectionType = ConnectionType.Injected;
-    } else {
-        web3 = new Web3();
-    }
+    } 
     
     const blockchainConnection: BlockchainConnection = {
         rpcUrl: rpcUrl ? rpcUrl : 'http://localhost:8545',

@@ -35,7 +35,7 @@ import { withRouter } from 'react-router-dom';
 import * as axios from 'axios';
 import { UIStructure, UICreationHandling, Element } from './views/ui-creation/UIStructure';
 import { UICreationView } from './views/ui-creation/UICreationView';
-import { BlockchainConnection, ConnectionType, initBlockchainConfiguration } from '../solidity-handler/BlockchainConnector';
+import { BlockchainConnection, ConnectionType, initBlockchainConfiguration, getDefaultBlockchainConnection } from '../solidity-handler/BlockchainConnector';
 import { Graph, GraphViewType } from './views/Graph/GraphGenerator';
 import * as PromiseFileReader from 'promise-file-reader';
 import { ErrorHandling } from './shared-elements/ErrorInfoBox';
@@ -300,8 +300,16 @@ class AppContainer extends React.Component<{}, {}> {
     async componentDidMount(): Promise<void> {
 
         this.initViews();
+        this.setState({
+            blockchainConnection: getDefaultBlockchainConnection(
+                this.updateBlockchainConnection, 
+                this.addAccount, 
+                this.addTransactionToHistory
+            )
+        
+        });
+        
         const params: any = queryString.parse((this.props as any).location.search);
-
         const blockchainConnection: BlockchainConnection = await initBlockchainConfiguration(
             params.rpc,
             this.updateBlockchainConnection,
@@ -355,13 +363,6 @@ class AppContainer extends React.Component<{}, {}> {
             this.loadFromConatinerFile(file.data, params.container);
 
         } 
-
-        setTimeout(() => { 
-
-            $('.animation-container').css('display', 'none');
-            $('.non-animation-container').css('display', 'block');
-
-        },         1);
 
     }
 
