@@ -4,6 +4,7 @@ stages:
   - build
   - package
   - deploy
+  - mirror
 
 # Job templates
 ui-build: 
@@ -67,3 +68,15 @@ deploy-to-production:
       - /^v[0-9]+.[0-9]+.[0-9]+$/
     variables:
       TARGET: production
+
+mirror-to-github:
+    only: 
+      - master
+      - /^v[0-9]+.[0-9]+.[0-9]+$/
+    script:
+      script:
+      - chmod 0400 $GITHUB_PUSH_KEY
+      - export GIT_SSH_COMMAND="/usr/bin/ssh -o StrictHostKeyChecking=no -i $GITHUB_PUSH_KEY"
+      - git remote add external git@github.com:slockit/piet.git
+      - git push --force external master
+      - git push --force external --tags 
