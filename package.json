@@ -6,7 +6,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "node_modules/webpack/bin/webpack.js  && cp index-production.html ./build/index.html && cp -rf ./javascript ./build && cp -rf ./style ./build && cp -rf ./assets ./build  && cp ./favicon.ico ./build/",
+    "build": "node_modules/webpack/bin/webpack.js && cp index-production.html ./build/index.html && cp -rf ./javascript ./build && cp -rf ./style ./build && cp -rf ./assets ./build && cp -rf ./examples ./build && cp ./favicon.ico ./build/",
     "start": "node_modules/webpack-dev-server/bin/webpack-dev-server.js --output-public-path=/dist/ -d --watch",
     "start-no-watch": "node --max_old_space_size=4096 node_modules/webpack-dev-server/bin/webpack-dev-server.js --output-public-path=/dist/",
     "start-no-dev": "node_modules/webpack/bin/webpack.js -w --output-public-path=/dist/ -d --watch"
@@ -65,7 +65,7 @@
     "react-split-pane": "^0.1.77",
     "react-syntax-highlighter": "^7.0.0",
     "react-treebeard": "^2.1.0",
-    "solidity-parser-antlr": "git+https://github.com/federicobond/solidity-parser-antlr.git",
+    "solidity-parser-antlr": "^0.4.8",
     "ts-loader": "^5.3.0",
     "web3": "1.2.0"
   }
