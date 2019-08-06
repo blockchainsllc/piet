@@ -33,30 +33,37 @@ docker-package:
   script:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
     - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME .
-    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME $CI_REGISTRY_IMAGE:latest
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
-    - docker push $CI_REGISTRY_IMAGE:latest
 
-deploy-to-dev:
-    stage: deploy
-    tags:
-      - short-jobs
+.deploy-tmpl:
+  stage: deploy
+  except:
+    - branches
+  tags:
+    - short-jobs
+  image: docker.slock.it/build-images/deployment
+  services:
+    - docker:dind
+  script:
+    - rancher -w up -d --prune -p -s piet-${TARGET} -c --force-upgrade
+    - sentry-cli releases new -p piet piet@${CI_COMMIT_REF_NAME}
+    - sentry-cli releases deploys piet@${CI_COMMIT_REF_NAME} new -e ${TARGET}
+    - sentry-cli releases set-commits --auto piet@${CI_COMMIT_REF_NAME}
+
+deploy-to-stage:
+    extends: .deploy-tmpl
+    dependencies:
+      - docker-package
     only:
-      - develop
-    image: markuskeil/docker-and-rancher
-    services:
-      - docker:dind
-    script:
-      - rancher-compose -p dev-${CI_PROJECT_PATH_SLUG} up -p -d -c --force-upgrade
+      - /^v[0-9]+.[0-9]+.[0-9]+-(alpha|beta|rc)\.[0-9]+$/
+    variables:
+      TARGET: stage
 
 deploy-to-production:
-    stage: deploy
-    tags:
-      - short-jobs
+    extends: .deploy-tmpl
+    dependencies:
+      - docker-package
     only:
-      - master
-    image: markuskeil/docker-and-rancher
-    services:
-      - docker:dind
-    script:
-      - rancher-compose -p $CI_PROJECT_PATH_SLUG up -p -d -c --force-upgrade
+      - /^v[0-9]+.[0-9]+.[0-9]+$/
+    variables:
+      TARGET: production
