@@ -361,8 +361,7 @@ export const callFunction: CallFunction =  async (
             }
         
         } catch (e) {
-            return e.message;
-
+            return Array(contractFunction.returnParams.length).fill(e.message);
         }    
 };
 
