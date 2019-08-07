@@ -1,11 +1,26 @@
-/**
- * this file is part of bundesblock-voting
+/**  
+ *   This file is part of Piet.
  *
- * it is subject to the terms and conditions defined in
- * the 'LICENSE' file, which is part of the repository.
+ *   Copyright (C) 2019  Heiko Burkhardt <heiko@slock.it>, Slock.it GmbH
  *
- * @author Heiko Burkhardt
- * @copyright 2018 by Slock.it GmbH
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   Permissions of this strong copyleft license are conditioned on
+ *   making available complete source code of licensed works and 
+ *   modifications, which include larger works using a licensed work,
+ *   under the same license. Copyright and license notices must be
+ *   preserved. Contributors provide an express grant of patent rights.
+ *   
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 import * as React from 'react';
@@ -14,23 +29,32 @@ import * as queryString from 'query-string';
 import { Sidebar } from './Sidebar';
 import { View, TabEntity, TabEntityType } from './View';
 import * as $ from 'jquery';
-import Web3Type from '../types/web3';
 import SplitPane from 'react-split-pane';
-import { getContracts } from '../utils/GitHub';
+import { getContracts, getPietContainer } from '../utils/GitHub';
 import { withRouter } from 'react-router-dom';
-import * as Web3 from 'web3';
 import * as axios from 'axios';
+import { UIStructure, UICreationHandling, Element } from './views/ui-creation/UIStructure';
+import { UICreationView } from './views/ui-creation/UICreationView';
+import { BlockchainConnection, ConnectionType, initBlockchainConfiguration, getDefaultBlockchainConnection } from '../solidity-handler/BlockchainConnector';
+import { Graph, GraphViewType } from './views/Graph/GraphGenerator';
+import * as PromiseFileReader from 'promise-file-reader';
+import { ErrorHandling } from './shared-elements/ErrorInfoBox';
 
 interface AppContainerState {
     contracts: Sol.Contract[];
     contractToSelect: string;
     contractToSelectAddress: string;
     selectedElement: Sol.NodeElement;
-    web3: Web3Type;
     isLaoding: boolean;
     tabEntities: TabEntity[][];
     activeTab: number[];
-    globalErrors: Error[];
+    globalErrorHandling: ErrorHandling;
+    createdUIStructure: UIStructure;
+    blockchainConnection: BlockchainConnection;
+    graph: Graph;
+    graphToLoad: Graph;
+    graphViewType: GraphViewType;
+    loadedPietFileName: string;
 }
 
 class AppContainer extends React.Component<{}, {}> {
@@ -39,20 +63,6 @@ class AppContainer extends React.Component<{}, {}> {
     constructor(props: any) {
         super(props);
 
-        this.state = {
-            contracts: [],
-            selectedElement: null,
-            contractToSelect: null,
-            contractToSelectAddress: null,
-            web3: null, // new Web3(web3),
-            
-            isLaoding: false,
-            globalErrors: [],
-            tabEntities: [[], []],
-            activeTab: [null, null]
-
-        };
-        
         this.updateContractNames = this.updateContractNames.bind(this);
         this.changeSelectedElement = this.changeSelectedElement.bind(this);
         this.setIsLoading = this.setIsLoading.bind(this);
@@ -65,7 +75,172 @@ class AppContainer extends React.Component<{}, {}> {
         this.removeTabEntity = this.removeTabEntity.bind(this);
         this.gotContractsFromGithub = this.gotContractsFromGithub.bind(this);
         this.removeContractToSelect = this.removeContractToSelect.bind(this);
+        this.setUIStructure = this.setUIStructure.bind(this);
+        this.addRow = this.addRow.bind(this);
+        this.addElementToRow = this.addElementToRow.bind(this);
+        this.addElementToAction = this.addElementToAction.bind(this);
+        this.updateBlockchainConnection = this.updateBlockchainConnection.bind(this);
+        this.addAccount = this.addAccount.bind(this);
+        this.selectAccount = this.selectAccount.bind(this);
+        this.addTransactionToHistory = this.addTransactionToHistory.bind(this);
+        this.changeGraphView = this.changeGraphView.bind(this);
+        this.setGraph = this.setGraph.bind(this);
+        this.loadFromConatinerFile = this.loadFromConatinerFile.bind(this);
+        this.removeError = this.removeError.bind(this);
 
+        this.state = {
+            contracts: [],
+            selectedElement: null,
+            contractToSelect: null,
+            contractToSelectAddress: null,
+            isLaoding: false,
+            globalErrorHandling: {
+                errors: [],
+                removeError: this.removeError
+
+            },
+            tabEntities: [[], []],
+            activeTab: [null, null],
+            createdUIStructure: {
+                contracts: [],
+                rows: [],
+                actionElements: []
+            },
+            blockchainConnection: {
+                connectionType: ConnectionType.None,
+                rpcUrl: null,
+                web3: null,
+                updateBlockchainConnection: null,
+                selectedAccount: null,
+                selectAccount: this.selectAccount,
+                addAccount: this.addAccount,
+                addTransactionToHistory: this.addTransactionToHistory,
+                useDefaultAccount: true,
+                transactionHistory: [],
+                netVersion: null
+            },
+            loadedPietFileName: null,
+            graph: null,
+            graphToLoad: null,
+            graphViewType: GraphViewType.Inheritance
+        };
+
+    }
+
+    setGraph(graph: Graph): void {
+        this.setState({
+            graph
+        });
+    }
+
+    removeError(index: number): void {
+        this.setState((prevState: AppContainerState) => {
+            prevState.globalErrorHandling.errors.splice(index, 1);
+
+            return {
+                globalErrorHandling: prevState.globalErrorHandling
+            };
+
+        });
+    }
+
+    changeGraphView(graphViewType: GraphViewType): void {
+        this.setState((prev: AppContainerState) => {
+            return {
+                graphViewType: graphViewType,
+                graph: null
+            };
+        });
+
+    }
+
+    addTransactionToHistory(transaction: any): void {
+        this.setState((prev: AppContainerState) => {
+            prev.blockchainConnection.transactionHistory.push(transaction);
+            return {
+                blockchainConnection: prev.blockchainConnection
+            };
+        });
+    }
+
+    updateBlockchainConnection(blockchainConnection: BlockchainConnection): void {
+        this.setState({
+            blockchainConnection
+        });
+    }
+
+    addRow(): void {
+        this.setState((prev: AppContainerState) => {
+            prev.createdUIStructure.rows.push({
+                elements: []
+            });
+
+            return {
+                createdUIStructure: prev.createdUIStructure
+            };
+        });
+    }
+
+    selectAccount(address: string): void {
+        this.setState((prevState: AppContainerState) => {
+            prevState.blockchainConnection.selectedAccount = address;
+            prevState.blockchainConnection.useDefaultAccount = address ? false : true;
+            return {
+                blockchainConnection: prevState.blockchainConnection
+            };
+        });
+    }
+
+    addAccount(privateKey: string): void {
+        
+        this.setState((prev: AppContainerState) => {
+            prev.blockchainConnection.web3.eth.accounts.wallet.clear();
+
+            let address: string;
+            try {
+                address = prev.blockchainConnection.web3.eth.accounts.wallet.add(privateKey).address;
+            } catch (e) {
+                address = null;
+                
+            }
+            
+            return {
+                blockchainConnection: prev.blockchainConnection
+            };
+        });
+    }
+
+    addElementToRow(rowIndex: number, element: Element): void {
+
+        this.setState(
+            (prev: AppContainerState) => {
+
+                if (rowIndex >= 0) {
+                    prev.createdUIStructure.rows[rowIndex].elements.push(element);
+                } else {
+                    prev.createdUIStructure.rows.push({
+                        elements: [element]
+                    });
+                }
+                
+                return {
+                    createdUIStructure: prev.createdUIStructure
+                };
+            }, 
+            () => console.log(JSON.stringify(this.state.createdUIStructure))
+        );
+    }
+
+    addElementToAction(element: Element): void {
+  
+        this.setState((prev: AppContainerState) => {
+
+            prev.createdUIStructure.actionElements.push(element);
+            
+            return {
+                createdUIStructure: prev.createdUIStructure
+            };
+        });
     }
 
     removeContractToSelect(): void {
@@ -82,6 +257,12 @@ class AppContainer extends React.Component<{}, {}> {
             };
         });
     }
+
+    setUIStructure(uiStructure: UIStructure): void {
+        this.setState({
+            createdUIStructure: uiStructure
+        });
+    }
     
     changeContractAddress(newContractAddress: string, contractName: string): void {
       
@@ -89,10 +270,12 @@ class AppContainer extends React.Component<{}, {}> {
             const contractIndex: number = prevState.contracts.findIndex((c: Sol.Contract) => c.name === contractName);
             if (contractIndex !== -1) {
                 prevState.contracts[contractIndex].deployedAt = newContractAddress;
+                prevState.selectedElement = prevState.contracts[contractIndex];
             }
 
             return {
-                contracts: prevState.contracts
+                contracts: prevState.contracts,
+                selectedElement: prevState.selectedElement
             };
 
         });
@@ -117,30 +300,29 @@ class AppContainer extends React.Component<{}, {}> {
     async componentDidMount(): Promise<void> {
 
         this.initViews();
-
-        let web3: any = null;
+        this.setState({
+            blockchainConnection: getDefaultBlockchainConnection(
+                this.updateBlockchainConnection, 
+                this.addAccount, 
+                this.addTransactionToHistory
+            )
+        
+        });
+        
         const params: any = queryString.parse((this.props as any).location.search);
-
-        if (params.rpc) {
-            web3 = new Web3(params.rpc);
-        } else if ((window as any).ethereum) {
-            web3 = new Web3((window as any).ethereum);
-            try {
-                // Request account access if needed
-                await (window as any).ethereum.enable();
-            } catch (error) {
-                // User denied account access...
-            }
-        }
-
-        else if ((window as any).web3) {
-            web3 = new Web3(web3.currentProvider);
-        }
+        const blockchainConnection: BlockchainConnection = await initBlockchainConfiguration(
+            params.rpc,
+            this.updateBlockchainConnection,
+            this.addAccount,
+            this.selectAccount,
+            this.addTransactionToHistory
+        );
         
         this.setState({
-            web3: web3,
+            blockchainConnection,
             contractToSelect: params.contract ? params.contract : null,
             contractToSelectAddress: params.contractAddress ? params.contractAddress : null
+        
         });
 
         if (params.solFile) {
@@ -156,31 +338,48 @@ class AppContainer extends React.Component<{}, {}> {
                 this.addError(new Error('Can not get https://eth.slock.it/api/file/' + params.solFile));
             }
             
+        } else if (params.containerSha) {
+            this.setIsLoading(true);
+            await getPietContainer(
+                (params.gitHubUser as string),
+                (params.gitHubRepo as string),
+                this.loadFromConatinerFile, 
+                params.containerSha as string
+            );
+
         } else if (params.gitHubRepo) {
             
             this.setIsLoading(true);
             await getContracts(
-                'https://api.github.com/repos/' + (params.gitHubRepo as string),
-                this.gotContractsFromGithub, params.subDir as string);
-            // await getContracts('https://api.github.com/repos/slockit/usn-mvp', this.gotContractsFromGithub, 'contracts')
-        }
+                (params.gitHubUser as string),
+                (params.gitHubRepo as string),
+                this.gotContractsFromGithub, 
+                params.subDir as string
+            );
+            
+        } else if (params.container) {
+            this.setIsLoading(true);
+            const file: any = await (axios as any).get(params.container);
+            this.loadFromConatinerFile(file.data, params.container);
 
-        setTimeout(() => { 
-
-            $('.animation-container').css('display', 'none');
-            $('.non-animation-container').css('display', 'block');
-
-        },         1);
+        } 
 
     }
 
-    addError(error: any): void {
+    addError(error: Error, operation?: string): void {
         this.setState((prevState: AppContainerState) => {
-            prevState.globalErrors.push(error);
-            return {
-                globalErrors: prevState.globalErrors
-            }
+                prevState.globalErrorHandling.errors.push({
+                    name: error.name,
+                    message: error.message,
+                    timestamp: Date.now().toString(),
+                    operation: operation
+                });
+
+                return {
+                    globalErrorHandling: prevState.globalErrorHandling
+                };
         });
+        this.setIsLoading(false);
     }
 
     gotContractsFromGithub(files: any, error?: Error): void {
@@ -189,19 +388,25 @@ class AppContainer extends React.Component<{}, {}> {
             this.addError(error);
     
         } else {
-            const contracts: Sol.Contract[] = Sol.parseContent(files);
-            const params: any = queryString.parse((this.props as any).location.search);
-            const contractName: string = params.contract ? params.contract.toString() : null;
-            const selectedContract: Sol.Contract = contracts.find((contract: Sol.Contract) => contract.name === contractName);
-            if (selectedContract) {
-                selectedContract.deployedAt = params.contractAddress ? params.contractAddress as string : selectedContract.deployedAt;
-            }
+            try {
+                const contracts: Sol.Contract[] = Sol.parseContent(files);
+            
+            
+                const params: any = queryString.parse((this.props as any).location.search);
+                const contractName: string = params.contract ? params.contract.toString() : null;
+                const selectedContract: Sol.Contract = contracts.find((contract: Sol.Contract) => contract.name === contractName);
+                if (selectedContract) {
+                    selectedContract.deployedAt = params.contractAddress ? params.contractAddress as string : selectedContract.deployedAt;
+                }
 
-            this.setState({
-                contractToSelect: selectedContract ? selectedContract.name : null,
-                contracts: contracts
-            });
-            this.removeTabEntity('About');
+                this.setState({
+                    contractToSelect: selectedContract ? selectedContract.name : null,
+                    contracts: contracts
+                });
+                this.removeTabEntity('About');
+            }  catch (e) {
+                this.addError(e);
+            }
             
         }
 
@@ -209,16 +414,54 @@ class AppContainer extends React.Component<{}, {}> {
 
     }
 
-    async updateContractNames(selectorFiles: FileList): Promise<void> {
-        this.setState({selectedElement: null});
-        this.setIsLoading(true);
+    loadFromConatinerFile(file: any, name: string): void {
 
-        this.setState({
-            contracts: await Sol.pushFiles(selectorFiles)
-        });
-        this.setIsLoading(false);
-        this.removeTabEntity('About');
+        this.setState(
+            {
+                contracts: file.contracts,
+                graph: file.graph,
+                selectedElement: file.selectedElement,
+                loadedPietFileName: name
+            }, 
+            () => {
+                this.setIsLoading(false);
+                this.removeTabEntity('About');
+                this.changeActiveTab(0, 1);
+          
+            }
+            
+        );
         
+    }
+
+    async updateContractNames(selectorFiles: FileList): Promise<void> {
+        if (selectorFiles.length === 1 && selectorFiles[0].name.endsWith('.piet.json')) {
+            const file: any = JSON.parse(await PromiseFileReader.readAsText(selectorFiles[0]));
+            this.loadFromConatinerFile(file, selectorFiles[0].name);
+   
+        } else {
+ 
+            try {
+                
+                this.setState({selectedElement: null});
+                this.setIsLoading(true);
+
+                const contracts: Sol.Contract[] = await Sol.pushFiles(selectorFiles);
+
+                this.setState((prev: AppContainerState) => ({
+                    contracts,
+                    graph: null,
+                    loadedPietFileName: null
+                }));
+                this.setIsLoading(false);
+                this.removeTabEntity('About');    
+                this.changeActiveTab(0, 1);
+            }  catch (e) {
+                this.addError(e, 'Loading file');
+            }
+
+        }
+    
     }
 
     removeTabEntity(tabName: string): void {
@@ -390,27 +633,66 @@ class AppContainer extends React.Component<{}, {}> {
 
     changeSelectedElement(selectedElement: Sol.NodeElement): void {
         this.changeActiveTab(0, 1);
+        this.changeActiveTab(1, 0);
 
         this.setState({
-            selectedElement: selectedElement
+            selectedElement: selectedElement,
+            contractToSelect: selectedElement.name
         });
     }
 
     render(): JSX.Element {
+        const selectedTabTypeForView: TabEntityType[] = this.state.tabEntities.map((tabs: TabEntity[], index: number) =>
+             (this.state.tabEntities[index][this.state.activeTab[index]] ? 
+                this.state.tabEntities[index][this.state.activeTab[index]].contentType : 
+                null)
+        );
+
+        const uiCreationHandling: UICreationHandling = {
+            addRow: this.addRow,
+            setUIStructure: this.setUIStructure,
+            uiStructure: this.state.createdUIStructure,
+            addElementToRow: this.addElementToRow,
+            addElementToAction: this.addElementToAction,
+    
+            ethAccount: this.state.blockchainConnection.selectedAccount
+            
+        };
+
+        const params: any = queryString.parse((this.props as any).location.search);
+
+        if (params.ui === 'true') {
+            return <UICreationView 
+                uiCreationHandling={uiCreationHandling}
+                key={'Migration Assistent'}
+                viewId={0}
+                tabId={0}
+                content={null}
+                blockchainConnection={this.state.blockchainConnection}
+                productiveMode={true}
+            />;
+        }
 
         return  <div>
-                    <SplitPane split='vertical' minSize={300} defaultSize={500} >
+                    <SplitPane split='vertical' minSize={400} defaultSize={550} >
                     
-                        <SplitPane split='vertical'  defaultSize={60} allowResize={false} >
+                        <SplitPane split='vertical'  defaultSize={70} allowResize={false} >
                                 
                                 <Sidebar 
                                     addTabEntity={this.addTabEntity}
                                     isLoading={this.state.isLaoding} 
                                     submitFiles={this.updateContractNames} 
                                     changeActiveTab={this.changeActiveTab}
+                                    blockchainConnection={this.state.blockchainConnection}
                                 />
-                                <View 
-                                    globalErrors={this.state.globalErrors}
+                                <View
+                                    loadedPietFileName={this.state.loadedPietFileName}
+                                    setGraph={this.setGraph}
+                                    graph={this.state.graph}
+                                    changeGraphView={this.changeGraphView}
+                                    uiCreationHandling={uiCreationHandling}
+                                    selectedTabTypeForView={selectedTabTypeForView}
+                                    globalErrorHandling={this.state.globalErrorHandling}
                                     removeContractToSelect={this.removeContractToSelect}
                                     selectedContractName={this.state.contractToSelect}
                                     removeTabEntity={this.removeTabEntity}
@@ -421,7 +703,7 @@ class AppContainer extends React.Component<{}, {}> {
                                     tabEntities={this.state.tabEntities[0]}
                                     addTabEntity={this.addTabEntity}
                                     selectedElement={this.state.selectedElement}
-                                    web3={this.state.web3} 
+                                    blockchainConnection={this.state.blockchainConnection} 
                                     changeContractAddress={this.changeContractAddress}
                                     changeSelectedElement={this.changeSelectedElement}
                                     contracts={this.state.contracts}
@@ -429,12 +711,20 @@ class AppContainer extends React.Component<{}, {}> {
                                     getEvents={this.getEvents}
                                     contentChange={this.contentChange}
                                     submitFiles={this.updateContractNames}
+                                    graphViewType={this.state.graphViewType}
                                 />
                                     
                         </SplitPane>
                     
                             <View
-                                globalErrors={this.state.globalErrors}
+                                loadedPietFileName={this.state.loadedPietFileName}
+                                graphViewType={this.state.graphViewType}
+                                setGraph={this.setGraph}
+                                graph={this.state.graph}
+                                changeGraphView={this.changeGraphView}
+                                uiCreationHandling={uiCreationHandling}
+                                selectedTabTypeForView={selectedTabTypeForView}
+                                globalErrorHandling={this.state.globalErrorHandling}
                                 removeContractToSelect={this.removeContractToSelect}
                                 selectedContractName={this.state.contractToSelect}
                                 removeTabEntity={this.removeTabEntity}
@@ -445,7 +735,7 @@ class AppContainer extends React.Component<{}, {}> {
                                 tabEntities={this.state.tabEntities[1]}
                                 addTabEntity={this.addTabEntity}
                                 selectedElement={this.state.selectedElement}
-                                web3={this.state.web3} 
+                                blockchainConnection={this.state.blockchainConnection} 
                                 changeContractAddress={this.changeContractAddress}
                                 changeSelectedElement={this.changeSelectedElement}
                                 contracts={this.state.contracts}

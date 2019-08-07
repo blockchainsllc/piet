@@ -1,25 +1,97 @@
 :root {
-    --main-background-color:#232323;
+    /* --main-background-color:#232323; */
+    --selected-background-color: #232323;
+    --main-background-color: white;
     --sidebar-color: #343a40;
     --toolbar-color: #4c4b4b;
     --element-color: #e4e4e4;
     --text-highlight-color: #ececec;
-    --contract-color: #355e88;
+    --contract-color: #315173;
+    --abstract-color: #5f7996;
     --struct-color: #715454;
-    --enum-color: #327746;
+    --enum-color: #406d4d;
     --link-color: #ffffff;
     --muted-text-color: #adadad;
     --error-red: #dc3545;
 
+}
 
+.inspector-info {
+    margin: 1rem;
+}
+
+.code-modal-signature {
+    padding-top: 0rem;
+}
+
+.no-border-radius {
+    border-radius: 0px;
+}
+
+.conf-container {
+    margin-top: 1rem;
+}
+
+.conf-select {
+    width: 200px;
+    border-radius: 0rem;
+    color: var(--text-highlight-color);
+    background-color: var(--toolbar-color);
+    border-width: 1px;
+    border-color: var(--selected-background-color);
+}
+
+.rpc-method-select {
+    width: 100%;
+    border-radius: 0rem;
+    color: var(--text-highlight-color);
+    background-color: var(--toolbar-color);
+    border-width: 1px;
+    border-color: var(--selected-background-color);
+}
+
+
+
+.navbar-pane {
+    width: 100%;
+}
+
+.contract-inspector {
+    background-color: var(--contract-color);
+}
+
+.abstract-contract-inspector {
+    background-color: var(--abstract-color);
+}
+
+.struct-inspector {
+    background-color: var(--struct-color);
+}
+
+.enum-inspector {
+    background-color: var(--enum-color);
+}
+
+.default-background {
+    background-color: var(--selected-background-color) !important;
+}
+
+.plain-background {
+    background-color: var(--main-background-color) !important;
+}
+
+
+.ui-creation-main {
+    background-color: #ffffff !important;
 }
 
 .error-red {
     color: var(--error-red);
 }
 
-.migration-function-cell {
-  
+.input-output {
+    font-family: monospace;
+    font-size: small;
 }
 
 .output-message-container {
@@ -31,6 +103,31 @@
     
 }
 
+.inputl-label {
+    color: var(--text-highlight-color);
+}
+
+.toolbar-pane.Pane1 {
+    background-color: var(--toolbar-color);
+}
+
+.sidebar .to-bottom {
+
+    position: absolute;
+    bottom: 0;
+    
+    
+
+}
+
+.connected-color {
+    color: #28a745;
+}
+
+.last-btn {
+    margin-left: 0px;
+}
+
 .migration-select {
     width: 120px;
     border-radius: 0rem;
@@ -39,8 +136,16 @@
     border-width: 0px;
 }
 
-.migration-select-down {
-    margin-top: 0.1rem;
+.connected {
+    color: #ffffff !important;
+}
+
+.vertical-toolbar-headline {
+    margin-bottom: 1rem;
+}
+
+.migration-select-form {
+    margin-bottom: 0.1rem;
 }
 
 .file-browser-alert {
@@ -90,7 +195,7 @@
 }
  
 ::-webkit-scrollbar-track {
-    background-color: var(--main-background-color)
+    /* background-color: var(--main-background-color) */
     
 }
  
@@ -102,7 +207,7 @@
 
 
 .joint-paper-background{
-    background-color: var(--main-background-color)
+    background-color: var(--selected-background-color)
 }
 
 .selected-list-item {
@@ -115,6 +220,18 @@
 
 .contract-node {
     fill: var(--contract-color);
+    stroke-width: 0;
+    stroke: #ffffff;
+} 
+
+.interface-node {
+    fill: var(--abstract-color);
+    stroke-width: 0;
+    stroke: #ffffff;
+} 
+
+.error-node {
+    fill: var(--error-red);
     stroke-width: 0;
     stroke: #ffffff;
 } 
@@ -139,6 +256,17 @@
 .node-text {
     fill: var(--text-highlight-color);
     
+    
+}
+
+.node-text:hover {
+    fill: var(--muted-text-color);
+    
+    
+}
+
+.other-node-text {
+    fill: var(--muted-text-color);
 }
 
 .node-text-error {
@@ -203,7 +331,7 @@ a:hover {
 }
 
 .file-tree > ul {
-    background-color: var(--main-background-color) !important;
+    background-color: var(--selected-background-color) !important;
 }
 
 .help-text {
@@ -232,6 +360,10 @@ a:hover {
 
 .sidebar {
     background-color: var(--sidebar-color)
+}
+
+.first-btn {
+    margin-top: 2rem !important;
 }
 
 .navbar-container {
@@ -325,16 +457,20 @@ body {
 }
 
 .Resizer.vertical {
-    width: 16px;
-    margin: 0 -5px;
-    border-left: 5px solid rgba(255, 255, 255, 0);
-    border-right: 5px solid rgba(255, 255, 255, 0);
+    width: 9px;
+    margin: 0 -3px;
+    border-left: 2px solid rgba(255, 255, 255, 0);
+    border-right: 2px solid rgba(255, 255, 255, 0);
     cursor: col-resize;
 }
 
+.error-message {
+    padding-top: 0.2rem;
+}
+
 .Resizer.vertical:hover {
-    border-left: 5px solid rgba(0, 0, 0, 0.5);
-    border-right: 5px solid rgba(0, 0, 0, 0.5);
+    border-left: 2px solid rgba(0, 0, 0, 0.5);
+    border-right: 2px solid rgba(0, 0, 0, 0.5);
 }
 .Resizer.disabled {
   cursor: not-allowed;
@@ -350,29 +486,67 @@ body {
     border-bottom-right-radius: 0rem !important;
 }
 
+.markdown-code {
+    color: var(--text-highlight-color);
+    font-family: monospace;
+}
+
+.not-last-alert {
+    margin-bottom: 1px;
+}
+
+.tabs-container ul li {
+    margin-left: 1px;
+}
+
+.markdown-preview {
+    background-color: var(--main-background-color)
+}
+
 .modifier-badge {
     margin-right: 0.25rem;
+}
+
+.ui-creation-container {
+    width: 100%;
+    background-color: white;
+    padding-top: 1rem;
 }
 
 .no-padding {
     padding: 0rem
 }
 
-.contract-card {
-    background-color: var(--contract-color);
 
+.load-ui-file-container {
+    margin-top: 5rem;
+}
+
+.load-ui {
+    margin-bottom: 0rem;
 }
 
 .struct-card {
     background-color: var(--struct-color);
-    
-
 }
 
 .enum-card {
     background-color: var(--enum-color);
-
 }
+
+.ui-function {
+    background-color: var(--element-color);
+}
+
+.function-exec-msg {
+    margin-top: 1rem;
+}
+
+.link-tools .tool-remove { display: none }
+
+.marker-arrowheads { display: none }
+
+.connection-wrap { display: none }
 
 
 .selected-card {
@@ -387,8 +561,8 @@ body {
 
 }
 
-.graph-placeholder {
-  
+.save-button {
+    margin-bottom: 8px;
 }
 
 .detailed-button {
@@ -459,9 +633,13 @@ body {
     border-radius: 0rem !important; 
 
 }
+.selected-list-item:hover  {
+    z-index: 100;
+
+}
 
 .functionOperations {
-    margin-top: 0.5rem
+    margin-top: 1rem
 }
 
 .function-operation-button {
@@ -490,25 +668,71 @@ body {
     margin-top: 12px;
 } 
 
+.ui-creation-value {
+    margin-bottom: 0rem !important;
+}
+
+.connection-badge {
+    font-size: 8px;
+    border-radius: 0px;
+    color: #343a40;
+}
+
+.connection-badge-small {
+    font-size: 8px;
+    border-radius: 0px;
+    color: #343a40;
+}
+.Resizer.vertical.disabled {
+    width: 4px;
+}
 .sidebar-buttons-container {
     margin-top: 1rem;
-    margin-bottom: 1rem;
+    
+    margin-right: 3px;
+}
+
+.ui-creation-row {
+    margin-top: 1rem;
 }
 
 .btn:not(.sv-call) {
     border-radius: 0rem;
     border-width: 0rem;
+    
+}
+.sv-call {
+    font-size: 0.7rem;
 }
 
 .state-varibale-result-container {
     margin-top: 0.2rem
 }
 
+.account-list-element {
+    background-color: var(--selected-background-color);
+    border-color: var(--sidebar-color)
+}
 
+.selected-account {
+    color: var(--text-highlight-color);
+}
+
+.user-add-container {
+    background-color: var(--toolbar-color);
+    padding: 5px;
+    margin-bottom: 1px;
+}
+
+.user-add-warning {
+    background-color: var(--toolbar-color);
+    padding: 5px;
+}
 .dark-input {
     border-radius: 0rem;
-    border-width: 0rem;
+    border-width: 1px;
     background-color: var(--sidebar-color);
+    border-color: var(--selected-background-color);
     color: #dcdcdc;
 
 } 
@@ -519,9 +743,9 @@ body {
     color: #dcdcdc !important;
 }
 
-.events-json-container > ul {
+/* .events-json-container > ul {
     background-color: var(--main-background-color) !important;
-}
+} */
 
 
 .loader-logo-loading .logo-quater {
