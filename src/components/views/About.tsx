@@ -67,7 +67,21 @@ export class About extends React.Component<{}, {}> {
 
                                         </span>
                                         <br />
-                                        Be aware that Piet has not yet undergone in-depth testing and may contain severe bugs.
+                                        Piet has not yet undergone in-depth testing and may contain serious bugs.
+                                        <br />
+                                        A list of known issues can be found at the&nbsp; 
+                                        <strong>
+                                            <a 
+                                                className='text-muted' 
+                                                href='https://github.com/slockit/piet'
+                                                target='_blank'
+                                                rel='noopener noreferrer'
+                                            >
+                                                Piet GitHub repository
+                                            </a>
+                                        </strong>
+                                        .
+
                                     </small></p>
                                     <br />
                                     <h5 className='help-text text-muted'>Getting started</h5> 
