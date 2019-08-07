@@ -71,13 +71,14 @@ deploy-to-production:
 
 mirror-to-github:
     stage: mirror
+    image: docker.slock.it/build-images/deployment
     tags:
       - short-jobs
     only: 
       - master
       - /^v[0-9]+.[0-9]+.[0-9]+$/
     script:
-      - chmod 0400 $GITHUB_PUSH_KEY
+      - chmod 400 $GITHUB_PUSH_KEY
       - export GIT_SSH_COMMAND="/usr/bin/ssh -o StrictHostKeyChecking=no -i $GITHUB_PUSH_KEY"
       - git remote add external git@github.com:slockit/piet.git
       - git push --force external master
