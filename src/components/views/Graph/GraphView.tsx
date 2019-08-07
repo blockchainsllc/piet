@@ -130,6 +130,17 @@ export class GraphView extends React.Component<GraphViewProps, GraphViewState> {
                 });
                         
             }
+        } else if (cellView && cellView.model) {
+
+
+            const nodenodeIdNamePair: JointElements.NodeNameIdPair = this.nodeIdNamePairs
+                .find((item: JointElements.NodeNameIdPair) =>
+                    cellView ? item.jointjsNode.id.toString() === cellView.model.id : item.nodeElement.name === contratName);
+            const nodeName: string =  nodenodeIdNamePair ? nodenodeIdNamePair.nodeElement.name : undefined;
+            const slectedNodeElement: SolidityHandler.NodeElement = this.findNodeElement(nodeName);
+            if (slectedNodeElement) {   
+                props.changeSelectedElement(slectedNodeElement);   
+            }
         }
         
     }
