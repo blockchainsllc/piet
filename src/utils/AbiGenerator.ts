@@ -1,96 +1,156 @@
-/**
- * this file is part of bundesblock-voting
+/**  
+ *   This file is part of Piet.
  *
- * it is subject to the terms and conditions defined in
- * the 'LICENSE' file, which is part of the repository.
+ *   Copyright (C) 2019  Heiko Burkhardt <heiko@slock.it>, Slock.it GmbH
  *
- * @author Heiko Burkhardt
- * @copyright 2018 by Slock.it GmbH
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   Permissions of this strong copyleft license are conditioned on
+ *   making available complete source code of licensed works and 
+ *   modifications, which include larger works using a licensed work,
+ *   under the same license. Copyright and license notices must be
+ *   preserved. Contributors provide an express grant of patent rights.
+ *   
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 import * as Sol from '../solidity-handler/SolidityHandler';
-import Web3Type from '../types/web3';
+import { BlockchainConnection} from '../solidity-handler/BlockchainConnector';
+import { contractElementLink } from '../components/views/Graph/JointElements';
 
-export const getFunctionAbi: (theFunction: Sol.ContractFunction, web3: Web3Type, contracts: Sol.Contract[]) => any  = 
-    (theFunction: Sol.ContractFunction, web3: Web3Type, contracts: Sol.Contract[]): any => {
+export const isSameFunction = 
+    (firstFunctionAbi: any[], secondFunctionAbi: any[], blockchainConnection: BlockchainConnection): boolean => {
+        const firstSignature: string = firstFunctionAbi.length === 1 ? 
+            blockchainConnection.web3.eth.abi.encodeFunctionSignature(firstFunctionAbi[0]) : 
+            null;
+        const secondSignature: string = secondFunctionAbi.length === 1 ? 
+            blockchainConnection.web3.eth.abi.encodeFunctionSignature(secondFunctionAbi[0]) : 
+            null;
+        
+        return firstSignature && secondSignature && (firstSignature === secondSignature);
+
+}
+
+export const getFunctionId = (
+    contract: Sol.Contract, 
+    blockchainConnection: BlockchainConnection,
+    contractFunction: Sol.ContractFunction
+): string => {
+    const id: string = 'function' + contract.name + contractFunction.name + contractFunction.params
+        .map((param: Sol.ContractFunctionParam) => param.name + param.solidityType.name)
+        .reduce((previous, current) => previous + current, '');
+
+    return blockchainConnection.web3.utils.sha3(id);
+};
+
+type GetFunctionAbi = (
+    theFunction: Sol.ContractFunction,
+    contracts: Sol.Contract[], 
+    contextContract: Sol.Contract
+) => any;
+
+export const getFunctionAbi: GetFunctionAbi  = (
+    theFunction: Sol.ContractFunction,
+    contracts: Sol.Contract[], 
+    contextContract: Sol.Contract
+) : any => {
 
         const functionAbi: any = {
             name: theFunction.name,
             type: 'function',
-            inputs: theFunction.params.map((param: Sol.ContractFunctionParam) => ({
-                type: checkType(param.solidityType, contracts),
-                name: param.name
-            })),
-            outputs: theFunction.returnParams.map((param: Sol.ContractFunctionParam) => ({
-                type: checkType(param.solidityType, contracts),
-                name: param.name
-            }))
+            inputs: getInAndOutputs(theFunction.params, contracts, contextContract),
+            outputs: getInAndOutputs(theFunction.returnParams, contracts, contextContract)
         };
+        return [functionAbi];
+    };
+
+export const getStateVariableAbi: (theFunction: Sol.ContractFunction, contracts: Sol.Contract[], contextContract: Sol.Contract) => any  = 
+    (theFunction: Sol.ContractFunction, contracts: Sol.Contract[], contextContract: Sol.Contract): any => {
+
+        const functionAbi: any = {
+            name: theFunction.name,
+            type: 'function',
+            inputs: getInAndOutputs(theFunction.params, contracts, contextContract),
+            outputs: getInAndOutputs(theFunction.returnParams, contracts, contextContract)
+        };
+        // if (functionAbi.outputs[0].type && functionAbi.outputs[0].type === 'tuple') {
+        //     functionAbi.outputs = functionAbi.outputs[0].components;
+        // } 
         
         return [functionAbi];
     };
 
-export const getStateVariableAbi: (theStateVariable: Sol.ContractStateVariable, web3: Web3Type, contracts: Sol.Contract[]) => any = 
-    (theStateVariable: Sol.ContractStateVariable, web3: Web3Type, contracts: Sol.Contract[]): any => {
+const evaluateStruct = (theStruct: Sol.ContractStruct, contracts: Sol.Contract[], contextContract: Sol.Contract, paramName: string, initSolType: string ) => {
 
-        let stateVariableAbi: any;
+    return {
+        components: 
+            theStruct.fields.map((field: Sol.ContractStateVariable) => {
+                const solType: string = checkType(field.solidityType, contracts, contextContract);
+                if (solType === 'tuple') {
+                    const childStruct: Sol.ContractStruct = searchContractMember<Sol.ContractStruct>(
+                        'structs',
+                        field.solidityType,
+                        contextContract,
+                        contracts
+                    );
+                    return evaluateStruct(childStruct, contracts, contextContract, field.name, solType);
+                } 
+                return {
+                    name: field.name,
+                    type: solType
+                };
+            })
+        ,
+        name: paramName === null || paramName === undefined ? '' : paramName,
+        type: initSolType
 
-        if (theStateVariable.solidityType.mapping) {
-            stateVariableAbi = {
-                constant: true,
-                name: theStateVariable.name,
-                type: 'function',
-                inputs: [{
-                    type: checkType(theStateVariable.solidityType.mapping.key, contracts),
-                    name: ''
-                }],
-                outputs: [{
-                    type: checkType(theStateVariable.solidityType.mapping.value, contracts),
-                    name: ''
-                }]
-            };
-
-        } else if (theStateVariable.solidityType.isArray) {
-            stateVariableAbi = {
-                constant: true,
-                name: theStateVariable.name,
-                type: 'function',
-                inputs: [{
-                    name: '',
-                    type: 'uint256'
-                }],
-                outputs: [{
-                    type: checkType(theStateVariable.solidityType, contracts),
-                    name: ''
-                }]
-            };
-
-        } else {
-
-            stateVariableAbi = {
-                constant: true,
-                name: theStateVariable.name,
-                type: 'function',
-                inputs: [],
-                outputs: [{
-                    type: checkType(theStateVariable.solidityType, contracts),
-                    name: ''
-                }]
-            };
-        }
-
-        return [stateVariableAbi];
     };
 
-export const getEventAbi: (theEvent: Sol.ContractEvent, web3: Web3Type, contracts: Sol.Contract[]) => any = 
-    (theEvent: Sol.ContractEvent, web3: Web3Type, contracts: Sol.Contract[]): any => {
+};
+
+const getInAndOutputs = (params: Sol.ContractFunctionParam[], contracts: Sol.Contract[], contextContract: Sol.Contract): any[] => {
+    return params.map((param: Sol.ContractFunctionParam) => {
+        const solType: string = checkType(param.solidityType, contracts, contextContract);
+        if (solType === 'tuple') {
+            
+            const theStruct: Sol.ContractStruct = searchContractMember<Sol.ContractStruct>(
+                'structs',
+                param.solidityType,
+                contextContract,
+                contracts
+            );
+
+            return evaluateStruct(theStruct, contracts, contextContract, param.name, solType);
+        } 
+        return {
+            type: solType,
+            name: param.name === null || param.name === undefined ? '' : param.name 
+        };
+        
+    });
+};
+
+export const getEventAbi = (
+    theEvent: Sol.ContractEvent,
+    contracts: Sol.Contract[],
+    contextContract: Sol.Contract
+): any => {
 
         const eventAbi: any = {
             name: theEvent.name,
             type: 'event',
             anonymous: false,
             inputs: theEvent.params.map((param: Sol.ContractFunctionParam) => ({
-                type: checkType(param.solidityType, contracts),
+                type: checkType(param.solidityType, contracts, contextContract),
                 indexed: param.isIndexed,
                 name: param.name
             }))
@@ -99,24 +159,67 @@ export const getEventAbi: (theEvent: Sol.ContractEvent, web3: Web3Type, contract
         return [eventAbi];
     };
 
-const checkType: (solidityType: Sol.SolidityType, contracts: Sol.Contract[]) => string =
-    (solidityType: Sol.SolidityType, contracts: Sol.Contract[]): string => {
+const searchContractMember = <T extends Sol.NodeElement> (
+    propertyKey: keyof Sol.Contract,
+    solidityType: Sol.SolidityType,
+    contextContract: Sol.Contract,
+    contracts: Sol.Contract[]
+): T => {
+    const name: string = solidityType.isArray ? solidityType.name.slice(0, solidityType.name.length - 2)  : solidityType.name;
+    
+    let member: T = 
+        contextContract[propertyKey].find((theMember: T) => theMember.shortName === name);
+    if (member) {
+        return member;
+    }
+
+    contextContract.baseContracts.forEach((contractName: string) => {
+        const theMember: T = searchContractMember<T>(
+            propertyKey,
+            solidityType,
+            contracts.find((aContract: Sol.Contract) => aContract.name === contractName),
+            contracts
+        );
+        member = theMember ? theMember : member;
+    });
+    if (member) {
+        return member;
+    }
+
+    contracts.forEach((aContract: Sol.Contract) => {
+        const theMember: T = aContract[propertyKey].find((aMember: T) => aMember.name === name);
+        member = theMember ? theMember : member;
+    });
+    if (member) {
+        return member;
+    }
+    return null;
+
+};
+
+const checkType: (solidityType: Sol.SolidityType, contracts: Sol.Contract[], contextContract: Sol.Contract, resolveArray?: boolean) => string =
+    (solidityType: Sol.SolidityType, contracts: Sol.Contract[], contextContract: Sol.Contract, resolveArray?: boolean): string => {
         if (solidityType.userDefined) {
-            if (contracts.find((contract: Sol.Contract) => contract.name === solidityType.name)) {
+            if (searchContractMember<Sol.ContractStruct>('structs', solidityType, contextContract, contracts)) {
+                return 'tuple';
+            } else if (searchContractMember<Sol.ContractEnumeration>('enumerations', solidityType, contextContract, contracts)) {
+                return 'uint8';
+            } else if (contracts.find((contract: Sol.Contract) => contract.name === solidityType.name)) {
                 return 'address';
-            } else {
-                throw Error('User defined types are not yet supported.');
+            }  else {   
+                console.log('ERROR' + solidityType.name);
+                throw Error('Unknow Type');
             }
 
         } else {
             const name: string = solidityType.isArray ? solidityType.pureName : solidityType.name;
             switch (name) {
                 case 'uint':
-                    return 'uint256';
+                    return solidityType.isArray && !resolveArray ? 'uint256[]' : 'uint256';
                 case 'byte':
-                    return 'bytes1';
+                    return solidityType.isArray && !resolveArray ? 'bytes1[]' : 'bytes1';
                 default:
-                    return solidityType.name;
+                    return solidityType.isArray && !resolveArray ? solidityType.pureName + '[]' : solidityType.name;
             }
         }
 

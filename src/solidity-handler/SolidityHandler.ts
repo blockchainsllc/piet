@@ -1,11 +1,26 @@
-/**
- * this file is part of bundesblock-voting
+/**  
+ *   This file is part of Piet.
  *
- * it is subject to the terms and conditions defined in
- * the 'LICENSE' file, which is part of the repository.
+ *   Copyright (C) 2019  Heiko Burkhardt <heiko@slock.it>, Slock.it GmbH
  *
- * @author Heiko Burkhardt
- * @copyright 2018 by Slock.it GmbH
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   Permissions of this strong copyleft license are conditioned on
+ *   making available complete source code of licensed works and 
+ *   modifications, which include larger works using a licensed work,
+ *   under the same license. Copyright and license notices must be
+ *   preserved. Contributors provide an express grant of patent rights.
+ *   
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 import * as PromiseFileReader from 'promise-file-reader';
@@ -32,6 +47,7 @@ export enum ElementType {
 
 export interface NodeElement {
     name: string;
+    shortName?: string;
     elementType: ElementType;
 }
 
@@ -100,6 +116,7 @@ export interface ContractStateVariable {
     name: string;
     solidityType: SolidityType;
     visibility: string;
+    getter: ContractFunction;
 }
 
 export interface ContractFunctionParam {
@@ -134,6 +151,12 @@ export interface SolidityAnnotation {
     value: string;
     subAnnotation: SolidityAnnotation;
 }
+
+export const isCallAble: (contractFunction: ContractFunction) => boolean = (contractFunction: ContractFunction): boolean => {
+    return contractFunction.modifiers.find((modifier: string) =>
+        (modifier === 'constant' || modifier === 'view' || modifier === 'pure')
+    ) !== undefined;
+};
 
 const getType: (node: any, references: string[]) => SolidityType = (node: any, references: string[]): SolidityType  => {
     switch (node.type) {
@@ -296,11 +319,83 @@ const getStateVariables: (node: any) => ContractStateVariable[] = (node: any): C
         .filter((subNode: any) => subNode.type && subNode.variables && subNode.type === 'StateVariableDeclaration')
         .map((subNode: any) => subNode.variables[0]);
 
-    return varibales.map((variable: any) => ({
+    return varibales.map((variable: any) => {
+        
+        let params: ContractFunctionParam[] = [];
+        let returnParams: ContractFunctionParam[] = [];
+
+        switch (variable.typeName.type) {
+            case 'Mapping':
+                params = [{
+                    name: variable.typeName.name,
+                    solidityType: getType(variable.typeName, []),
+                    isStorage: false,
+                    isIndexed: false,
+                    description: null
+                }];
+                returnParams = [{
+                    name: variable.typeName.name,
+                    solidityType: params[0].solidityType.mapping.value,
+                    isStorage: false,
+                    isIndexed: false,
+                    description: null
+                }];
+                params[0].solidityType = params[0].solidityType.mapping.key;
+                
+                break; 
+            case 'ArrayTypeName':
+                params = [{
+                    name: variable.typeName.name,
+                    solidityType: {
+                        isArray: false,
+                        name: 'uint256',
+                        references: [],
+                        userDefined: false
+                    },
+                    isStorage: false,
+                    isIndexed: false,
+                    description: null
+                }];
+                returnParams = [{
+                    name: '',
+                    solidityType: getType(variable.typeName, []),
+                    isStorage: false,
+                    isIndexed: false,
+                    description: null
+                }];
+                returnParams[0].solidityType.name = returnParams[0].solidityType.pureName;
+                returnParams[0].solidityType.isArray = false;
+                break; 
+            default:
+                returnParams = [{
+                    name: '',
+                    solidityType: getType(variable.typeName, []),
+                    isStorage: false,
+                    isIndexed: false,
+                    description: null
+                }];
+                
+        }
+
+        const getter: ContractFunction = {
+            annotations: null,
+            description: null,
+            end: null,
+            modifiers: variable.visibility === 'public' ? ['view', 'public'] : [],
+            name: variable.name,
+            params: params,
+            returnParams: returnParams,
+            source: null,
+            start: null
+        };
+
+        return {
             name: variable.name,
             solidityType: getType(variable.typeName, []),
-            visibility: variable.visibility
-        }));
+            visibility: variable.visibility,
+            getter
+        };
+    });
 };
 
 const contractMemberCopy: (contract: Contract, generalContract: Contract) => Contract = 
@@ -464,7 +559,7 @@ export const parseContent: (fileContents: any) => Contract[] = (fileContents: an
                 return contracts;
         }
 
-        const sourceUnit: any = parser.parse(source, {loc: true, range: true});
+        const sourceUnit: any = parser.parse(source, {loc: true, range: true, tolerant: true});
         parser.visit(sourceUnit, {
             ContractDefinition: (node: any): void => {
 
@@ -500,11 +595,9 @@ export const parseContent: (fileContents: any) => Contract[] = (fileContents: an
                     isAbstract: (node as any).subNodes
                         .filter((subNode: any) => subNode.type && subNode.type === 'FunctionDefinition' && subNode.body === null).length > 0
                 };
-                // console.log('################')
-                // console.log(node)
-                // console.log(contract)
 
                 contracts.push(contract);
+
             }
         });
     });

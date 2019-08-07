@@ -1,28 +1,49 @@
-/**
- * this file is part of bundesblock-voting
+/**  
+ *   This file is part of Piet.
  *
- * it is subject to the terms and conditions defined in
- * the 'LICENSE' file, which is part of the repository.
+ *   Copyright (C) 2019  Heiko Burkhardt <heiko@slock.it>, Slock.it GmbH
  *
- * @author Heiko Burkhardt
- * @copyright 2018 by Slock.it GmbH
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   Permissions of this strong copyleft license are conditioned on
+ *   making available complete source code of licensed works and 
+ *   modifications, which include larger works using a licensed work,
+ *   under the same license. Copyright and license notices must be
+ *   preserved. Contributors provide an express grant of patent rights.
+ *   
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 import * as React from 'react';
 import * as Sol from '../../solidity-handler/SolidityHandler';
-import Web3Type from '../../types/web3';
 import {Treebeard, decorators} from 'react-treebeard';
 import SplitPane from 'react-split-pane';
+import { Graph } from './Graph/GraphGenerator';
+import { saveAs } from 'file-saver';
+import { BlockchainConnection } from '../../solidity-handler/BlockchainConnector';
+import { ErrorInfoBox, ErrorHandling } from '../shared-elements/ErrorInfoBox';
 
 interface FileBrowserViewProps {
-    web3: Web3Type;
+    blockchainConnection: BlockchainConnection;
     content: any;
     viewId: number;
     tabId: number;
     submitFiles: Function;
     contracts: Sol.Contract[];
     loading: boolean;
-    globalErrors: Error[];
+    globalErrorHandling: ErrorHandling;
+    selectedElement: Sol.NodeElement;
+    graph: Graph;
+    changeSelectedElement: Function;
 
 }
 
@@ -31,7 +52,7 @@ interface FileBrowserViewState {
     data: any;
 }
 
-decorators.Header = ({style, node}): any => {
+decorators.Header = ({style, node}: any): any => {
     const iconStyle: any = {marginRight: '5px'};
 
     return (
@@ -48,8 +69,8 @@ decorators.Header = ({style, node}): any => {
     );
 };
 
-decorators.Toggle =  ({style}) => {
-    const {height, width} = style;
+decorators.Toggle =  ({style}: any): JSX.Element => {
+    const {height, width}: any = style;
     const midHeight: number = height * 0.5;
     const points: string = `0,0 0,${height} ${width},${midHeight}`;
 
@@ -77,7 +98,24 @@ export class FileBrowserView extends React.Component<FileBrowserViewProps, FileB
         
         this.submitFiles = this.submitFiles.bind(this);
         this.onToggle = this.onToggle.bind(this);
+        this.save = this.save.bind(this);
        
+    }
+
+    save(): void {
+        const stateData: string = JSON.stringify(
+            {
+                pietFileVersion: '0.0.1',
+                contracts: this.props.contracts,
+                graph: this.props.graph,
+                selectedElement: this.props.selectedElement
+            },
+            null,
+            2
+        );
+
+        saveAs(new Blob([stateData], {type : 'application/json'}), 'export' + Date.now() + '.piet.json');
+
     }
 
     componentDidMount(): void {
@@ -94,7 +132,7 @@ export class FileBrowserView extends React.Component<FileBrowserViewProps, FileB
         const files: any[] = [];
 
         contracts.forEach((contract: Sol.Contract) => {
-            const file: any = files.find((file: any) => file.name === contract.inFile);
+            const file: any = files.find((aFile: any) => aFile.name === contract.inFile);
 
             const contractChildren: any = [
                 ...contract.enumerations.map((contractEnum: Sol.ContractEnumeration) => ({
@@ -110,7 +148,7 @@ export class FileBrowserView extends React.Component<FileBrowserViewProps, FileB
             ];
 
             const contractRepresentation: any = {
-                name: contract.name,
+                name: contract.name + (contract.deployedAt ? ' (' + contract.deployedAt.substr(0, 6) + '...)' : ''),
                 icon: 'fas fa-file-alt',
                 className: 'contract-icon',
                 children: contractChildren.length > 0 ? contractChildren : undefined
@@ -159,6 +197,7 @@ export class FileBrowserView extends React.Component<FileBrowserViewProps, FileB
         if (node.children) {
             node.toggled = toggled;
         }
+
         this.setState({ cursor: node });
     }
 
@@ -185,26 +224,33 @@ export class FileBrowserView extends React.Component<FileBrowserViewProps, FileB
             base0F: '#cc6633'
           };
 
-        const errorsToShow: JSX.Element[] = this.props.globalErrors.map((error: Error) =>  
-            <div key={error.message + error.name} className='file-browser-alert alert alert-danger' role='alert'>   
-                <small><i className='fas fa-exclamation-circle'></i> <strong>Error:</strong> {error.message}</small>
-             </div> 
-        );
-
         return <SplitPane className='scrollable hide-resizer' split='horizontal'  defaultSize={40} allowResize={false} >
                     <div className='h-100 w-100 toolbar'>
                     
-                        <label className={'btn btn-sm btn-outline-info'} htmlFor='file'>Choose Files</label>
-                        <input id='file' className='files-input' type='file' onChange={ (e) => this.submitFiles(e.target.files)} multiple />
+                        <label className={'btn btn-sm btn-outline-info'} htmlFor='file'>Load</label>
+                        <input 
+                            id='file' 
+                            className='files-input' 
+                            type='file' 
+                            onChange={ (e: any): void => this.submitFiles(e.target.files)} 
+                            multiple 
+                        />
                         
+                       &nbsp;
+                        <button 
+                            title='Zoom Out'
+                            className='btn btn-sm btn-outline-info save-button'
+                            onClick={this.save}
+                        >
+                            Save
+                        </button>
+
                     </div>
                     <SplitPane className='scrollable hide-resizer empty-first-pane' split='horizontal'  defaultSize={1} allowResize={false}>
                         <div></div>
                         <div>
-                            { this.props.globalErrors.length > 0 &&
-                                errorsToShow
-                            }   
-                            {this.props.globalErrors.length === 0  && this.props.loading ? 
+                            <ErrorInfoBox errorHandling={this.props.globalErrorHandling}/>
+                            {this.props.globalErrorHandling.errors.length === 0  && this.props.loading ? 
                                 <div className='file-browser-alert alert alert-warning' role='alert'>
                                     <small><i className='fas fa-info-circle'></i> Parsing Code: This may take a while...</small>
                                 </div> :   
@@ -212,9 +258,14 @@ export class FileBrowserView extends React.Component<FileBrowserViewProps, FileB
                                 (this.props.contracts.length > 0 &&  this.state.data ? 
                                     <div className='container'>
                                         <div className='row'>
-                                            <div className='col-12 file-tree'>
+                                            <div className='col-12 file-tree default-background'>
                                             
-                                                <Treebeard data={this.state.data} decorators={decorators} onToggle={this.onToggle}/> 
+                                                <Treebeard 
+                                                    className='default-background' 
+                                                    data={this.state.data} 
+                                                    decorators={decorators} 
+                                                    onToggle={this.onToggle}
+                                                /> 
                                             
                                             </div>
                                         </div>

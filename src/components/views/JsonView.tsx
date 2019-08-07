@@ -1,20 +1,35 @@
-/**
- * this file is part of bundesblock-voting
+/**  
+ *   This file is part of Piet.
  *
- * it is subject to the terms and conditions defined in
- * the 'LICENSE' file, which is part of the repository.
+ *   Copyright (C) 2019  Heiko Burkhardt <heiko@slock.it>, Slock.it GmbH
  *
- * @author Heiko Burkhardt
- * @copyright 2018 by Slock.it GmbH
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   Permissions of this strong copyleft license are conditioned on
+ *   making available complete source code of licensed works and 
+ *   modifications, which include larger works using a licensed work,
+ *   under the same license. Copyright and license notices must be
+ *   preserved. Contributors provide an express grant of patent rights.
+ *   
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 import * as React from 'react';
-import Web3Type from '../../types/web3';
 import JSONTree from 'react-json-tree';
 import SplitPane from 'react-split-pane';
+import { BlockchainConnection } from '../../solidity-handler/BlockchainConnector';
 
 interface JsonViewProps {
-    web3: Web3Type;
+    blockchainConnection: BlockchainConnection;
     content: any;
     viewId: number;
     tabId: number;
@@ -26,9 +41,7 @@ export class JsonView extends React.Component<JsonViewProps, {}> {
     render(): JSX.Element {
         
         const theme: any = {
-            scheme: 'monokai',
-            author: 'wimer hazenberg (http://www.monokai.nl)',
-            base00: '#272822',
+            base00: '#232323',
             base01: '#383830',
             base02: '#49483e',
             base03: '#75715e',
@@ -44,7 +57,7 @@ export class JsonView extends React.Component<JsonViewProps, {}> {
             base0D: '#66d9ef',
             base0E: '#ae81ff',
             base0F: '#cc6633'
-          };
+        };
 
         return <SplitPane className='scrollable hide-resizer' split='horizontal'  defaultSize={40} allowResize={false} >
                     <div className='h-100 w-100 toolbar'>
@@ -57,7 +70,7 @@ export class JsonView extends React.Component<JsonViewProps, {}> {
                         allowResize={false}
                     >
                         <div></div>
-                        <div className='container'>
+                        <div className='container-fluid'>
                             <div className='row'>
                                 <div className='col-12'>
                                     <small className='events-json-container'>

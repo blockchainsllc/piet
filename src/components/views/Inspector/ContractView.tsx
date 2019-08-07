@@ -1,27 +1,43 @@
-/**
- * this file is part of bundesblock-voting
+/**  
+ *   This file is part of Piet.
  *
- * it is subject to the terms and conditions defined in
- * the 'LICENSE' file, which is part of the repository.
+ *   Copyright (C) 2019  Heiko Burkhardt <heiko@slock.it>, Slock.it GmbH
  *
- * @author Heiko Burkhardt
- * @copyright 2018 by Slock.it GmbH
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   Permissions of this strong copyleft license are conditioned on
+ *   making available complete source code of licensed works and 
+ *   modifications, which include larger works using a licensed work,
+ *   under the same license. Copyright and license notices must be
+ *   preserved. Contributors provide an express grant of patent rights.
+ *   
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 import * as React from 'react';
 
 import * as Sol from '../../../solidity-handler/SolidityHandler';
-import Web3Type from '../../../types/web3';
 import { ContractStateVaribaleView } from './ContractStateVaribaleView';
 import { ContractEventView } from './ContractEventView';
 import { ContractModifierView } from './ContractModifierView';
 import { ContractFunctionView } from './ContractFunctionView';
 import { TabEntity, TabEntityType } from '../../View';
+import { UICreationHandling } from '../ui-creation/UIStructure';
+import { BlockchainConnection, checkBlockchainConnection } from '../../../solidity-handler/BlockchainConnector';
 interface ContractViewProps {
     selectedContract: Sol.Contract;
     contracts: Sol.Contract[];
     testMode: boolean;
-    web3: Web3Type;
+    blockchainConnection: BlockchainConnection;
     showInheritedMembers: boolean;
     addTabEntity: Function;
     markCode: Function;
@@ -29,7 +45,9 @@ interface ContractViewProps {
     changeContractAddress: Function;
     getEvents: Function;
     toggleInheritance: Function;
-
+    selectedTabTypeForView: TabEntityType[];
+    uiCreationHandling: UICreationHandling;
+    weiBalance: string;
 }
 
 interface ContractViewState {
@@ -58,7 +76,9 @@ export class ContractView extends React.Component<ContractViewProps, ContractVie
     render(): JSX.Element {
 
         const contract: Sol.Contract = this.props.selectedContract as Sol.Contract;
-        const subtitle: string = this.props.selectedContract.kind;
+        const subtitle: string = this.props.selectedContract.kind === 'contract' && this.props.selectedContract.isAbstract ? 
+            'abstract contract' : 
+            this.props.selectedContract.kind;
 
         const tabEntity: TabEntity = {
             active: true,
@@ -78,10 +98,16 @@ export class ContractView extends React.Component<ContractViewProps, ContractVie
             .find((annotation: Sol.SolidityAnnotation) => annotation.name === 'notice');
         return  <div className='card selected-card h-100'>
                    
-                    <div className='card-body selected-card contract-card'>
+                    <div className=
+                        {'card-body selected-card ' + (contract.isAbstract  ? 'abstract-contract-inspector' : 'contract-inspector')}
+                    >
                         <div className='text-center'>
                             {/* <h3>
-                                 <a href='#' className='inspector-view-headline' onClick={() => this.props.addTabEntity(tabEntity, 1, false)}>
+                                 <a 
+                                    href='#' 
+                                    className='inspector-view-headline' 
+                                    onClick={() => this.props.addTabEntity(tabEntity, 1, false)}
+                                 >
                                     {this.props.selectedContract.name}
                                  </a>
                             </h3>  */}
@@ -91,7 +117,10 @@ export class ContractView extends React.Component<ContractViewProps, ContractVie
                             </h6>
 
                             { !contract.source && <div className='text-muted-light' ><p>
-                                <strong className='error-red'>No sources found for this Contract.</strong> </p>
+                                    <span className='badge badge-danger'>
+                                        <i className='fas fa-exclamation-circle'></i> No sources found for this Contract.
+                                    </span>
+                                </p>
                                 <p>Child contracts don't show members inhertited from this contract. </p>                              
                             </div> }
                             <div className='text-muted-light normal-line-height'>
@@ -101,21 +130,25 @@ export class ContractView extends React.Component<ContractViewProps, ContractVie
                             </div>
                         </div>
                         <br />
-                        <ContractStateVaribaleView 
+                        <ContractStateVaribaleView
+                            uiCreationHandling={this.props.uiCreationHandling}
+                            selectedTabTypeForView={this.props.selectedTabTypeForView}  
                             toggleInheritance={this.props.toggleInheritance}
                             contracts={this.props.contracts}
                             selectedContract={this.props.selectedContract} 
                             showInheritedMembers={this.props.showInheritedMembers}
                             testMode={this.props.testMode} 
-                            web3={this.props.web3} />
+                            blockchainConnection={this.props.blockchainConnection} />
                         <ContractFunctionView 
+                            uiCreationHandling={this.props.uiCreationHandling}
+                            selectedTabTypeForView={this.props.selectedTabTypeForView}
                             toggleInheritance={this.props.toggleInheritance}
                             contracts={this.props.contracts}
                             markCode={this.props.markCode}
                             selectedContract={this.props.selectedContract} 
                             showInheritedMembers={this.props.showInheritedMembers} 
                             testMode={this.props.testMode}
-                            web3={this.props.web3} 
+                            blockchainConnection={this.props.blockchainConnection} 
                             addTabEntity={this.props.addTabEntity}
                         />
                         <ContractModifierView 
@@ -123,6 +156,10 @@ export class ContractView extends React.Component<ContractViewProps, ContractVie
                             selectedContract={this.props.selectedContract} 
                             showInheritedMembers={this.props.showInheritedMembers} />
                         <ContractEventView 
+                            contracts={this.props.contracts}
+                            uiCreationHandling={this.props.uiCreationHandling}
+                            selectedTabTypeForView={this.props.selectedTabTypeForView}
+                            blockchainConnection={this.props.blockchainConnection} 
                             toggleInheritance={this.props.toggleInheritance}
                             testMode={this.props.testMode}
                             selectedContract={this.props.selectedContract} 
@@ -131,33 +168,53 @@ export class ContractView extends React.Component<ContractViewProps, ContractVie
                         />
                         {contract.deployedAt || this.props.editContractAddress ? 
                             <div>
-                                <h5 id='meta' className='member-headline'><i className='fas fa-info-circle'></i> Meta</h5>
+                                <h5 id='meta' className='member-headline'><i className='fas fa-info-circle'></i> Instance information</h5>
                                 <div className='list-group'>
                                     <a  href='#' 
                                         className='selected-list-item list-group-item list-group-item-action flex-column align-items-start'
                                     >
-                                        <strong>Deployed at</strong>
+                                        <strong>Address</strong>
                                         <div>
                                             {this.props.editContractAddress ?
                                             <div>
                                                 <input
                                                     placeholder={contract.deployedAt}
-                                                    onChange={(e) => this.onChangeContractAddress(e)}
-                                                    className='form-control form-control-sm' type='text'
+                                                    onChange={(e: any): void => this.onChangeContractAddress(e)}
+                                                    className='form-control form-control-sm input-output' 
+                                                    type='text'
                                                 />
                                                 <div className='text-right functionOperations'>
                                                 <button 
                                                     type='button'
                                                     className='function-operation-button btn btn-outline-primary btn-sm'
-                                                    onClick={() => {this.props.changeContractAddress(this.state.contractAddress, contract.name); }}
+                                                    onClick={(): void => {
+                                                        this.props.changeContractAddress(this.state.contractAddress, contract.name); 
+                                                    }}
                                                 >
                                                         Save
                                                 </button>
                                                 </div>
                                             </div>
-                                            : <small>{contract.deployedAt}</small>}
+                                            : <span className='input-output'>{contract.deployedAt}</span>}
                                         </div>
                                     </a>
+                                    { this.props.weiBalance &&
+                                        <a  href='#' 
+                                            className='
+                                                selected-list-item
+                                                list-group-item
+                                                list-group-item-action
+                                                flex-column
+                                                align-items-start
+                                            '
+                                        >
+                                        <strong>Wei balance</strong>
+                                        <div>
+                                            <span className='input-output'>{this.props.weiBalance}</span>
+                                        </div>
+                                    </a>
+                                    }
+                                    
                                 </div>
                             </div>
                             : null

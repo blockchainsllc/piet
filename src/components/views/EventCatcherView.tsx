@@ -1,22 +1,37 @@
-/**
- * this file is part of bundesblock-voting
+/**  
+ *   This file is part of Piet.
  *
- * it is subject to the terms and conditions defined in
- * the 'LICENSE' file, which is part of the repository.
+ *   Copyright (C) 2019  Heiko Burkhardt <heiko@slock.it>, Slock.it GmbH
  *
- * @author Heiko Burkhardt
- * @copyright 2018 by Slock.it GmbH
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   Permissions of this strong copyleft license are conditioned on
+ *   making available complete source code of licensed works and 
+ *   modifications, which include larger works using a licensed work,
+ *   under the same license. Copyright and license notices must be
+ *   preserved. Contributors provide an express grant of patent rights.
+ *   
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 import * as React from 'react';
 import * as Sol from '../../solidity-handler/SolidityHandler';
-import Web3Type from '../../types/web3';
 import JSONTree from 'react-json-tree';
 import SplitPane from 'react-split-pane';
 import { getEventAbi } from '../../utils/AbiGenerator';
+import { BlockchainConnection } from '../../solidity-handler/BlockchainConnector';
 
 interface EventCatcherViewProps {
-    web3: Web3Type;
+    blockchainConnection: BlockchainConnection;
     content: EventViewContent;
     contentChange: Function;
     viewId: number;
@@ -73,8 +88,8 @@ export class EventCatcherView extends React.Component<EventCatcherViewProps, Eve
         });
         const fromBlock: string = this.props.content.fromBlock ? this.props.content.fromBlock : '0';
         const toBlock: string = this.props.content.toBlock ? this.props.content.toBlock : 'latest';
-        const contract: any = new this.props.web3.eth.Contract(
-            getEventAbi(this.props.content.event, this.props.web3, this.props.contracts),
+        const contract: any = new this.props.blockchainConnection.web3.eth.Contract(
+            getEventAbi(this.props.content.event, this.props.contracts, this.props.content.contract),
             this.props.content.contract.deployedAt);
         this.props.contentChange(this.props.viewId, this.props.tabId, {
             ...this.props.content,
@@ -151,14 +166,14 @@ export class EventCatcherView extends React.Component<EventCatcherViewProps, Eve
                             />
                             &nbsp;
                             <button className={'btn btn-sm btn-outline-info'}
-                                onClick={() => this.onClickPlay()}>
+                                onClick={(): Promise<void> => this.onClickPlay()}>
                                 <i className='fas fa-play'></i>
                             </button>
                             &nbsp;
                             &nbsp;
                             &nbsp;
                             <button className={'btn btn-sm btn-' + (this.state.rawView ? '' : 'outline-') + 'info'}
-                                onClick={() => this.onClickRaw()}>
+                                onClick={(): void => this.onClickRaw()}>
                                 Raw View
                             </button>
                         </div>
@@ -182,7 +197,7 @@ export class EventCatcherView extends React.Component<EventCatcherViewProps, Eve
                                 </small>
                                 : null }
                             {this.props.content.result && this.state.rawView ?
-                                <div className='container'>
+                                <div className='container-fluid'>
                                     <div className='row'>
                                         <div className='col-12'>
                                             <small>

@@ -1,24 +1,38 @@
-/**
- * this file is part of bundesblock-voting
+/**  
+ *   This file is part of Piet.
  *
- * it is subject to the terms and conditions defined in
- * the 'LICENSE' file, which is part of the repository.
+ *   Copyright (C) 2019  Heiko Burkhardt <heiko@slock.it>, Slock.it GmbH
  *
- * @author Heiko Burkhardt
- * @copyright 2018 by Slock.it GmbH
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   Permissions of this strong copyleft license are conditioned on
+ *   making available complete source code of licensed works and 
+ *   modifications, which include larger works using a licensed work,
+ *   under the same license. Copyright and license notices must be
+ *   preserved. Contributors provide an express grant of patent rights.
+ *   
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 import * as React from 'react';
 import * as Sol from '../../../solidity-handler/SolidityHandler';
-import { Conversion, Convert } from '../../../solidity-handler/TypeConversion';
-import Web3Type from '../../../types/web3';
+import { Conversion, convert } from '../../../solidity-handler/TypeConversion';
 import * as CsvParse from 'csv-parse';
 import * as PromiseFileReader from 'promise-file-reader';
 import SplitPane from 'react-split-pane';
-import { Eth } from '../../../types/types';
+import { sendFunction, BlockchainConnection } from '../../../solidity-handler/BlockchainConnector';
 
 interface MigrationAssistentProps {
-    web3: Web3Type;
+    blockchainConnection: BlockchainConnection;
     content: any;
     viewId: number;
     tabId: number;
@@ -93,9 +107,10 @@ export class MigrationAssistent extends React.Component<MigrationAssistentProps,
         });
     }
 
-    onClickPlay(): void {
+    async onClickPlay(): Promise<void> {
         this.addOutputMessage('Starting Migration...');
-        this.state.migrationFunctions.forEach((migrationFunction: MigrationFunction) => {
+        for (const migrationFunction of this.state.migrationFunctions) {
+        
             
             const convertedParams: any[] = Array(this.state.parsedCsv.length).fill(
                 Array(migrationFunction.selectedFunction.params.length).fill(null)
@@ -112,7 +127,7 @@ export class MigrationAssistent extends React.Component<MigrationAssistentProps,
                         
                         convertedParams[rowIndex] = [
                             ...convertedParams[rowIndex].slice(0, paramIndex),
-                            Convert(migrationFunctionMapping.conversion, row[migrationFunctionMapping.columnNumber], this.props.web3),
+                            convert(migrationFunctionMapping.conversion, row[migrationFunctionMapping.columnNumber], this.props.blockchainConnection),
                             ...convertedParams[rowIndex].slice(paramIndex + 1)
                         ]; 
                             
@@ -120,7 +135,7 @@ export class MigrationAssistent extends React.Component<MigrationAssistentProps,
                 });
             });
 
-            convertedParams.forEach(async (line: any) => {
+            for (const line of convertedParams) {
                 let log: string = migrationFunction.selectedContract.name + '.' + migrationFunction.selectedFunction.name + '(';
             
                 line.forEach((value: any, index: number) => {
@@ -130,29 +145,27 @@ export class MigrationAssistent extends React.Component<MigrationAssistentProps,
                 //this.addOutputMessage('Try to send Tx: ' + log);
                 await this.send(migrationFunction, line);
 
-            });
+            }
           
-        });
+        }
     }
 
     async send(migrationFunction: MigrationFunction, params: any[]): Promise<void> {
 
-        const accounts: string[] = await this.props.web3.eth.getAccounts();
-        
-        if (accounts.length > 0) {
-            
-            const contract: any = new this.props.web3.eth.Contract(
-                migrationFunction.selectedContract.meta.abi, 
-                migrationFunction.selectedContract.deployedAt);
+        try {
+            await sendFunction(
+                migrationFunction.selectedFunction, 
+                this.props.blockchainConnection, 
+                migrationFunction.selectedContract.deployedAt, 
+                migrationFunction.selectedContract.meta.abi,
+                params,
+                null
+            );
+            this.addOutputMessage('Tx successfully send: ' + migrationFunction.selectedFunction.name);
+        } catch (e) {
+            this.addOutputMessage('ERROR: ' + e.message.toString());
+        } 
 
-            try {
-                await contract.methods[migrationFunction.selectedFunction.name](...params).send({from: accounts[0]}); 
-                this.addOutputMessage('Tx successfully send');
-            } catch (e) {
-                this.addOutputMessage('ERROR: ' + e.message.toString());
-            } 
-
-        }
     }
 
     async parseCsvFile(fileList: FileList): Promise<void> {
@@ -259,13 +272,15 @@ export class MigrationAssistent extends React.Component<MigrationAssistentProps,
             );
 
         return (
-            <select 
-                onChange={(event) => this.onSelectFunction(event, migrationFunction.selectedContract, index)} 
-                className='custom-select custom-select-sm migration-select migration-select-down'
-            >
-                <option key={'null'}>Select Function</option>
-                {functionOptions}
-            </select>
+            <div className='form-group migration-select-form'>
+                <select 
+                    onChange={(event) => this.onSelectFunction(event, migrationFunction.selectedContract, index)} 
+                    className='custom-select custom-select-sm migration-select'
+                >
+                    <option key={'null'}>Select Function</option>
+                    {functionOptions}
+                </select>
+            </div>
         );
     }
 
@@ -294,14 +309,17 @@ export class MigrationAssistent extends React.Component<MigrationAssistentProps,
             .fill(null)
             .map((item: any, index: number) => 
                 <td key={index}>
-                    <select 
-                        onChange={(event) => this.onSelectParameter(event, selectedFunction, lineIndex, index)} 
-                        className='custom-select custom-select-sm migration-select'
-                    >
-                        <option key={'null'}></option>
-                        {parameterOptions(index)}
-                    </select>
+                    <div className='form-group migration-select-form'>
+                        <select 
+                            onChange={(event) => this.onSelectParameter(event, selectedFunction, lineIndex, index)} 
+                            className='custom-select custom-select-sm migration-select'
+                        >
+                            <option key={'null'}></option>
+                            {parameterOptions(index)}
+                        </select>
+                    </div>
                     {this.parameterConversions(this.state.migrationFunctions[lineIndex].parameterColumnMapping[index], lineIndex, index)}
+                    
                 </td>
                 
             );
@@ -328,12 +346,14 @@ export class MigrationAssistent extends React.Component<MigrationAssistentProps,
             );
         
         return (
-            <select 
-            onChange={(event) => this.onSelectConversion(event, lineIndex, colIndex)} 
-                className='custom-select custom-select-sm migration-select migration-select-down'
-            >
-                {conversions}
-            </select>
+            <div className='form-group migration-select-form'>
+                <select 
+                onChange={(event) => this.onSelectConversion(event, lineIndex, colIndex)} 
+                    className='custom-select custom-select-sm migration-select migration-select-down'
+                >
+                    {conversions}
+                </select>
+            </div>
         );
 
     }
@@ -347,15 +367,18 @@ export class MigrationAssistent extends React.Component<MigrationAssistentProps,
         return migrationFunctions.map((migrationFunction: MigrationFunction, index: number) => 
             <tr key={index}> 
                 <td className='migration-function-cell'>
-                    <select 
-                        onChange={(event) => this.onSelectContract(event, index)} 
-                        className='custom-select custom-select-sm migration-select'
-                    >
-                        <option key={'null'}>Select Contract</option>
-                        {contractSelect}
-                    </select>
-                   
-                    {this.functionSelector(migrationFunction, index)}
+                    <div className='form-group migration-select-form'>
+                        <select 
+                            onChange={(event) => this.onSelectContract(event, index)} 
+                            className='custom-select custom-select-sm migration-select'
+                        >
+                            <option key={'null'}>Select Contract</option>
+                            {contractSelect}
+                        </select>
+                    </div>
+                    
+                        {this.functionSelector(migrationFunction, index)}
+                    
                     
                 </td>
                 {this.functionParameters(migrationFunction.selectedFunction, index, numberOfColumns)}
