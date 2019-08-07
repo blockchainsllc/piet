@@ -82,5 +82,6 @@ mirror-to-github:
       - export GIT_SSH_COMMAND="/usr/bin/ssh -o StrictHostKeyChecking=no -i $GITHUB_PUSH_KEY"
       - git remote rm external || true
       - git remote add external git@github.com:slockit/piet.git
+      - git status
       - git push -u --force external master
       - git push --force external --tags 
