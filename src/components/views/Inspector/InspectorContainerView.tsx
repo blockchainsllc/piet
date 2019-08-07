@@ -100,7 +100,7 @@ export class InspectorContainerView extends React.Component<InspectorContainerVi
     }
 
     componentWillReceiveProps(props: InspectorContainerViewProps): void {
-        this.init(this.props);
+        this.init(props);
     }
 
     async init(props: InspectorContainerViewProps): Promise<void> {
