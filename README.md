@@ -1,6 +1,7 @@
 # Piet
 A tool helping to grasp solidity smart contract architectures.
 
+**Warning:** Piet has not yet undergone in-depth testing and may contain serious bugs.
 
 ## Abstract
 Piet is a web application providing support to understand smart contract architectures. 
@@ -14,7 +15,6 @@ The presentation of the contract and the contract members is enriched by documen
 Piet also provides an interactive mode enabling to read the state of a smart contract, sending transactions and browsing through events. This is achieved by connecting to deployed smart contracts through an injected web3 object.  
 
 
-
 ## Feature List
 - Graphical representation of smart contract architectures
   - Inheritance structure of contracts
@@ -26,21 +26,19 @@ Piet also provides an interactive mode enabling to read the state of a smart con
 - Interactive Mode
   - Read state from blockchain (e.g. state variables, view functions) 
   - Send transactions
-  - Show events 
-- Solidity code viewer 
+- Event browser
+- NatSpec to Markdown documentation generator
+- Node inspection via JSON RPC calls
+- Transaction history view
+- Code and ABI view
 
 ## Usage
 Type `npm i` followed by `npm start` to start a local instance of Piet at [http://localhost:3001](http://localhost:3001 ) 
 
-## Screenshots 
-![Piet Screeshot](docs/complete-screen.png)
-### Smart contract inspector
-![Inspector](docs/inspector.png)
-### Events
-![Events](docs/events.png)
-### Events Raw
-![Events raw](docs/events-raw.png)
+## Known Issues
+- Some returned tuples may not be displayed correctly
+- Two or more contracts with the identical name cannot be loaded
+- The react component structure needs to be refactored
 
-## Name
-The main feature of Piet is to provide a graphical representation of smart contract architectures consisting mostly of rectangles and lines on a canvas. 
-So I decided to name this software after Piet Mondrian who seems to be a pioneer in doing this ;)
+
+
