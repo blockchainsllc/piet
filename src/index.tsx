@@ -26,7 +26,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
-import { EntryPoint } from './EntryPoint';
+import { App } from './components/AppContainer';
 
 import * as Sentry from '@sentry/browser';
 
@@ -36,7 +36,7 @@ Sentry.init({
 
 ReactDOM.render(
     <BrowserRouter>
-        <EntryPoint />
+        <App />
     </BrowserRouter>,
-    document.getElementById('example')
+    document.getElementById('theApp')
 );
