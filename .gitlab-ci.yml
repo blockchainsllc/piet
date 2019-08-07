@@ -79,8 +79,8 @@ mirror-to-github:
       - /^v[0-9]+.[0-9]+.[0-9]+$/
     script:
       - echo -e "$GITHUB_PUSH_KEY" > /gitkey
-      - chmod 400 $GITHUB_PUSH_KEY
-      - export GIT_SSH_COMMAND="/usr/bin/ssh -o StrictHostKeyChecking=no -i $GITHUB_PUSH_KEY"
+      - chmod 0400 /gitkey
+      - export GIT_SSH_COMMAND="/usr/bin/ssh -o StrictHostKeyChecking=no -i /gitkey"
       - git branch -D ext-master || true
       - git checkout -b ext-master
       - git remote rm external || true
