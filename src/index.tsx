@@ -28,12 +28,6 @@ import * as ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 import { App } from './components/AppContainer';
 
-import * as Sentry from '@sentry/browser';
-
-Sentry.init({
-    dsn: 'https://bed0f0a54f70456b8b83c5da0d8b5c56@sentry.slock.it/9'
-});
-
 ReactDOM.render(
     <BrowserRouter>
         <App />
