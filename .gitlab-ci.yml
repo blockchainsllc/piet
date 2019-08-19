@@ -71,7 +71,7 @@ deploy-to-production:
 
 mirror-to-github:
     stage: mirror
-    image: docker.slock.it/build-images/deployment
+    when: manual
     tags:
       - short-jobs
     only: 
