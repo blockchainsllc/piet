@@ -71,6 +71,7 @@ deploy-to-production:
 
 mirror-to-github:
     stage: mirror
+    when: manual
     tags:
       - short-jobs
     only: 
