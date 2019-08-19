@@ -78,8 +78,13 @@ mirror-to-github:
       - master
       - /^v[0-9]+.[0-9]+.[0-9]+$/
     script:
-      - chmod 0400 $GITHUB_PUSH_KEY
-      - export GIT_SSH_COMMAND="/usr/bin/ssh -o StrictHostKeyChecking=no -i $GITHUB_PUSH_KEY"
+      - echo -e "$GITHUB_PUSH_KEY" > /gitkey
+      - chmod 0400 /gitkey
+      - export GIT_SSH_COMMAND="/usr/bin/ssh -o StrictHostKeyChecking=no -i /gitkey"
+      - git branch -D ext-master || true
+      - git checkout -b ext-master
+      - git remote rm external || true
       - git remote add external git@github.com:slockit/piet.git
-      - git push --force external master
+      - git status
+      - git push -u --force external ext-master:master
       - git push --force external --tags 
