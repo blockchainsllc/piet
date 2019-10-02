@@ -287,7 +287,7 @@ export class ContractStateVaribaleView extends React.Component<ContractStateVari
         }
     
         return  <div >
-                    <h5 className='member-headline'><i className='fas fa-database'></i> State varibales</h5>
+                    <h5 className='member-headline'><i className='fas fa-database'></i> State variables</h5>
                     <div className='list-group'>
                         {this.getStateVariableList(this.props.selectedContract, false)}
                         {this.getStateVariableList(this.props.selectedContract, true)}
