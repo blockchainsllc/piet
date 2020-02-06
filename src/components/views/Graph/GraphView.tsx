@@ -30,7 +30,7 @@ import * as SolidityHandler from '../../../solidity-handler/SolidityHandler';
 import * as JointElements from './JointElements';
 import { Graph, graphGenerator, getDefaultGraph, GraphViewType, extractElementsFromGraph } from './GraphGenerator';
 
-interface GraphViewProps {
+export interface GraphViewProps {
     contracts: SolidityHandler.Contract[];
     graphScale: number;
     changeSelectedElement: Function;
@@ -75,9 +75,10 @@ export class GraphView extends React.Component<GraphViewProps, GraphViewState> {
 
         if (this.props.selectedContractName) {
             this.highlightContract(null, this.props.selectedContractName, this.props);
-            this.props.removeContractToSelect();
+            if (this.props.removeContractToSelect) {
+                this.props.removeContractToSelect();
+            }
         }
-
     }
 
     hightlightNode(slectedNodeElement: any, node: any): void {
@@ -184,7 +185,6 @@ export class GraphView extends React.Component<GraphViewProps, GraphViewState> {
     }
 
     componentWillReceiveProps(newProps: GraphViewProps): void {
-        
         if (this.props.graphScale !== newProps.graphScale) {
             this.scale(newProps.graphScale);
         }
@@ -216,16 +216,18 @@ export class GraphView extends React.Component<GraphViewProps, GraphViewState> {
     }
 
     storeGraph(props: GraphViewProps): void {
-        props.setGraph({ 
-            graph: this.model.toJSON(),
-            inheritanceLinks: this.inheritanceLinks,
-            otherLinks: this.otherLinks,
-            nodeIdNamePairs: this.nodeIdNamePairs
-        });
+        if (props.setGraph) {
+            props.setGraph({ 
+                graph: this.model.toJSON(),
+                inheritanceLinks: this.inheritanceLinks,
+                otherLinks: this.otherLinks,
+                nodeIdNamePairs: this.nodeIdNamePairs
+            });
+        }
+        
     }   
 
     update(props: GraphViewProps): void {
-        
         const defaultGraph: Graph = getDefaultGraph();
         this.paper = null;
     
@@ -266,12 +268,14 @@ export class GraphView extends React.Component<GraphViewProps, GraphViewState> {
             this.storeGraph(props);
         });
 
-        props.setGraph({ 
-            graph: graph.graph.toJSON(),
-            inheritanceLinks: graph.inheritanceLinks,
-            otherLinks: graph.otherLinks,
-            nodeIdNamePairs: graph.nodeIdNamePairs
-        });
+        if (props.setGraph && props.contracts.length > 0) {
+            props.setGraph({ 
+                graph: graph.graph.toJSON(),
+                inheritanceLinks: graph.inheritanceLinks,
+                otherLinks: graph.otherLinks,
+                nodeIdNamePairs: graph.nodeIdNamePairs
+            });
+        }
 
         this.scale(props.graphScale);
    

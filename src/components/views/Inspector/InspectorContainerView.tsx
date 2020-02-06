@@ -84,7 +84,8 @@ export class InspectorContainerView extends React.Component<InspectorContainerVi
                 name: 'Documentation',
                 content: null,
                 icon: 'book-open',
-                removable: true
+                removable: true,
+                isLoading: true
             }, 
             1,
             false
@@ -170,7 +171,7 @@ export class InspectorContainerView extends React.Component<InspectorContainerVi
                     allowResize={false} 
                 >
                     <div className='h-100 w-100 toolbar'>
-                        { this.props.selectedElement && this.props.selectedElement.elementType === Sol.ElementType.Contract &&
+                        { this.state.codeBoxIsShown && this.props.selectedElement && this.props.selectedElement.elementType === Sol.ElementType.Contract &&
                             <ContractCodeBox 
                                 blockchainConnection={this.props.blockchainConnection}
                                 codeBoxIsShown={this.state.codeBoxIsShown}
@@ -186,11 +187,11 @@ export class InspectorContainerView extends React.Component<InspectorContainerVi
                                     className={'btn btn-sm btn' + (this.state.showInheritedMembers ? '' : '-outline') + '-info'}
                                     onClick={() => this.toogleShowInheritedMembers()}
                                 >
-                                    <i className='fas fa-sitemap'></i>
+                                    <i className='fas fa-project-diagram'></i>
                                 </button>
                                 &nbsp;
                                 <button 
-                                    title={this.state.testMode ? 'Deactivate Ineractive Mode' : 'Activate Ineractive Mode' } 
+                                    title={this.state.testMode ? 'Deactivate Interactive Mode' : 'Activate Interactive Mode' } 
                                     className={'btn btn-sm btn' + (this.state.testMode ? '' : '-outline') + '-info'}
                                     onClick={() => this.toogleTestMode()}
                                 >
@@ -222,7 +223,7 @@ export class InspectorContainerView extends React.Component<InspectorContainerVi
                                 className={'btn btn-sm btn' + (this.state.editContractAddress ? '' : '-outline') + '-info'}
                                 onClick={() => this.toogleEditContractAddress()}
                             >
-                                <i className='fas fa-edit'></i> Instance Address
+                                <i className='fas fa-edit'></i>
                             </a>
                         </div>
                     </div>
@@ -234,6 +235,7 @@ export class InspectorContainerView extends React.Component<InspectorContainerVi
                     >
                         <div></div>
                         <SelectedView 
+                            toogleEditContractAddress={this.toogleEditContractAddress}
                             uiCreationHandling={this.props.uiCreationHandling}
                             selectedTabTypeForView={this.props.selectedTabTypeForView}
                             toggleInheritance={this.toogleShowInheritedMembers}

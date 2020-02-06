@@ -27,7 +27,7 @@ import * as React from 'react';
 import * as Sol from '../../../solidity-handler/SolidityHandler';
 import * as Hljs from 'highlight.js';
 import SyntaxHighlighter from 'react-syntax-highlighter';
-import { docco } from 'react-syntax-highlighter/styles/hljs';
+import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { getFunctionAbi } from '../../../utils/AbiGenerator';
 import * as jsonFormat from 'json-format';
 import { spawnSync } from 'child_process';

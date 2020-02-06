@@ -1,0 +1,1767 @@
+{
+  "pietFileVersion": "0.0.1",
+  "contracts": [
+    {
+      "elementType": 0,
+      "name": "A",
+      "baseContracts": [],
+      "enumerations": [],
+      "structs": [
+        {
+          "name": "A.Test",
+          "shortName": "Test",
+          "parentName": "A",
+          "elementType": 1,
+          "fields": [
+            {
+              "name": "number",
+              "solidityType": {
+                "name": "uint256",
+                "userDefined": false,
+                "references": [],
+                "isArray": false
+              },
+              "visibility": null
+            },
+            {
+              "name": "isTest",
+              "solidityType": {
+                "name": "bool",
+                "userDefined": false,
+                "references": [],
+                "isArray": false
+              },
+              "visibility": null
+            }
+          ]
+        }
+      ],
+      "stateVariables": [
+        {
+          "name": "nestedMapping",
+          "solidityType": {
+            "name": "(bool => (address => (uint => (address => Test))))",
+            "mapping": {
+              "key": {
+                "name": "bool",
+                "userDefined": false,
+                "references": [],
+                "isArray": false
+              },
+              "value": {
+                "name": "(address => (uint => (address => Test)))",
+                "mapping": {
+                  "key": {
+                    "name": "address",
+                    "userDefined": false,
+                    "references": [],
+                    "isArray": false
+                  },
+                  "value": {
+                    "name": "(uint => (address => Test))",
+                    "mapping": {
+                      "key": {
+                        "name": "uint",
+                        "userDefined": false,
+                        "references": [],
+                        "isArray": false
+                      },
+                      "value": {
+                        "name": "(address => Test)",
+                        "mapping": {
+                          "key": {
+                            "name": "address",
+                            "userDefined": false,
+                            "references": [],
+                            "isArray": false
+                          },
+                          "value": {
+                            "name": "Test",
+                            "userDefined": true,
+                            "references": [
+                              "Test"
+                            ],
+                            "isArray": false
+                          }
+                        },
+                        "userDefined": true,
+                        "references": [],
+                        "isArray": false
+                      }
+                    },
+                    "userDefined": true,
+                    "references": [],
+                    "isArray": false
+                  }
+                },
+                "userDefined": true,
+                "references": [],
+                "isArray": false
+              }
+            },
+            "userDefined": true,
+            "references": [],
+            "isArray": false
+          },
+          "visibility": "public",
+          "getter": {
+            "annotations": null,
+            "description": null,
+            "end": null,
+            "modifiers": [
+              "view",
+              "public"
+            ],
+            "name": "nestedMapping",
+            "params": [
+              {
+                "name": "",
+                "solidityType": {
+                  "name": "bool",
+                  "userDefined": false,
+                  "references": [],
+                  "isArray": false
+                },
+                "isStorage": false,
+                "isIndexed": false,
+                "description": null,
+                "lastType": {
+                  "name": "(address => (uint => (address => Test)))",
+                  "mapping": {
+                    "key": {
+                      "name": "address",
+                      "userDefined": false,
+                      "references": [],
+                      "isArray": false
+                    },
+                    "value": {
+                      "name": "(uint => (address => Test))",
+                      "mapping": {
+                        "key": {
+                          "name": "uint",
+                          "userDefined": false,
+                          "references": [],
+                          "isArray": false
+                        },
+                        "value": {
+                          "name": "(address => Test)",
+                          "mapping": {
+                            "key": {
+                              "name": "address",
+                              "userDefined": false,
+                              "references": [],
+                              "isArray": false
+                            },
+                            "value": {
+                              "name": "Test",
+                              "userDefined": true,
+                              "references": [
+                                "Test"
+                              ],
+                              "isArray": false
+                            }
+                          },
+                          "userDefined": true,
+                          "references": [],
+                          "isArray": false
+                        }
+                      },
+                      "userDefined": true,
+                      "references": [],
+                      "isArray": false
+                    }
+                  },
+                  "userDefined": true,
+                  "references": [],
+                  "isArray": false
+                }
+              },
+              {
+                "name": "",
+                "solidityType": {
+                  "name": "address",
+                  "userDefined": false,
+                  "references": [],
+                  "isArray": false
+                },
+                "isStorage": false,
+                "isIndexed": false,
+                "description": null,
+                "lastType": {
+                  "name": "(uint => (address => Test))",
+                  "mapping": {
+                    "key": {
+                      "name": "uint",
+                      "userDefined": false,
+                      "references": [],
+                      "isArray": false
+                    },
+                    "value": {
+                      "name": "(address => Test)",
+                      "mapping": {
+                        "key": {
+                          "name": "address",
+                          "userDefined": false,
+                          "references": [],
+                          "isArray": false
+                        },
+                        "value": {
+                          "name": "Test",
+                          "userDefined": true,
+                          "references": [
+                            "Test"
+                          ],
+                          "isArray": false
+                        }
+                      },
+                      "userDefined": true,
+                      "references": [],
+                      "isArray": false
+                    }
+                  },
+                  "userDefined": true,
+                  "references": [],
+                  "isArray": false
+                }
+              },
+              {
+                "name": "",
+                "solidityType": {
+                  "name": "uint",
+                  "userDefined": false,
+                  "references": [],
+                  "isArray": false
+                },
+                "isStorage": false,
+                "isIndexed": false,
+                "description": null,
+                "lastType": {
+                  "name": "(address => Test)",
+                  "mapping": {
+                    "key": {
+                      "name": "address",
+                      "userDefined": false,
+                      "references": [],
+                      "isArray": false
+                    },
+                    "value": {
+                      "name": "Test",
+                      "userDefined": true,
+                      "references": [
+                        "Test"
+                      ],
+                      "isArray": false
+                    }
+                  },
+                  "userDefined": true,
+                  "references": [],
+                  "isArray": false
+                }
+              },
+              {
+                "name": "",
+                "solidityType": {
+                  "name": "address",
+                  "userDefined": false,
+                  "references": [],
+                  "isArray": false
+                },
+                "isStorage": false,
+                "isIndexed": false,
+                "description": null,
+                "lastType": {
+                  "name": "Test",
+                  "userDefined": true,
+                  "references": [
+                    "Test"
+                  ],
+                  "isArray": false
+                }
+              }
+            ],
+            "returnParams": [
+              {
+                "solidityType": {
+                  "name": "Test",
+                  "userDefined": true,
+                  "references": [
+                    "Test"
+                  ],
+                  "isArray": false
+                },
+                "isStorage": false,
+                "isIndexed": false,
+                "description": null
+              }
+            ],
+            "source": null,
+            "start": null
+          }
+        },
+        {
+          "name": "aTestArray",
+          "solidityType": {
+            "name": "Test[]",
+            "pureName": "Test",
+            "userDefined": true,
+            "references": [],
+            "isArray": true
+          },
+          "visibility": "public",
+          "getter": {
+            "annotations": null,
+            "description": null,
+            "end": null,
+            "modifiers": [
+              "view",
+              "public"
+            ],
+            "name": "aTestArray",
+            "params": [
+              {
+                "solidityType": {
+                  "isArray": false,
+                  "name": "uint256",
+                  "references": [],
+                  "userDefined": false
+                },
+                "isStorage": false,
+                "isIndexed": false,
+                "description": null,
+                "lastType": {
+                  "name": "Test",
+                  "userDefined": true,
+                  "references": [
+                    "Test"
+                  ],
+                  "isArray": false
+                }
+              }
+            ],
+            "returnParams": [
+              {
+                "solidityType": {
+                  "name": "Test",
+                  "userDefined": true,
+                  "references": [
+                    "Test"
+                  ],
+                  "isArray": false
+                },
+                "isStorage": false,
+                "isIndexed": false,
+                "description": null
+              }
+            ],
+            "source": null,
+            "start": null
+          }
+        },
+        {
+          "name": "simple",
+          "solidityType": {
+            "name": "uint256",
+            "userDefined": false,
+            "references": [],
+            "isArray": false
+          },
+          "visibility": "public",
+          "getter": {
+            "annotations": null,
+            "description": null,
+            "end": null,
+            "modifiers": [
+              "view",
+              "public"
+            ],
+            "name": "simple",
+            "params": [],
+            "returnParams": [
+              {
+                "name": "",
+                "solidityType": {
+                  "name": "uint256",
+                  "userDefined": false,
+                  "references": [],
+                  "isArray": false
+                },
+                "isStorage": false,
+                "isIndexed": false,
+                "description": null
+              }
+            ],
+            "source": null,
+            "start": null
+          }
+        },
+        {
+          "name": "arrayMapping",
+          "solidityType": {
+            "name": "(uint => Test[])",
+            "mapping": {
+              "key": {
+                "name": "uint",
+                "userDefined": false,
+                "references": [],
+                "isArray": false
+              },
+              "value": {
+                "name": "Test[]",
+                "pureName": "Test",
+                "userDefined": true,
+                "references": [],
+                "isArray": true
+              }
+            },
+            "userDefined": true,
+            "references": [],
+            "isArray": false
+          },
+          "visibility": "public",
+          "getter": {
+            "annotations": null,
+            "description": null,
+            "end": null,
+            "modifiers": [
+              "view",
+              "public"
+            ],
+            "name": "arrayMapping",
+            "params": [
+              {
+                "name": "",
+                "solidityType": {
+                  "name": "uint",
+                  "userDefined": false,
+                  "references": [],
+                  "isArray": false
+                },
+                "isStorage": false,
+                "isIndexed": false,
+                "description": null,
+                "lastType": {
+                  "name": "Test[]",
+                  "pureName": "Test",
+                  "userDefined": true,
+                  "references": [],
+                  "isArray": true
+                }
+              },
+              {
+                "solidityType": {
+                  "isArray": false,
+                  "name": "uint256",
+                  "references": [],
+                  "userDefined": false
+                },
+                "isStorage": false,
+                "isIndexed": false,
+                "description": null,
+                "lastType": {
+                  "name": "Test",
+                  "userDefined": true,
+                  "references": [
+                    "Test"
+                  ],
+                  "isArray": false
+                }
+              }
+            ],
+            "returnParams": [
+              {
+                "solidityType": {
+                  "name": "Test",
+                  "userDefined": true,
+                  "references": [
+                    "Test"
+                  ],
+                  "isArray": false
+                },
+                "isStorage": false,
+                "isIndexed": false,
+                "description": null
+              }
+            ],
+            "source": null,
+            "start": null
+          }
+        }
+      ],
+      "functions": [
+        {
+          "name": "constructor",
+          "params": [],
+          "returnParams": [],
+          "description": "",
+          "modifiers": [
+            "public",
+            null
+          ],
+          "source": "constructor() public {\n        \n        simple = 123;\n        \n        nestedMapping[true][address(0)][2][address(0)].number = 99;\n        nestedMapping[true][address(0)][2][address(0)].isTest = true;\n        \n        aTestArray.push(Test({\n            number: 67,\n            isTest: true\n        }));\n\n        arrayMapping[1].push(Test({\n            number: 67,\n            isTest: true\n        }));\n    }",
+          "start": {
+            "line": 17,
+            "column": 4
+          },
+          "end": {
+            "line": 33,
+            "column": 4
+          },
+          "annotations": []
+        }
+      ],
+      "annotations": [],
+      "deployedAt": null,
+      "meta": null,
+      "modifiers": [],
+      "events": [],
+      "kind": "contract",
+      "heritageDissolved": true,
+      "inheritedStateVariables": [],
+      "inheritedFunctions": [],
+      "inheritedEvents": [],
+      "inheritedModifiers": [],
+      "source": "contract A {\n  \n    struct Test {\n        uint256 number;\n        bool isTest;\n    }\n    \n    mapping(bool => mapping (address => mapping(uint => mapping(address => Test)))) public nestedMapping;\n    \n    Test[] public aTestArray;\n    \n    uint256 public simple; \n\n    \n    mapping(uint => Test[]) public arrayMapping;\n    \n    constructor() public {\n        \n        simple = 123;\n        \n        nestedMapping[true][address(0)][2][address(0)].number = 99;\n        nestedMapping[true][address(0)][2][address(0)].isTest = true;\n        \n        aTestArray.push(Test({\n            number: 67,\n            isTest: true\n        }));\n\n        arrayMapping[1].push(Test({\n            number: 67,\n            isTest: true\n        }));\n    }\n    \n\n}",
+      "inFile": "A.sol",
+      "references": [
+        "Test"
+      ],
+      "isAbstract": false
+    },
+    {
+      "elementType": 0,
+      "name": "B",
+      "baseContracts": [],
+      "enumerations": [],
+      "structs": [
+        {
+          "name": "B.Test",
+          "shortName": "Test",
+          "parentName": "B",
+          "elementType": 1,
+          "fields": [
+            {
+              "name": "number",
+              "solidityType": {
+                "name": "uint256",
+                "userDefined": false,
+                "references": [],
+                "isArray": false
+              },
+              "visibility": null
+            },
+            {
+              "name": "isTest",
+              "solidityType": {
+                "name": "bool",
+                "userDefined": false,
+                "references": [],
+                "isArray": false
+              },
+              "visibility": null
+            }
+          ]
+        }
+      ],
+      "stateVariables": [],
+      "functions": [],
+      "annotations": [],
+      "deployedAt": null,
+      "meta": null,
+      "modifiers": [],
+      "events": [],
+      "kind": "contract",
+      "heritageDissolved": true,
+      "inheritedStateVariables": [],
+      "inheritedFunctions": [],
+      "inheritedEvents": [],
+      "inheritedModifiers": [],
+      "source": "contract B {\n  \n    struct Test {\n        uint256 number;\n        bool isTest;\n    }\n\n\n    \n\n}",
+      "inFile": "B.sol",
+      "references": [],
+      "isAbstract": false
+    }
+  ],
+  "graph": {
+    "graph": {
+      "cells": [
+        {
+          "type": "link",
+          "source": {
+            "id": "be86e52d-b848-49a0-8049-37aceeeb76c9"
+          },
+          "target": {
+            "id": "20d76f61-0a10-4b76-b63a-67a8851b5a20"
+          },
+          "router": {
+            "name": "manhattan",
+            "args": {}
+          },
+          "connector": {
+            "name": "normal"
+          },
+          "id": "cd7b11c2-c4aa-4c73-a8a1-a34794334ffc",
+          "z": -1,
+          "attrs": {
+            ".marker-target": {
+              "stroke": "#8e8e8e",
+              "fill": "#8e8e8e",
+              "d": "M 10 0 L 0 5 L 10 10 z"
+            },
+            ".connection": {
+              "stroke-width": 2,
+              "stroke": "#8e8e8e"
+            }
+          }
+        },
+        {
+          "type": "link",
+          "source": {
+            "id": "0e19e148-db79-40a9-9f7d-852d38f4ed94"
+          },
+          "target": {
+            "id": "3c8c556a-b591-4fa8-bc66-1ebc6b92b7a1"
+          },
+          "router": {
+            "name": "manhattan",
+            "args": {}
+          },
+          "connector": {
+            "name": "normal"
+          },
+          "id": "1919a7ca-de46-4042-b180-7d755337cd0b",
+          "z": 0,
+          "attrs": {
+            ".marker-target": {
+              "stroke": "#8e8e8e",
+              "fill": "#8e8e8e",
+              "d": "M 10 0 L 0 5 L 10 10 z"
+            },
+            ".connection": {
+              "stroke-width": 2,
+              "stroke": "#8e8e8e"
+            }
+          }
+        },
+        {
+          "type": "basic.Rect",
+          "position": {
+            "x": 200,
+            "y": 0
+          },
+          "size": {
+            "width": 150,
+            "height": 40
+          },
+          "angle": 0,
+          "id": "3c8c556a-b591-4fa8-bc66-1ebc6b92b7a1",
+          "z": 1,
+          "attrs": {
+            "text": {
+              "text": "A",
+              "font-size": 12,
+              "class": "node-text"
+            },
+            "image": {
+              "xlink:href": "assets/file-contract-solid.svg"
+            },
+            "rect": {
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
+            }
+          }
+        },
+        {
+          "type": "basic.Rect",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "size": {
+            "width": 150,
+            "height": 40
+          },
+          "angle": 0,
+          "id": "0e19e148-db79-40a9-9f7d-852d38f4ed94",
+          "z": 2,
+          "attrs": {
+            "text": {
+              "text": "Test",
+              "font-size": 12,
+              "class": "node-text"
+            },
+            "image": {
+              "xlink:href": "assets/stream-solid.svg"
+            },
+            "rect": {
+              "class": "struct-node",
+              "rx": 5,
+              "ry": 10
+            }
+          }
+        },
+        {
+          "type": "basic.Rect",
+          "position": {
+            "x": 200,
+            "y": 70
+          },
+          "size": {
+            "width": 150,
+            "height": 40
+          },
+          "angle": 0,
+          "id": "20d76f61-0a10-4b76-b63a-67a8851b5a20",
+          "z": 3,
+          "attrs": {
+            "text": {
+              "text": "B",
+              "font-size": 12,
+              "class": "node-text"
+            },
+            "image": {
+              "xlink:href": "assets/file-contract-solid.svg"
+            },
+            "rect": {
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
+            }
+          }
+        },
+        {
+          "type": "basic.Rect",
+          "position": {
+            "x": 0,
+            "y": 70
+          },
+          "size": {
+            "width": 150,
+            "height": 40
+          },
+          "angle": 0,
+          "id": "be86e52d-b848-49a0-8049-37aceeeb76c9",
+          "z": 4,
+          "attrs": {
+            "text": {
+              "text": "Test",
+              "font-size": 12,
+              "class": "node-text"
+            },
+            "image": {
+              "xlink:href": "assets/stream-solid.svg"
+            },
+            "rect": {
+              "class": "struct-node",
+              "rx": 5,
+              "ry": 10
+            }
+          }
+        }
+      ]
+    },
+    "inheritanceLinks": [],
+    "otherLinks": [
+      {
+        "type": "link",
+        "source": {
+          "id": "0e19e148-db79-40a9-9f7d-852d38f4ed94"
+        },
+        "target": {
+          "id": "3c8c556a-b591-4fa8-bc66-1ebc6b92b7a1"
+        },
+        "router": {
+          "name": "manhattan",
+          "args": {}
+        },
+        "connector": {
+          "name": "normal"
+        },
+        "id": "1919a7ca-de46-4042-b180-7d755337cd0b",
+        "z": 5,
+        "attrs": {
+          ".marker-target": {
+            "stroke": "#8e8e8e",
+            "fill": "#8e8e8e",
+            "d": "M 10 0 L 0 5 L 10 10 z"
+          },
+          ".connection": {
+            "stroke-width": 2,
+            "stroke": "#8e8e8e"
+          }
+        }
+      },
+      {
+        "type": "link",
+        "source": {
+          "id": "be86e52d-b848-49a0-8049-37aceeeb76c9"
+        },
+        "target": {
+          "id": "20d76f61-0a10-4b76-b63a-67a8851b5a20"
+        },
+        "router": {
+          "name": "manhattan",
+          "args": {}
+        },
+        "connector": {
+          "name": "normal"
+        },
+        "id": "cd7b11c2-c4aa-4c73-a8a1-a34794334ffc",
+        "z": 6,
+        "attrs": {
+          ".marker-target": {
+            "stroke": "#fe8550",
+            "fill": "#fe8550",
+            "d": "M 10 0 L 0 5 L 10 10 z"
+          },
+          ".connection": {
+            "stroke-width": 4,
+            "stroke": "#fe8550"
+          }
+        }
+      }
+    ],
+    "nodeIdNamePairs": [
+      {
+        "nodeElement": {
+          "elementType": 0,
+          "name": "A",
+          "baseContracts": [],
+          "enumerations": [],
+          "structs": [
+            {
+              "name": "A.Test",
+              "shortName": "Test",
+              "parentName": "A",
+              "elementType": 1,
+              "fields": [
+                {
+                  "name": "number",
+                  "solidityType": {
+                    "name": "uint256",
+                    "userDefined": false,
+                    "references": [],
+                    "isArray": false
+                  },
+                  "visibility": null
+                },
+                {
+                  "name": "isTest",
+                  "solidityType": {
+                    "name": "bool",
+                    "userDefined": false,
+                    "references": [],
+                    "isArray": false
+                  },
+                  "visibility": null
+                }
+              ]
+            }
+          ],
+          "stateVariables": [
+            {
+              "name": "nestedMapping",
+              "solidityType": {
+                "name": "(bool => (address => (uint => (address => Test))))",
+                "mapping": {
+                  "key": {
+                    "name": "bool",
+                    "userDefined": false,
+                    "references": [],
+                    "isArray": false
+                  },
+                  "value": {
+                    "name": "(address => (uint => (address => Test)))",
+                    "mapping": {
+                      "key": {
+                        "name": "address",
+                        "userDefined": false,
+                        "references": [],
+                        "isArray": false
+                      },
+                      "value": {
+                        "name": "(uint => (address => Test))",
+                        "mapping": {
+                          "key": {
+                            "name": "uint",
+                            "userDefined": false,
+                            "references": [],
+                            "isArray": false
+                          },
+                          "value": {
+                            "name": "(address => Test)",
+                            "mapping": {
+                              "key": {
+                                "name": "address",
+                                "userDefined": false,
+                                "references": [],
+                                "isArray": false
+                              },
+                              "value": {
+                                "name": "Test",
+                                "userDefined": true,
+                                "references": [
+                                  "Test"
+                                ],
+                                "isArray": false
+                              }
+                            },
+                            "userDefined": true,
+                            "references": [],
+                            "isArray": false
+                          }
+                        },
+                        "userDefined": true,
+                        "references": [],
+                        "isArray": false
+                      }
+                    },
+                    "userDefined": true,
+                    "references": [],
+                    "isArray": false
+                  }
+                },
+                "userDefined": true,
+                "references": [],
+                "isArray": false
+              },
+              "visibility": "public",
+              "getter": {
+                "annotations": null,
+                "description": null,
+                "end": null,
+                "modifiers": [
+                  "view",
+                  "public"
+                ],
+                "name": "nestedMapping",
+                "params": [
+                  {
+                    "name": "",
+                    "solidityType": {
+                      "name": "bool",
+                      "userDefined": false,
+                      "references": [],
+                      "isArray": false
+                    },
+                    "isStorage": false,
+                    "isIndexed": false,
+                    "description": null,
+                    "lastType": {
+                      "name": "(address => (uint => (address => Test)))",
+                      "mapping": {
+                        "key": {
+                          "name": "address",
+                          "userDefined": false,
+                          "references": [],
+                          "isArray": false
+                        },
+                        "value": {
+                          "name": "(uint => (address => Test))",
+                          "mapping": {
+                            "key": {
+                              "name": "uint",
+                              "userDefined": false,
+                              "references": [],
+                              "isArray": false
+                            },
+                            "value": {
+                              "name": "(address => Test)",
+                              "mapping": {
+                                "key": {
+                                  "name": "address",
+                                  "userDefined": false,
+                                  "references": [],
+                                  "isArray": false
+                                },
+                                "value": {
+                                  "name": "Test",
+                                  "userDefined": true,
+                                  "references": [
+                                    "Test"
+                                  ],
+                                  "isArray": false
+                                }
+                              },
+                              "userDefined": true,
+                              "references": [],
+                              "isArray": false
+                            }
+                          },
+                          "userDefined": true,
+                          "references": [],
+                          "isArray": false
+                        }
+                      },
+                      "userDefined": true,
+                      "references": [],
+                      "isArray": false
+                    }
+                  },
+                  {
+                    "name": "",
+                    "solidityType": {
+                      "name": "address",
+                      "userDefined": false,
+                      "references": [],
+                      "isArray": false
+                    },
+                    "isStorage": false,
+                    "isIndexed": false,
+                    "description": null,
+                    "lastType": {
+                      "name": "(uint => (address => Test))",
+                      "mapping": {
+                        "key": {
+                          "name": "uint",
+                          "userDefined": false,
+                          "references": [],
+                          "isArray": false
+                        },
+                        "value": {
+                          "name": "(address => Test)",
+                          "mapping": {
+                            "key": {
+                              "name": "address",
+                              "userDefined": false,
+                              "references": [],
+                              "isArray": false
+                            },
+                            "value": {
+                              "name": "Test",
+                              "userDefined": true,
+                              "references": [
+                                "Test"
+                              ],
+                              "isArray": false
+                            }
+                          },
+                          "userDefined": true,
+                          "references": [],
+                          "isArray": false
+                        }
+                      },
+                      "userDefined": true,
+                      "references": [],
+                      "isArray": false
+                    }
+                  },
+                  {
+                    "name": "",
+                    "solidityType": {
+                      "name": "uint",
+                      "userDefined": false,
+                      "references": [],
+                      "isArray": false
+                    },
+                    "isStorage": false,
+                    "isIndexed": false,
+                    "description": null,
+                    "lastType": {
+                      "name": "(address => Test)",
+                      "mapping": {
+                        "key": {
+                          "name": "address",
+                          "userDefined": false,
+                          "references": [],
+                          "isArray": false
+                        },
+                        "value": {
+                          "name": "Test",
+                          "userDefined": true,
+                          "references": [
+                            "Test"
+                          ],
+                          "isArray": false
+                        }
+                      },
+                      "userDefined": true,
+                      "references": [],
+                      "isArray": false
+                    }
+                  },
+                  {
+                    "name": "",
+                    "solidityType": {
+                      "name": "address",
+                      "userDefined": false,
+                      "references": [],
+                      "isArray": false
+                    },
+                    "isStorage": false,
+                    "isIndexed": false,
+                    "description": null,
+                    "lastType": {
+                      "name": "Test",
+                      "userDefined": true,
+                      "references": [
+                        "Test"
+                      ],
+                      "isArray": false
+                    }
+                  }
+                ],
+                "returnParams": [
+                  {
+                    "solidityType": {
+                      "name": "Test",
+                      "userDefined": true,
+                      "references": [
+                        "Test"
+                      ],
+                      "isArray": false
+                    },
+                    "isStorage": false,
+                    "isIndexed": false,
+                    "description": null
+                  }
+                ],
+                "source": null,
+                "start": null
+              }
+            },
+            {
+              "name": "aTestArray",
+              "solidityType": {
+                "name": "Test[]",
+                "pureName": "Test",
+                "userDefined": true,
+                "references": [],
+                "isArray": true
+              },
+              "visibility": "public",
+              "getter": {
+                "annotations": null,
+                "description": null,
+                "end": null,
+                "modifiers": [
+                  "view",
+                  "public"
+                ],
+                "name": "aTestArray",
+                "params": [
+                  {
+                    "solidityType": {
+                      "isArray": false,
+                      "name": "uint256",
+                      "references": [],
+                      "userDefined": false
+                    },
+                    "isStorage": false,
+                    "isIndexed": false,
+                    "description": null,
+                    "lastType": {
+                      "name": "Test",
+                      "userDefined": true,
+                      "references": [
+                        "Test"
+                      ],
+                      "isArray": false
+                    }
+                  }
+                ],
+                "returnParams": [
+                  {
+                    "solidityType": {
+                      "name": "Test",
+                      "userDefined": true,
+                      "references": [
+                        "Test"
+                      ],
+                      "isArray": false
+                    },
+                    "isStorage": false,
+                    "isIndexed": false,
+                    "description": null
+                  }
+                ],
+                "source": null,
+                "start": null
+              }
+            },
+            {
+              "name": "simple",
+              "solidityType": {
+                "name": "uint256",
+                "userDefined": false,
+                "references": [],
+                "isArray": false
+              },
+              "visibility": "public",
+              "getter": {
+                "annotations": null,
+                "description": null,
+                "end": null,
+                "modifiers": [
+                  "view",
+                  "public"
+                ],
+                "name": "simple",
+                "params": [],
+                "returnParams": [
+                  {
+                    "name": "",
+                    "solidityType": {
+                      "name": "uint256",
+                      "userDefined": false,
+                      "references": [],
+                      "isArray": false
+                    },
+                    "isStorage": false,
+                    "isIndexed": false,
+                    "description": null
+                  }
+                ],
+                "source": null,
+                "start": null
+              }
+            },
+            {
+              "name": "arrayMapping",
+              "solidityType": {
+                "name": "(uint => Test[])",
+                "mapping": {
+                  "key": {
+                    "name": "uint",
+                    "userDefined": false,
+                    "references": [],
+                    "isArray": false
+                  },
+                  "value": {
+                    "name": "Test[]",
+                    "pureName": "Test",
+                    "userDefined": true,
+                    "references": [],
+                    "isArray": true
+                  }
+                },
+                "userDefined": true,
+                "references": [],
+                "isArray": false
+              },
+              "visibility": "public",
+              "getter": {
+                "annotations": null,
+                "description": null,
+                "end": null,
+                "modifiers": [
+                  "view",
+                  "public"
+                ],
+                "name": "arrayMapping",
+                "params": [
+                  {
+                    "name": "",
+                    "solidityType": {
+                      "name": "uint",
+                      "userDefined": false,
+                      "references": [],
+                      "isArray": false
+                    },
+                    "isStorage": false,
+                    "isIndexed": false,
+                    "description": null,
+                    "lastType": {
+                      "name": "Test[]",
+                      "pureName": "Test",
+                      "userDefined": true,
+                      "references": [],
+                      "isArray": true
+                    }
+                  },
+                  {
+                    "solidityType": {
+                      "isArray": false,
+                      "name": "uint256",
+                      "references": [],
+                      "userDefined": false
+                    },
+                    "isStorage": false,
+                    "isIndexed": false,
+                    "description": null,
+                    "lastType": {
+                      "name": "Test",
+                      "userDefined": true,
+                      "references": [
+                        "Test"
+                      ],
+                      "isArray": false
+                    }
+                  }
+                ],
+                "returnParams": [
+                  {
+                    "solidityType": {
+                      "name": "Test",
+                      "userDefined": true,
+                      "references": [
+                        "Test"
+                      ],
+                      "isArray": false
+                    },
+                    "isStorage": false,
+                    "isIndexed": false,
+                    "description": null
+                  }
+                ],
+                "source": null,
+                "start": null
+              }
+            }
+          ],
+          "functions": [
+            {
+              "name": "constructor",
+              "params": [],
+              "returnParams": [],
+              "description": "",
+              "modifiers": [
+                "public",
+                null
+              ],
+              "source": "constructor() public {\n        \n        simple = 123;\n        \n        nestedMapping[true][address(0)][2][address(0)].number = 99;\n        nestedMapping[true][address(0)][2][address(0)].isTest = true;\n        \n        aTestArray.push(Test({\n            number: 67,\n            isTest: true\n        }));\n\n        arrayMapping[1].push(Test({\n            number: 67,\n            isTest: true\n        }));\n    }",
+              "start": {
+                "line": 17,
+                "column": 4
+              },
+              "end": {
+                "line": 33,
+                "column": 4
+              },
+              "annotations": []
+            }
+          ],
+          "annotations": [],
+          "deployedAt": null,
+          "meta": null,
+          "modifiers": [],
+          "events": [],
+          "kind": "contract",
+          "heritageDissolved": true,
+          "inheritedStateVariables": [],
+          "inheritedFunctions": [],
+          "inheritedEvents": [],
+          "inheritedModifiers": [],
+          "source": "contract A {\n  \n    struct Test {\n        uint256 number;\n        bool isTest;\n    }\n    \n    mapping(bool => mapping (address => mapping(uint => mapping(address => Test)))) public nestedMapping;\n    \n    Test[] public aTestArray;\n    \n    uint256 public simple; \n\n    \n    mapping(uint => Test[]) public arrayMapping;\n    \n    constructor() public {\n        \n        simple = 123;\n        \n        nestedMapping[true][address(0)][2][address(0)].number = 99;\n        nestedMapping[true][address(0)][2][address(0)].isTest = true;\n        \n        aTestArray.push(Test({\n            number: 67,\n            isTest: true\n        }));\n\n        arrayMapping[1].push(Test({\n            number: 67,\n            isTest: true\n        }));\n    }\n    \n\n}",
+          "inFile": "A.sol",
+          "references": [
+            "Test"
+          ],
+          "isAbstract": false
+        },
+        "jointjsNode": {
+          "type": "basic.Rect",
+          "position": {
+            "x": 200,
+            "y": 0
+          },
+          "size": {
+            "width": 150,
+            "height": 40
+          },
+          "angle": 0,
+          "id": "3c8c556a-b591-4fa8-bc66-1ebc6b92b7a1",
+          "z": 1,
+          "attrs": {
+            "text": {
+              "text": "A",
+              "font-size": 12,
+              "class": "node-text"
+            },
+            "image": {
+              "xlink:href": "assets/file-contract-solid.svg"
+            },
+            "rect": {
+              "class": "contract-node",
+              "rx": 1,
+              "ry": 2
+            }
+          }
+        },
+        "inheritanceLinks": [],
+        "otherLinks": [
+          {
+            "type": "link",
+            "source": {
+              "id": "0e19e148-db79-40a9-9f7d-852d38f4ed94"
+            },
+            "target": {
+              "id": "3c8c556a-b591-4fa8-bc66-1ebc6b92b7a1"
+            },
+            "router": {
+              "name": "manhattan",
+              "args": {}
+            },
+            "connector": {
+              "name": "normal"
+            },
+            "id": "1919a7ca-de46-4042-b180-7d755337cd0b",
+            "z": 5,
+            "attrs": {
+              ".marker-target": {
+                "stroke": "#8e8e8e",
+                "fill": "#8e8e8e",
+                "d": "M 10 0 L 0 5 L 10 10 z"
+              },
+              ".connection": {
+                "stroke-width": 2,
+                "stroke": "#8e8e8e"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "nodeElement": {
+          "name": "A.Test",
+          "shortName": "Test",
+          "parentName": "A",
+          "elementType": 1,
+          "fields": [
+            {
+              "name": "number",
+              "solidityType": {
+                "name": "uint256",
+                "userDefined": false,
+                "references": [],
+                "isArray": false
+              },
+              "visibility": null
+            },
+            {
+              "name": "isTest",
+              "solidityType": {
+                "name": "bool",
+                "userDefined": false,
+                "references": [],
+                "isArray": false
+              },
+              "visibility": null
+            }
+          ]
+        },
+        "jointjsNode": {
+          "type": "basic.Rect",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "size": {
+            "width": 150,
+            "height": 40
+          },
+          "angle": 0,
+          "id": "0e19e148-db79-40a9-9f7d-852d38f4ed94",
+          "z": 2,
+          "attrs": {
+            "text": {
+              "text": "Test",
+              "font-size": 12,
+              "class": "node-text"
+            },
+            "image": {
+              "xlink:href": "assets/stream-solid.svg"
+            },
+            "rect": {
+              "class": "struct-node",
+              "rx": 5,
+              "ry": 10
+            }
+          }
+        },
+        "inheritanceLinks": [],
+        "otherLinks": [
+          {
+            "type": "link",
+            "source": {
+              "id": "0e19e148-db79-40a9-9f7d-852d38f4ed94"
+            },
+            "target": {
+              "id": "3c8c556a-b591-4fa8-bc66-1ebc6b92b7a1"
+            },
+            "router": {
+              "name": "manhattan",
+              "args": {}
+            },
+            "connector": {
+              "name": "normal"
+            },
+            "id": "1919a7ca-de46-4042-b180-7d755337cd0b",
+            "z": 5,
+            "attrs": {
+              ".marker-target": {
+                "stroke": "#8e8e8e",
+                "fill": "#8e8e8e",
+                "d": "M 10 0 L 0 5 L 10 10 z"
+              },
+              ".connection": {
+                "stroke-width": 2,
+                "stroke": "#8e8e8e"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "nodeElement": {
+          "elementType": 0,
+          "name": "B",
+          "baseContracts": [],
+          "enumerations": [],
+          "structs": [
+            {
+              "name": "B.Test",
+              "shortName": "Test",
+              "parentName": "B",
+              "elementType": 1,
+              "fields": [
+                {
+                  "name": "number",
+                  "solidityType": {
+                    "name": "uint256",
+                    "userDefined": false,
+                    "references": [],
+                    "isArray": false
+                  },
+                  "visibility": null
+                },
+                {
+                  "name": "isTest",
+                  "solidityType": {
+                    "name": "bool",
+                    "userDefined": false,
+                    "references": [],
+                    "isArray": false
+                  },
+                  "visibility": null
+                }
+              ]
+            }
+          ],
+          "stateVariables": [],
+          "functions": [],
+          "annotations": [],
+          "deployedAt": null,
+          "meta": null,
+          "modifiers": [],
+          "events": [],
+          "kind": "contract",
+          "heritageDissolved": true,
+          "inheritedStateVariables": [],
+          "inheritedFunctions": [],
+          "inheritedEvents": [],
+          "inheritedModifiers": [],
+          "source": "contract B {\n  \n    struct Test {\n        uint256 number;\n        bool isTest;\n    }\n\n\n    \n\n}",
+          "inFile": "B.sol",
+          "references": [],
+          "isAbstract": false
+        },
+        "jointjsNode": {
+          "type": "basic.Rect",
+          "position": {
+            "x": 200,
+            "y": 70
+          },
+          "size": {
+            "width": 150,
+            "height": 40
+          },
+          "angle": 0,
+          "id": "20d76f61-0a10-4b76-b63a-67a8851b5a20",
+          "z": 3,
+          "attrs": {
+            "text": {
+              "text": "B",
+              "font-size": 12,
+              "class": "node-text"
+            },
+            "image": {
+              "xlink:href": "assets/file-contract-solid.svg"
+            },
+            "rect": {
+              "class": "contract-node node-highlighted",
+              "rx": 1,
+              "ry": 2
+            }
+          }
+        },
+        "inheritanceLinks": [],
+        "otherLinks": [
+          {
+            "type": "link",
+            "source": {
+              "id": "be86e52d-b848-49a0-8049-37aceeeb76c9"
+            },
+            "target": {
+              "id": "20d76f61-0a10-4b76-b63a-67a8851b5a20"
+            },
+            "router": {
+              "name": "manhattan",
+              "args": {}
+            },
+            "connector": {
+              "name": "normal"
+            },
+            "id": "cd7b11c2-c4aa-4c73-a8a1-a34794334ffc",
+            "z": 6,
+            "attrs": {
+              ".marker-target": {
+                "stroke": "#fe8550",
+                "fill": "#fe8550",
+                "d": "M 10 0 L 0 5 L 10 10 z"
+              },
+              ".connection": {
+                "stroke-width": 4,
+                "stroke": "#fe8550"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "nodeElement": {
+          "name": "B.Test",
+          "shortName": "Test",
+          "parentName": "B",
+          "elementType": 1,
+          "fields": [
+            {
+              "name": "number",
+              "solidityType": {
+                "name": "uint256",
+                "userDefined": false,
+                "references": [],
+                "isArray": false
+              },
+              "visibility": null
+            },
+            {
+              "name": "isTest",
+              "solidityType": {
+                "name": "bool",
+                "userDefined": false,
+                "references": [],
+                "isArray": false
+              },
+              "visibility": null
+            }
+          ]
+        },
+        "jointjsNode": {
+          "type": "basic.Rect",
+          "position": {
+            "x": 0,
+            "y": 70
+          },
+          "size": {
+            "width": 150,
+            "height": 40
+          },
+          "angle": 0,
+          "id": "be86e52d-b848-49a0-8049-37aceeeb76c9",
+          "z": 4,
+          "attrs": {
+            "text": {
+              "text": "Test",
+              "font-size": 12,
+              "class": "node-text"
+            },
+            "image": {
+              "xlink:href": "assets/stream-solid.svg"
+            },
+            "rect": {
+              "class": "struct-node",
+              "rx": 5,
+              "ry": 10
+            }
+          }
+        },
+        "inheritanceLinks": [],
+        "otherLinks": [
+          {
+            "type": "link",
+            "source": {
+              "id": "be86e52d-b848-49a0-8049-37aceeeb76c9"
+            },
+            "target": {
+              "id": "20d76f61-0a10-4b76-b63a-67a8851b5a20"
+            },
+            "router": {
+              "name": "manhattan",
+              "args": {}
+            },
+            "connector": {
+              "name": "normal"
+            },
+            "id": "cd7b11c2-c4aa-4c73-a8a1-a34794334ffc",
+            "z": 6,
+            "attrs": {
+              ".marker-target": {
+                "stroke": "#fe8550",
+                "fill": "#fe8550",
+                "d": "M 10 0 L 0 5 L 10 10 z"
+              },
+              ".connection": {
+                "stroke-width": 4,
+                "stroke": "#fe8550"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "selectedElement": {
+    "elementType": 0,
+    "name": "B",
+    "baseContracts": [],
+    "enumerations": [],
+    "structs": [
+      {
+        "name": "B.Test",
+        "shortName": "Test",
+        "parentName": "B",
+        "elementType": 1,
+        "fields": [
+          {
+            "name": "number",
+            "solidityType": {
+              "name": "uint256",
+              "userDefined": false,
+              "references": [],
+              "isArray": false
+            },
+            "visibility": null
+          },
+          {
+            "name": "isTest",
+            "solidityType": {
+              "name": "bool",
+              "userDefined": false,
+              "references": [],
+              "isArray": false
+            },
+            "visibility": null
+          }
+        ]
+      }
+    ],
+    "stateVariables": [],
+    "functions": [],
+    "annotations": [],
+    "deployedAt": null,
+    "meta": null,
+    "modifiers": [],
+    "events": [],
+    "kind": "contract",
+    "heritageDissolved": true,
+    "inheritedStateVariables": [],
+    "inheritedFunctions": [],
+    "inheritedEvents": [],
+    "inheritedModifiers": [],
+    "source": "contract B {\n  \n    struct Test {\n        uint256 number;\n        bool isTest;\n    }\n\n\n    \n\n}",
+    "inFile": "B.sol",
+    "references": [],
+    "isAbstract": false
+  }
+}

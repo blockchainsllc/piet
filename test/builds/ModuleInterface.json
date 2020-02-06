@@ -1,0 +1,307 @@
+{
+  "contractName": "ModuleInterface",
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "NAME",
+      "outputs": [
+        {
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "VERSION",
+      "outputs": [
+        {
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.5.10+commit.5a6ea5b1\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"constant\":true,\"inputs\":[],\"name\":\"NAME\",\"outputs\":[{\"name\":\"\",\"type\":\"string\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"VERSION\",\"outputs\":[{\"name\":\"\",\"type\":\"string\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"author\":\"David Nicholas - <dnicholas@blockchains.com>\",\"methods\":{},\"title\":\"Module Interface - An interface to get the name and version of a module\"},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"/Users/heikoburkhardt/Documents/custody/multisig_contracts/contracts/module-interface/ModuleInterface.sol\":\"ModuleInterface\"},\"evmVersion\":\"byzantium\",\"libraries\":{},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/Users/heikoburkhardt/Documents/custody/multisig_contracts/contracts/module-interface/ModuleInterface.sol\":{\"keccak256\":\"0xcd4af82aa6fb12117af445ef078801bfa56f98e03e577224c535b1b922409e6c\",\"urls\":[\"bzzr://ffc9767682c700c88a35749ed6c420b8ccc44de49fd9612dfc3682bc7832b396\",\"dweb:/ipfs/QmTtf8EDQL7o9MuGnaFEw1tbzG2GFgHMhXnLQbGGWiV22U\"]}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b5061015d806100206000396000f3fe608060405234801561001057600080fd5b5060043610610052577c01000000000000000000000000000000000000000000000000000000006000350463a3f4df7e8114610057578063ffa1ad74146100d4575b600080fd5b61005f6100dc565b6040805160208082528351818301528351919283929083019185019080838360005b83811015610099578181015183820152602001610081565b50505050905090810190601f1680156100c65780820380516001836020036101000a031916815260200191505b509250505060405180910390f35b61005f6100ef565b6040518060200160405280600081525081565b6040518060400160405280600581526020017f302e302e300000000000000000000000000000000000000000000000000000008152508156fea265627a7a72305820b21fbd915f76aa832770e9b4feb1786a88d89e1c6017ad30bdad1d13569792b064736f6c634300050a0032",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b5060043610610052577c01000000000000000000000000000000000000000000000000000000006000350463a3f4df7e8114610057578063ffa1ad74146100d4575b600080fd5b61005f6100dc565b6040805160208082528351818301528351919283929083019185019080838360005b83811015610099578181015183820152602001610081565b50505050905090810190601f1680156100c65780820380516001836020036101000a031916815260200191505b509250505060405180910390f35b61005f6100ef565b6040518060200160405280600081525081565b6040518060400160405280600581526020017f302e302e300000000000000000000000000000000000000000000000000000008152508156fea265627a7a72305820b21fbd915f76aa832770e9b4feb1786a88d89e1c6017ad30bdad1d13569792b064736f6c634300050a0032",
+  "sourceMap": "205:112:4:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;205:112:4;;;;;;;",
+  "deployedSourceMap": "205:112:4:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;205:112:4;;;;;;;;;;;;;;;;;;;;;;;;236:32;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;8:100:-1;33:3;30:1;27:10;8:100;;;90:11;;;84:18;71:11;;;64:39;52:2;45:10;8:100;;;12:14;236:32:4;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;274:40;;;:::i;236:32::-;;;;;;;;;;;;;;:::o;274:40::-;;;;;;;;;;;;;;;;;;;:::o",
+  "source": "pragma solidity 0.5.10;\n\n/// @title Module Interface - An interface to get the name and version of a module\n/// @author David Nicholas - <dnicholas@blockchains.com>\n\n//solium-disable-next-line blank-lines\ncontract ModuleInterface {\n    string public constant NAME = \"\";\n    string public constant VERSION = \"0.0.0\";\n}\n",
+  "sourcePath": "/Users/heikoburkhardt/Documents/custody/multisig_contracts/contracts/module-interface/ModuleInterface.sol",
+  "ast": {
+    "absolutePath": "/Users/heikoburkhardt/Documents/custody/multisig_contracts/contracts/module-interface/ModuleInterface.sol",
+    "exportedSymbols": {
+      "ModuleInterface": [
+        1141
+      ]
+    },
+    "id": 1142,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 1134,
+        "literals": [
+          "solidity",
+          "0.5",
+          ".10"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:4"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": "@title Module Interface - An interface to get the name and version of a module\n @author David Nicholas - <dnicholas@blockchains.com>",
+        "fullyImplemented": true,
+        "id": 1141,
+        "linearizedBaseContracts": [
+          1141
+        ],
+        "name": "ModuleInterface",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "constant": true,
+            "id": 1137,
+            "name": "NAME",
+            "nodeType": "VariableDeclaration",
+            "scope": 1141,
+            "src": "236:32:4",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_string_memory",
+              "typeString": "string"
+            },
+            "typeName": {
+              "id": 1135,
+              "name": "string",
+              "nodeType": "ElementaryTypeName",
+              "src": "236:6:4",
+              "typeDescriptions": {
+                "typeIdentifier": "t_string_storage_ptr",
+                "typeString": "string"
+              }
+            },
+            "value": {
+              "argumentTypes": null,
+              "hexValue": "",
+              "id": 1136,
+              "isConstant": false,
+              "isLValue": false,
+              "isPure": true,
+              "kind": "string",
+              "lValueRequested": false,
+              "nodeType": "Literal",
+              "src": "266:2:4",
+              "subdenomination": null,
+              "typeDescriptions": {
+                "typeIdentifier": "t_stringliteral_c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+                "typeString": "literal_string \"\""
+              },
+              "value": ""
+            },
+            "visibility": "public"
+          },
+          {
+            "constant": true,
+            "id": 1140,
+            "name": "VERSION",
+            "nodeType": "VariableDeclaration",
+            "scope": 1141,
+            "src": "274:40:4",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_string_memory",
+              "typeString": "string"
+            },
+            "typeName": {
+              "id": 1138,
+              "name": "string",
+              "nodeType": "ElementaryTypeName",
+              "src": "274:6:4",
+              "typeDescriptions": {
+                "typeIdentifier": "t_string_storage_ptr",
+                "typeString": "string"
+              }
+            },
+            "value": {
+              "argumentTypes": null,
+              "hexValue": "302e302e30",
+              "id": 1139,
+              "isConstant": false,
+              "isLValue": false,
+              "isPure": true,
+              "kind": "string",
+              "lValueRequested": false,
+              "nodeType": "Literal",
+              "src": "307:7:4",
+              "subdenomination": null,
+              "typeDescriptions": {
+                "typeIdentifier": "t_stringliteral_09a13c37e92d1241eb6d4e601d2ee55d46fecc5385dc68e1f17d2201a79bbb5e",
+                "typeString": "literal_string \"0.0.0\""
+              },
+              "value": "0.0.0"
+            },
+            "visibility": "public"
+          }
+        ],
+        "scope": 1142,
+        "src": "205:112:4"
+      }
+    ],
+    "src": "0:318:4"
+  },
+  "legacyAST": {
+    "absolutePath": "/Users/heikoburkhardt/Documents/custody/multisig_contracts/contracts/module-interface/ModuleInterface.sol",
+    "exportedSymbols": {
+      "ModuleInterface": [
+        1141
+      ]
+    },
+    "id": 1142,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 1134,
+        "literals": [
+          "solidity",
+          "0.5",
+          ".10"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:4"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": "@title Module Interface - An interface to get the name and version of a module\n @author David Nicholas - <dnicholas@blockchains.com>",
+        "fullyImplemented": true,
+        "id": 1141,
+        "linearizedBaseContracts": [
+          1141
+        ],
+        "name": "ModuleInterface",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "constant": true,
+            "id": 1137,
+            "name": "NAME",
+            "nodeType": "VariableDeclaration",
+            "scope": 1141,
+            "src": "236:32:4",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_string_memory",
+              "typeString": "string"
+            },
+            "typeName": {
+              "id": 1135,
+              "name": "string",
+              "nodeType": "ElementaryTypeName",
+              "src": "236:6:4",
+              "typeDescriptions": {
+                "typeIdentifier": "t_string_storage_ptr",
+                "typeString": "string"
+              }
+            },
+            "value": {
+              "argumentTypes": null,
+              "hexValue": "",
+              "id": 1136,
+              "isConstant": false,
+              "isLValue": false,
+              "isPure": true,
+              "kind": "string",
+              "lValueRequested": false,
+              "nodeType": "Literal",
+              "src": "266:2:4",
+              "subdenomination": null,
+              "typeDescriptions": {
+                "typeIdentifier": "t_stringliteral_c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+                "typeString": "literal_string \"\""
+              },
+              "value": ""
+            },
+            "visibility": "public"
+          },
+          {
+            "constant": true,
+            "id": 1140,
+            "name": "VERSION",
+            "nodeType": "VariableDeclaration",
+            "scope": 1141,
+            "src": "274:40:4",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_string_memory",
+              "typeString": "string"
+            },
+            "typeName": {
+              "id": 1138,
+              "name": "string",
+              "nodeType": "ElementaryTypeName",
+              "src": "274:6:4",
+              "typeDescriptions": {
+                "typeIdentifier": "t_string_storage_ptr",
+                "typeString": "string"
+              }
+            },
+            "value": {
+              "argumentTypes": null,
+              "hexValue": "302e302e30",
+              "id": 1139,
+              "isConstant": false,
+              "isLValue": false,
+              "isPure": true,
+              "kind": "string",
+              "lValueRequested": false,
+              "nodeType": "Literal",
+              "src": "307:7:4",
+              "subdenomination": null,
+              "typeDescriptions": {
+                "typeIdentifier": "t_stringliteral_09a13c37e92d1241eb6d4e601d2ee55d46fecc5385dc68e1f17d2201a79bbb5e",
+                "typeString": "literal_string \"0.0.0\""
+              },
+              "value": "0.0.0"
+            },
+            "visibility": "public"
+          }
+        ],
+        "scope": 1142,
+        "src": "205:112:4"
+      }
+    ],
+    "src": "0:318:4"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.5.10+commit.5a6ea5b1.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.0.20",
+  "updatedAt": "2020-01-31T10:58:04.539Z",
+  "devdoc": {
+    "author": "David Nicholas - <dnicholas@blockchains.com>",
+    "methods": {},
+    "title": "Module Interface - An interface to get the name and version of a module"
+  },
+  "userdoc": {
+    "methods": {}
+  }
+}
