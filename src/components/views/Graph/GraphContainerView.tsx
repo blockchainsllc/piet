@@ -31,7 +31,7 @@ import SplitPane from 'react-split-pane';
 import { Graph, GraphViewType } from './GraphGenerator';
 import { BlockchainConnection } from '../../../solidity-handler/BlockchainConnector';
 
-interface GraphContainerViewProps {
+export interface GraphContainerViewProps {
     selectedElement: Sol.NodeElement;
     blockchainConnection: BlockchainConnection;
     contracts: Sol.Contract[];

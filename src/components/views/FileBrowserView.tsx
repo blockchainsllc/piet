@@ -224,16 +224,36 @@ export class FileBrowserView extends React.Component<FileBrowserViewProps, FileB
             base0F: '#cc6633'
           };
 
+        const giveCustomAttributes = (input: any): void => {
+            if (input) {
+                input.setAttribute('webkitdirectory', '');
+                input.setAttribute('mozdirectory', '');
+                input.setAttribute('directory', '');
+                
+            }
+        };
+
         return <SplitPane className='scrollable hide-resizer' split='horizontal'  defaultSize={40} allowResize={false} >
                     <div className='h-100 w-100 toolbar'>
                     
-                        <label className={'btn btn-sm btn-outline-info'} htmlFor='file'>Load</label>
+                        
+                       <label className={'btn btn-sm btn-outline-info'} htmlFor='file'>Load Files</label>
                         <input 
                             id='file' 
                             className='files-input' 
                             type='file' 
                             onChange={ (e: any): void => this.submitFiles(e.target.files)} 
                             multiple 
+                        />
+                       &nbsp;
+                       <label className={'btn btn-sm btn-outline-info'} htmlFor='dir'>Load Directory</label>
+                        <input 
+                            id='dir' 
+                            className='files-input' 
+                            type='file' 
+                            onChange={ (e: any): void => this.submitFiles(e.target.files)} 
+                            multiple 
+                            ref={giveCustomAttributes}
                         />
                         
                        &nbsp;

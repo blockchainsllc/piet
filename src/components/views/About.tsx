@@ -90,16 +90,29 @@ export class About extends React.Component<{}, {}> {
                                      
                                         Click <strong>"Load"</strong> and select solidity files, truffle build files or a piet file.
                                         <br />
-                                        You can also load the&nbsp;
+                                        <br />
+                                        You can also load the following examples:
+
+                                        <br />
+                    
                                         <strong>
                                             <a 
-                                                className='text-muted' 
-                                                href='/?container=examples%2Fexport1562664060589.piet.json'
+                                                className='' 
+                                                href='/?container=examples%2Fin3-export1581003982763.piet.json&rpc=https%3A%2F%2Frpc.slock.it%2Fmainnet%2Fparity-pruned-2'
                                             >
-                                                example
+                                                in3 Contracts
                                             </a>
                                         </strong>
-                                        .
+                                        <br />
+                                        <strong>
+                                            <a 
+                                                className='' 
+                                                href='/?container=examples%2Fgs111-export1581005493087.piet.json&rpc=https%3A%2F%2Frpc.slock.it%2Fmainnet%2Fparity-pruned-2'
+                                            >
+                                                GnosisSafe Contracts
+                                            </a>
+                                        </strong>
+                                        
                                     </small></p>
                                     <br />
 

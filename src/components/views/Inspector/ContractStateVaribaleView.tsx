@@ -71,24 +71,32 @@ export class ContractStateVaribaleView extends React.Component<ContractStateVari
         this.setState({resultBoxIsShown: show});
     }
 
-    onStateVariableInputChange(e: any, stateVariableName: string): void  {
+    onStateVariableInputChange(e: any, stateVariableName: string, level: number): void  {
         e.persist();
-        this.setState((prevState: ContractStateVaribaleViewState) => {
+        this.setState(
+            (prevState: ContractStateVaribaleViewState) => {
 
-            prevState.stateVariableInput[stateVariableName] = e.target.value;
+                if (!prevState.stateVariableInput[stateVariableName]) {
+                    prevState.stateVariableInput[stateVariableName] = [];
+                }
 
-            return {
-                stateVariableInput: prevState.stateVariableInput
-            };
+                prevState.stateVariableInput[stateVariableName][level] = e.target.value;
 
-        },            () => {
-            const stateVariables: Sol.ContractStateVariable[] = 
-                [...this.props.selectedContract.stateVariables, ...this.props.selectedContract.inheritedStateVariables];
-            const stateVariableIndex: number = stateVariables.findIndex((sv: Sol.ContractStateVariable) => sv.name === stateVariableName);
-            if (stateVariableIndex !== -1) {
-                this.call(stateVariables[stateVariableIndex], stateVariableIndex);
+                return {
+                    stateVariableInput: prevState.stateVariableInput
+                };
+
+            },
+            () => {
+                const stateVariables: Sol.ContractStateVariable[] = 
+                    [...this.props.selectedContract.stateVariables, ...this.props.selectedContract.inheritedStateVariables];
+                const stateVariableIndex: number = stateVariables.findIndex((sv: Sol.ContractStateVariable) => 
+                    sv.name === stateVariableName);
+                if (stateVariableIndex !== -1) {
+                    this.call(stateVariables[stateVariableIndex], stateVariableIndex);
+                }
             }
-        });
+        );
 
     }
 
@@ -130,7 +138,7 @@ export class ContractStateVaribaleView extends React.Component<ContractStateVari
                 || !stateVariable.solidityType.mapping)
             && ((stateVariable.solidityType.isArray && this.state.stateVariableInput[stateVariable.name]) 
                 || !stateVariable.solidityType.isArray)
-            ) {
+        ) {
             this.setState({
                 resultMapping: [...this.state.resultMapping.slice(0, index),
                                 '',
@@ -151,17 +159,13 @@ export class ContractStateVaribaleView extends React.Component<ContractStateVari
             }
 
             if (abi) {
-                const contract: any = new this.props.blockchainConnection.web3.eth.Contract(
-                    abi,
-                    this.props.selectedContract.deployedAt);
-
                 result = await callFunction(
                     stateVariable.getter,
                     this.props.blockchainConnection,
                     this.props.selectedContract.deployedAt,
                     abi,
                     stateVariable.solidityType.mapping || stateVariable.solidityType.isArray ? 
-                        [this.state.stateVariableInput[stateVariable.name]] : []
+                        [...this.state.stateVariableInput[stateVariable.name]] : []
                 );
                 
             }
@@ -212,7 +216,44 @@ export class ContractStateVaribaleView extends React.Component<ContractStateVari
             const result: any = this.state.resultMapping[svIndexOffset + index];
 
             const outputValue: any = result ? Array.isArray(result) ? result[0] : result : '';
+            
+            const handeldNestedType = (
+                nestedType: Sol.SolidityType,
+                svInputs: JSX.Element[],
+                level: number
+            ): JSX.Element[] => {
+                return nestedType.mapping ?
+                handeldNestedType(
+                    nestedType.mapping ? nestedType.mapping.value : nestedType, 
+                    [
+                        <input  
+                            className='form-control form-control-sm input-output'
+                            key={stateVariable.name + level}
+                            type='text'
+                            placeholder={nestedType.mapping.key.name}
+                            onChange={(e: any): void  => this.onStateVariableInputChange(e, stateVariable.name, level)} 
+                        />, 
+                        ...svInputs
+                    ],
+                    level + 1
+                ) :  nestedType.isArray ?
+                [
+                    <input  
+                        className='form-control form-control-sm input-output'
+                        key={stateVariable.name + level}
+                        type='text'
+                        placeholder='uint'
+                        onChange={(e: any): void  => this.onStateVariableInputChange(e, stateVariable.name, level)} 
+                    />, 
+                    ...svInputs
+                ] :
+                [...svInputs];
+            } ;
 
+            const svInput = this.props.testMode && contract.deployedAt != null && stateVariable.visibility === 'public' ?
+                handeldNestedType(stateVariable.solidityType, [], 0).reverse() :
+                null;
+       
             return  <div className='selected-list-item list-group-item list-group-item-action flex-column align-items-start'
                         key={'stateVariable' + contract.name + stateVariable.name}>
                         <div className='d-flex w-100 justify-content-between'>
@@ -233,12 +274,8 @@ export class ContractStateVaribaleView extends React.Component<ContractStateVari
                             </div> 
                         </div>
                         { this.props.testMode && contract.deployedAt != null && stateVariable.visibility === 'public' ?
-                            <div>{(stateVariable.solidityType.mapping || stateVariable.solidityType.isArray) && 
-                                <input  
-                                    className='form-control form-control-sm input-output'
-                                    type='text'
-                                    onChange={(e: any): void  => this.onStateVariableInputChange(e, stateVariable.name)} />
-                            }
+                            <div>  
+                                {svInput}
                                 <div className='input-group mb-3 state-varibale-result-container'>
                                     {stateVariable.solidityType.userDefined ?
                                     <textarea  
@@ -287,7 +324,7 @@ export class ContractStateVaribaleView extends React.Component<ContractStateVari
         }
     
         return  <div >
-                    <h5 className='member-headline'><i className='fas fa-database'></i> State varibales</h5>
+                    <h5 className='member-headline'><i className='fas fa-database'></i> State variables</h5>
                     <div className='list-group'>
                         {this.getStateVariableList(this.props.selectedContract, false)}
                         {this.getStateVariableList(this.props.selectedContract, true)}

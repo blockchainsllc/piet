@@ -33,10 +33,29 @@ interface JsonViewProps {
     content: any;
     viewId: number;
     tabId: number;
+    isLoading: boolean;
 
 }
 
-export class JsonView extends React.Component<JsonViewProps, {}> {
+interface JsonViewState {
+    raw: boolean;
+
+}
+
+export class JsonView extends React.Component<JsonViewProps, JsonViewState> {
+
+    constructor(props: JsonViewProps) {
+        super(props);
+        this.state = {
+            raw: false
+        };
+        this.toogleRaw = this.toogleRaw.bind(this);
+    }
+
+    toogleRaw(): void {
+        this.setState((prevState: JsonViewState) => ({raw: !prevState.raw}));
+    }
+
 
     render(): JSX.Element {
         
@@ -61,7 +80,15 @@ export class JsonView extends React.Component<JsonViewProps, {}> {
 
         return <SplitPane className='scrollable hide-resizer' split='horizontal'  defaultSize={40} allowResize={false} >
                     <div className='h-100 w-100 toolbar'>
-                     
+                        <button 
+                            className={'btn btn-sm btn' + (this.state.raw ? '' : '-outline') + '-info'} 
+                            onClick={this.toogleRaw}
+                            title='Raw JSON'
+                        >
+                            <i className='fas fa-file-code'></i>
+                        </button>
+                  
+                        {this.props.isLoading && <i className='fas fa-spinner fa-spin'></i>}
                     </div>
                     <SplitPane 
                         className='scrollable hide-resizer empty-first-pane'
@@ -74,8 +101,13 @@ export class JsonView extends React.Component<JsonViewProps, {}> {
                             <div className='row'>
                                 <div className='col-12'>
                                     <small className='events-json-container'>
-                                        {this.props.content ? 
-                                            <JSONTree data={this.props.content} theme={theme} invertTheme={false}/> : null
+                                        {this.props.content && !this.state.raw &&
+                                            <JSONTree data={this.props.content} theme={theme} invertTheme={false}/>
+                                        }
+                                        {this.props.content && this.state.raw &&
+                                            <pre className='markdown-code'>
+                                                {JSON.stringify(this.props.content, null, 2)}
+                                            </pre>
                                         }
                                     </small>
                                 </div>

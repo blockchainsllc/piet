@@ -1,0 +1,609 @@
+{
+  "contractName": "CustodyWhitelist",
+  "abi": [
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "name": "value",
+          "type": "uint256"
+        },
+        {
+          "name": "data",
+          "type": "bytes"
+        }
+      ],
+      "name": "executeWhitelisted",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "isWhitelisted",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "manager",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_masterCopy",
+          "type": "address"
+        }
+      ],
+      "name": "changeMasterCopy",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "removeFromWhitelist",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "NAME",
+      "outputs": [
+        {
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "accounts",
+          "type": "address[]"
+        }
+      ],
+      "name": "setup",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "addToWhitelist",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "VERSION",
+      "outputs": [
+        {
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "name": "masterCopy",
+          "type": "address"
+        }
+      ],
+      "name": "ChangedMasterCopy",
+      "type": "event"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.5.10+commit.5a6ea5b1\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"constant\":false,\"inputs\":[{\"name\":\"to\",\"type\":\"address\"},{\"name\":\"value\",\"type\":\"uint256\"},{\"name\":\"data\",\"type\":\"bytes\"}],\"name\":\"executeWhitelisted\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"address\"}],\"name\":\"isWhitelisted\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"manager\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_masterCopy\",\"type\":\"address\"}],\"name\":\"changeMasterCopy\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"account\",\"type\":\"address\"}],\"name\":\"removeFromWhitelist\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"NAME\",\"outputs\":[{\"name\":\"\",\"type\":\"string\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"accounts\",\"type\":\"address[]\"}],\"name\":\"setup\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"account\",\"type\":\"address\"}],\"name\":\"addToWhitelist\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"VERSION\",\"outputs\":[{\"name\":\"\",\"type\":\"string\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"masterCopy\",\"type\":\"address\"}],\"name\":\"ChangedMasterCopy\",\"type\":\"event\"}],\"devdoc\":{\"author\":\"David Nicholas - <dnicholas@blockchains.com>\",\"methods\":{\"addToWhitelist(address)\":{\"details\":\"Allows to add destination to whitelist. This can only be done via a Safe transaction.\",\"params\":{\"account\":\"Destination address.\"}},\"changeMasterCopy(address)\":{\"details\":\"Allows to upgrade the contract. This can only be done via a Safe transaction.\",\"params\":{\"_masterCopy\":\"New contract address.\"}},\"executeWhitelisted(address,uint256,bytes)\":{\"details\":\"Returns if Safe transaction is to a whitelisted destination.\",\"params\":{\"data\":\"Not checked.\",\"to\":\"Whitelisted destination address.\",\"value\":\"Not checked.\"},\"return\":\"Returns if transaction can be executed.\"},\"removeFromWhitelist(address)\":{\"details\":\"Allows to remove destination from whitelist. This can only be done via a Safe transaction.\",\"params\":{\"account\":\"Destination address.\"}},\"setup(address[])\":{\"details\":\"Setup function sets initial storage of contract.\",\"params\":{\"accounts\":\"List of whitelisted accounts.\"}}},\"title\":\"Custody Whitelist Module - Implements the Gnosis Whitelist Module and inherits ModuleInterface\"},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"/Users/heikoburkhardt/Documents/custody/multisig_contracts/contracts/custody-whitelist-module/CustodyWhitelist.sol\":\"CustodyWhitelist\"},\"evmVersion\":\"byzantium\",\"libraries\":{},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/Users/heikoburkhardt/Documents/custody/multisig_contracts/contracts/custody-whitelist-module/CustodyWhitelist.sol\":{\"keccak256\":\"0xa8ca3b88f48840820e282ff38897f52ffbce2df9e48aa7fe1f980744906e3858\",\"urls\":[\"bzzr://5301db69c6bb40e19789ba21866d9b6c27ac81c07cf8ff7adcd16751f4d230a6\",\"dweb:/ipfs/QmWdPfBZHLvDwYqLuupFqVTaXFvhPgu8N3p99SSsU62BqD\"]},\"/Users/heikoburkhardt/Documents/custody/multisig_contracts/contracts/module-interface/ModuleInterface.sol\":{\"keccak256\":\"0xcd4af82aa6fb12117af445ef078801bfa56f98e03e577224c535b1b922409e6c\",\"urls\":[\"bzzr://ffc9767682c700c88a35749ed6c420b8ccc44de49fd9612dfc3682bc7832b396\",\"dweb:/ipfs/QmTtf8EDQL7o9MuGnaFEw1tbzG2GFgHMhXnLQbGGWiV22U\"]},\"@gnosis.pm/safe-contracts/contracts/base/Executor.sol\":{\"keccak256\":\"0xd2835623a200b6f14979751aff14e48362b5db0d86fff17dfb6a982790ff6c67\",\"urls\":[\"bzzr://7f15ee0e1d51ff5bcdb9dc554017d1636c6c47cc1911b34b711db2f4a38aa0b9\",\"dweb:/ipfs/QmXozPPHk7KAyoihdx4FEn4dEaR2x9yDJthQcZPR3Knxpv\"]},\"@gnosis.pm/safe-contracts/contracts/base/Module.sol\":{\"keccak256\":\"0x0d168bb2c28fe04185e992692705925d700ecc32692e1a1f997478c55722b9ad\",\"urls\":[\"bzzr://40c36b6edd8208be25295e43ad1fd6db810f70dd423b67b7f09b825f2b473356\",\"dweb:/ipfs/QmekYYrv5X2wdg2QqaP96qhkxpwTT8nt47CHvuBxzHv9hp\"]},\"@gnosis.pm/safe-contracts/contracts/base/ModuleManager.sol\":{\"keccak256\":\"0xd1f41edf7fd05526882d77b9517155b5c2d30839aab3b019658d923355706c58\",\"urls\":[\"bzzr://6fe9afb81b3d2d1a66ca289bf96d50c73a0464027043cd0e8c180dde9b43fb9f\",\"dweb:/ipfs/QmYor9Qm7mRyXa55VDz9Rcbf82QE2bmi9yFP5c2kMw15mk\"]},\"@gnosis.pm/safe-contracts/contracts/base/OwnerManager.sol\":{\"keccak256\":\"0xd35138614ba872903e32335245e37afebbc5ebecc2ae6dce74a90623695842c0\",\"urls\":[\"bzzr://23e2f990c8c4b1674b812d4990c902b9c66f9757939571de65474325247f62f9\",\"dweb:/ipfs/QmbTiyea585HTmRpYtiNRozcRjyQmhMB9ijjNhKBSfMeYN\"]},\"@gnosis.pm/safe-contracts/contracts/common/Enum.sol\":{\"keccak256\":\"0x7bc6e5afb9436d9f7e376c2cdba51ca1f337e1b31c04cca5769db3a77ed40081\",\"urls\":[\"bzzr://102a5dba4f51d162e55d0baacc87a45332e8ef8b7a34edc276d248ac367e115f\",\"dweb:/ipfs/QmTefyhXcMALQew96u7YRLQBnye9vapqkKBWxbynWpMHDM\"]},\"@gnosis.pm/safe-contracts/contracts/common/MasterCopy.sol\":{\"keccak256\":\"0xf0c63fb6f7bcfc761300b7a13b3062e773ff5f8fc143bda7868ba1696100faeb\",\"urls\":[\"bzzr://f09960a6f5e483f8143b7077f9561e80470f37db8ad1e884d5278318fb4e3ce8\",\"dweb:/ipfs/QmYr7uTVcLNPxWeYThFY8TnqARbN8RG4t9ixHEVYnkeNBG\"]},\"@gnosis.pm/safe-contracts/contracts/common/SelfAuthorized.sol\":{\"keccak256\":\"0x4c4f094227fc466846a97fe375c47ecdfcab050c303baeb69b5970d28db717a6\",\"urls\":[\"bzzr://769f364f6e2afe4d7d2650ec70f754231e8d222a45caf5cf540ad9a51bb00d4c\",\"dweb:/ipfs/QmTWPnHdfcBbddkMJxvEvoWs3CZoKB5rtz3s8K2ii9z9CG\"]},\"@gnosis.pm/safe-contracts/contracts/modules/WhitelistModule.sol\":{\"keccak256\":\"0x941e9e912d85c9a5c0fbcac98a65b7226acc1477486d8691b48ff574985bb069\",\"urls\":[\"bzzr://d6a32c603fda34eae061444bc369b31141175efbd81a4310b385de360fcd3526\",\"dweb:/ipfs/QmeTc4Jz6QbByRJy7Dhb9nJXXxmzdAyUkynCGBLE5AE7Xo\"]}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b50610bb6806100206000396000f3fe608060405234801561001057600080fd5b50600436106100b0576000357c0100000000000000000000000000000000000000000000000000000000900480638ab1d681116100835780638ab1d681146101f6578063a3f4df7e1461021c578063bd5b853b14610299578063e43252d71461033c578063ffa1ad7414610362576100b0565b80632f2f3be1146100b55780633af32abf14610184578063481c6a75146101aa5780637de7edef146101ce575b600080fd5b610170600480360360608110156100cb57600080fd5b600160a060020a03823516916020810135918101906060810160408201356401000000008111156100fb57600080fd5b82018360208201111561010d57600080fd5b8035906020019184600183028401116401000000008311171561012f57600080fd5b91908080601f01602080910402602001604051908101604052809392919081815260200183838082843760009201919091525092955061036a945050505050565b604080519115158252519081900360200190f35b6101706004803603602081101561019a57600080fd5b5035600160a060020a0316610602565b6101b2610617565b60408051600160a060020a039092168252519081900360200190f35b6101f4600480360360208110156101e457600080fd5b5035600160a060020a0316610626565b005b6101f46004803603602081101561020c57600080fd5b5035600160a060020a031661071b565b6102246107f8565b6040805160208082528351818301528351919283929083019185019080838360005b8381101561025e578181015183820152602001610246565b50505050905090810190601f16801561028b5780820380516001836020036101000a031916815260200191505b509250505060405180910390f35b6101f4600480360360208110156102af57600080fd5b8101906020810181356401000000008111156102ca57600080fd5b8201836020820111156102dc57600080fd5b803590602001918460208302840111640100000000831117156102fe57600080fd5b919080806020026020016040519081016040528093929190818152602001838360200280828437600092019190915250929550610831945050505050565b6101f46004803603602081101561035257600080fd5b5035600160a060020a03166108f7565b610224610a36565b600154604080517f2f54bf6e0000000000000000000000000000000000000000000000000000000081523360048201529051600092600160a060020a031691632f54bf6e916024808301926020929190829003018186803b1580156103ce57600080fd5b505afa1580156103e2573d6000803e3d6000fd5b505050506040513d60208110156103f857600080fd5b50516104385760405160e560020a62461bcd028152600401808060200182810382526025815260200180610b166025913960400191505060405180910390fd5b600160a060020a03841660009081526002602052604090205460ff166104925760405160e560020a62461bcd028152600401808060200182810382526021815260200180610b3b6021913960400191505060405180910390fd5b6001546040517f468721a7000000000000000000000000000000000000000000000000000000008152600160a060020a03868116600483019081526024830187905292169163468721a79187918791879160009160448101906064018360ff168152602001828103825284818151815260200191508051906020019080838360005b8381101561052c578181015183820152602001610514565b50505050905090810190601f1680156105595780820380516001836020036101000a031916815260200191505b5095505050505050602060405180830381600087803b15801561057b57600080fd5b505af115801561058f573d6000803e3d6000fd5b505050506040513d60208110156105a557600080fd5b50516105fb576040805160e560020a62461bcd02815260206004820152601d60248201527f436f756c64206e6f742065786563757465207472616e73616374696f6e000000604482015290519081900360640190fd5b9392505050565b60026020526000908152604090205460ff1681565b600154600160a060020a031681565b600154600160a060020a031633146106725760405160e560020a62461bcd028152600401808060200182810382526026815260200180610b5c6026913960400191505060405180910390fd5b600160a060020a0381166106ba5760405160e560020a62461bcd028152600401808060200182810382526024815260200180610af26024913960400191505060405180910390fd5b60008054600160a060020a03831673ffffffffffffffffffffffffffffffffffffffff19909116811790915560408051918252517f75e41bc35ff1bf14d81d1d2f649c0084a0f974f9289c803ec9898eeec4c8d0b89181900360200190a150565b600154600160a060020a031633146107675760405160e560020a62461bcd028152600401808060200182810382526026815260200180610b5c6026913960400191505060405180910390fd5b600160a060020a03811660009081526002602052604090205460ff166107d7576040805160e560020a62461bcd02815260206004820152601a60248201527f4163636f756e74206973206e6f742077686974656c6973746564000000000000604482015290519081900360640190fd5b600160a060020a03166000908152600260205260409020805460ff19169055565b6040518060400160405280601781526020017f437573746f647957686974656c697374204d6f64756c6500000000000000000081525081565b610839610a6f565b60005b81518110156108f357600082828151811061085357fe5b602002602001015190506000600160a060020a031681600160a060020a031614156108c8576040805160e560020a62461bcd02815260206004820152601860248201527f496e76616c6964206163636f756e742070726f76696465640000000000000000604482015290519081900360640190fd5b600160a060020a03166000908152600260205260409020805460ff191660019081179091550161083c565b5050565b600154600160a060020a031633146109435760405160e560020a62461bcd028152600401808060200182810382526026815260200180610b5c6026913960400191505060405180910390fd5b600160a060020a0381166109a1576040805160e560020a62461bcd02815260206004820152601860248201527f496e76616c6964206163636f756e742070726f76696465640000000000000000604482015290519081900360640190fd5b600160a060020a03811660009081526002602052604090205460ff1615610a12576040805160e560020a62461bcd02815260206004820152601e60248201527f4163636f756e7420697320616c72656164792077686974656c69737465640000604482015290519081900360640190fd5b600160a060020a03166000908152600260205260409020805460ff19166001179055565b6040518060400160405280600581526020017f302e312e3000000000000000000000000000000000000000000000000000000081525081565b600154600160a060020a031615610ad0576040805160e560020a62461bcd02815260206004820152601c60248201527f4d616e616765722068617320616c7265616479206265656e2073657400000000604482015290519081900360640190fd5b6001805473ffffffffffffffffffffffffffffffffffffffff19163317905556fe496e76616c6964206d617374657220636f707920616464726573732070726f76696465644d6574686f642063616e206f6e6c792062652063616c6c656420627920616e206f776e6572546172676574206163636f756e74206973206e6f742077686974656c69737465644d6574686f642063616e206f6e6c792062652063616c6c65642066726f6d206d616e61676572a265627a7a723058201696d9a2528b1caf60a06e3ad9d37c99ac89744028efd9ffb5c6a7cac9f89e6964736f6c634300050a0032",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100b0576000357c0100000000000000000000000000000000000000000000000000000000900480638ab1d681116100835780638ab1d681146101f6578063a3f4df7e1461021c578063bd5b853b14610299578063e43252d71461033c578063ffa1ad7414610362576100b0565b80632f2f3be1146100b55780633af32abf14610184578063481c6a75146101aa5780637de7edef146101ce575b600080fd5b610170600480360360608110156100cb57600080fd5b600160a060020a03823516916020810135918101906060810160408201356401000000008111156100fb57600080fd5b82018360208201111561010d57600080fd5b8035906020019184600183028401116401000000008311171561012f57600080fd5b91908080601f01602080910402602001604051908101604052809392919081815260200183838082843760009201919091525092955061036a945050505050565b604080519115158252519081900360200190f35b6101706004803603602081101561019a57600080fd5b5035600160a060020a0316610602565b6101b2610617565b60408051600160a060020a039092168252519081900360200190f35b6101f4600480360360208110156101e457600080fd5b5035600160a060020a0316610626565b005b6101f46004803603602081101561020c57600080fd5b5035600160a060020a031661071b565b6102246107f8565b6040805160208082528351818301528351919283929083019185019080838360005b8381101561025e578181015183820152602001610246565b50505050905090810190601f16801561028b5780820380516001836020036101000a031916815260200191505b509250505060405180910390f35b6101f4600480360360208110156102af57600080fd5b8101906020810181356401000000008111156102ca57600080fd5b8201836020820111156102dc57600080fd5b803590602001918460208302840111640100000000831117156102fe57600080fd5b919080806020026020016040519081016040528093929190818152602001838360200280828437600092019190915250929550610831945050505050565b6101f46004803603602081101561035257600080fd5b5035600160a060020a03166108f7565b610224610a36565b600154604080517f2f54bf6e0000000000000000000000000000000000000000000000000000000081523360048201529051600092600160a060020a031691632f54bf6e916024808301926020929190829003018186803b1580156103ce57600080fd5b505afa1580156103e2573d6000803e3d6000fd5b505050506040513d60208110156103f857600080fd5b50516104385760405160e560020a62461bcd028152600401808060200182810382526025815260200180610b166025913960400191505060405180910390fd5b600160a060020a03841660009081526002602052604090205460ff166104925760405160e560020a62461bcd028152600401808060200182810382526021815260200180610b3b6021913960400191505060405180910390fd5b6001546040517f468721a7000000000000000000000000000000000000000000000000000000008152600160a060020a03868116600483019081526024830187905292169163468721a79187918791879160009160448101906064018360ff168152602001828103825284818151815260200191508051906020019080838360005b8381101561052c578181015183820152602001610514565b50505050905090810190601f1680156105595780820380516001836020036101000a031916815260200191505b5095505050505050602060405180830381600087803b15801561057b57600080fd5b505af115801561058f573d6000803e3d6000fd5b505050506040513d60208110156105a557600080fd5b50516105fb576040805160e560020a62461bcd02815260206004820152601d60248201527f436f756c64206e6f742065786563757465207472616e73616374696f6e000000604482015290519081900360640190fd5b9392505050565b60026020526000908152604090205460ff1681565b600154600160a060020a031681565b600154600160a060020a031633146106725760405160e560020a62461bcd028152600401808060200182810382526026815260200180610b5c6026913960400191505060405180910390fd5b600160a060020a0381166106ba5760405160e560020a62461bcd028152600401808060200182810382526024815260200180610af26024913960400191505060405180910390fd5b60008054600160a060020a03831673ffffffffffffffffffffffffffffffffffffffff19909116811790915560408051918252517f75e41bc35ff1bf14d81d1d2f649c0084a0f974f9289c803ec9898eeec4c8d0b89181900360200190a150565b600154600160a060020a031633146107675760405160e560020a62461bcd028152600401808060200182810382526026815260200180610b5c6026913960400191505060405180910390fd5b600160a060020a03811660009081526002602052604090205460ff166107d7576040805160e560020a62461bcd02815260206004820152601a60248201527f4163636f756e74206973206e6f742077686974656c6973746564000000000000604482015290519081900360640190fd5b600160a060020a03166000908152600260205260409020805460ff19169055565b6040518060400160405280601781526020017f437573746f647957686974656c697374204d6f64756c6500000000000000000081525081565b610839610a6f565b60005b81518110156108f357600082828151811061085357fe5b602002602001015190506000600160a060020a031681600160a060020a031614156108c8576040805160e560020a62461bcd02815260206004820152601860248201527f496e76616c6964206163636f756e742070726f76696465640000000000000000604482015290519081900360640190fd5b600160a060020a03166000908152600260205260409020805460ff191660019081179091550161083c565b5050565b600154600160a060020a031633146109435760405160e560020a62461bcd028152600401808060200182810382526026815260200180610b5c6026913960400191505060405180910390fd5b600160a060020a0381166109a1576040805160e560020a62461bcd02815260206004820152601860248201527f496e76616c6964206163636f756e742070726f76696465640000000000000000604482015290519081900360640190fd5b600160a060020a03811660009081526002602052604090205460ff1615610a12576040805160e560020a62461bcd02815260206004820152601e60248201527f4163636f756e7420697320616c72656164792077686974656c69737465640000604482015290519081900360640190fd5b600160a060020a03166000908152600260205260409020805460ff19166001179055565b6040518060400160405280600581526020017f302e312e3000000000000000000000000000000000000000000000000000000081525081565b600154600160a060020a031615610ad0576040805160e560020a62461bcd02815260206004820152601c60248201527f4d616e616765722068617320616c7265616479206265656e2073657400000000604482015290519081900360640190fd5b6001805473ffffffffffffffffffffffffffffffffffffffff19163317905556fe496e76616c6964206d617374657220636f707920616464726573732070726f76696465644d6574686f642063616e206f6e6c792062652063616c6c656420627920616e206f776e6572546172676574206163636f756e74206973206e6f742077686974656c69737465644d6574686f642063616e206f6e6c792062652063616c6c65642066726f6d206d616e61676572a265627a7a723058201696d9a2528b1caf60a06e3ad9d37c99ac89744028efd9ffb5c6a7cac9f89e6964736f6c634300050a0032",
+  "sourceMap": "352:172:1:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;352:172:1;;;;;;;",
+  "deployedSourceMap": "352:172:1:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;352:172:1;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;2039:518:19;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;-1:-1;;;;;2039:518:19;;;;;;;;;;;;;;;;;;;21:11:-1;5:28;;2:2;;;46:1;43;36:12;2:2;2039:518:19;;35:9:-1;28:4;12:14;8:25;5:40;2:2;;;58:1;55;48:12;2:2;2039:518:19;;;;;;100:9:-1;95:1;81:12;77:20;67:8;63:35;60:50;39:11;25:12;22:29;11:107;8:2;;;131:1;128;121:12;8:2;2039:518:19;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;30:3:-1;22:6;14;1:33;99:1;81:16;;74:27;;;;-1:-1;2039:518:19;;-1:-1:-1;2039:518:19;;-1:-1:-1;;;;;2039:518:19:i;:::-;;;;;;;;;;;;;;;;;;528:46;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;-1:-1;528:46:19;-1:-1:-1;;;;;528:46:19;;:::i;278:28:9:-;;;:::i;:::-;;;;-1:-1:-1;;;;;278:28:9;;;;;;;;;;;;;;794:302:13;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;-1:-1;794:302:13;-1:-1:-1;;;;;794:302:13;;:::i;:::-;;1583:202:19;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;-1:-1;1583:202:19;-1:-1:-1;;;;;1583:202:19;;:::i;420:55:1:-;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;8:100:-1;33:3;30:1;27:10;8:100;;;90:11;;;84:18;71:11;;;64:39;52:2;45:10;8:100;;;12:14;420:55:1;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;697:314:19;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;697:314:19;;;;;;;;21:11:-1;5:28;;2:2;;;46:1;43;36:12;2:2;697:314:19;;35:9:-1;28:4;12:14;8:25;5:40;2:2;;;58:1;55;48:12;2:2;697:314:19;;;;;;101:9:-1;95:2;81:12;77:21;67:8;63:36;60:51;39:11;25:12;22:29;11:108;8:2;;;132:1;129;122:12;8:2;697:314:19;;;;;;;;;;;;;;;;;;;;;;;;;;;;;30:3:-1;22:6;14;1:33;99:1;81:16;;74:27;;;;-1:-1;697:314:19;;-1:-1:-1;697:314:19;;-1:-1:-1;;;;;697:314:19:i;1160:269::-;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;-1:-1;1160:269:19;-1:-1:-1;;;;;1160:269:19;;:::i;481:40:1:-;;;:::i;2039:518:19:-;2283:7;;2262:50;;;;;;2301:10;2262:50;;;;;;2145:4;;-1:-1:-1;;;;;2283:7:19;;2262:38;;:50;;;;;;;;;;;;;;2283:7;2262:50;;;5:2:-1;;;;30:1;27;20:12;5:2;2262:50:19;;;;8:9:-1;5:2;;;45:16;42:1;39;24:38;77:16;74:1;67:27;5:2;2262:50:19;;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;-1:-1;2262:50:19;2254:100;;;;-1:-1:-1;;;;;2254:100:19;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;;;;2372:17:19;;;;;;:13;:17;;;;;;;;2364:63;;;;-1:-1:-1;;;;;2364:63:19;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;2445:7;;:71;;;;;-1:-1:-1;;;;;2445:71:19;;;;;;;;;;;;;;;:7;;;:33;;2479:2;;2483:5;;2490:4;;2445:7;;:71;;;;;;:7;:71;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;23:1:-1;8:100;33:3;30:1;27:10;8:100;;;90:11;;;84:18;71:11;;;64:39;52:2;45:10;8:100;;;12:14;2445:71:19;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;2445:71:19;;;;8:9:-1;5:2;;;45:16;42:1;39;24:38;77:16;74:1;67:27;5:2;2445:71:19;;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;-1:-1;2445:71:19;2437:113;;;;;-1:-1:-1;;;;;2437:113:19;;;;;;;;;;;;;;;;;;;;;;;;;;;;2039:518;;;;;:::o;528:46::-;;;;;;;;;;;;;;;:::o;278:28:9:-;;;-1:-1:-1;;;;;278:28:9;;:::o;794:302:13:-;375:7:9;;-1:-1:-1;;;;;375:7:9;353:10;:30;345:81;;;;-1:-1:-1;;;;;345:81:9;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;;;;944:25:13;;936:74;;;;-1:-1:-1;;;;;936:74:13;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1020:10;:24;;-1:-1:-1;;;;;1020:24:13;;-1:-1:-1;;1020:24:13;;;;;;;;1059:30;;;;;;;;;;;;;;;;794:302;:::o;1583:202:19:-;375:7:9;;-1:-1:-1;;;;;375:7:9;353:10;:30;345:81;;;;-1:-1:-1;;;;;345:81:9;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;;;;1685:22:19;;;;;;:13;:22;;;;;;;;1677:61;;;;;-1:-1:-1;;;;;1677:61:19;;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;;;;1748:22:19;1773:5;1748:22;;;:13;:22;;;;;:30;;-1:-1:-1;;1748:30:19;;;1583:202::o;420:55:1:-;;;;;;;;;;;;;;;;;;;:::o;697:314:19:-;768:12;:10;:12::i;:::-;795:9;790:215;814:8;:15;810:1;:19;790:215;;;850:15;868:8;877:1;868:11;;;;;;;;;;;;;;850:29;;920:1;-1:-1:-1;;;;;901:21:19;:7;-1:-1:-1;;;;;901:21:19;;;893:58;;;;;-1:-1:-1;;;;;893:58:19;;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;;;;965:22:19;;;;;:13;:22;;;;;:29;;-1:-1:-1;;965:29:19;990:4;965:29;;;;;;831:3;790:215;;;;697:314;:::o;1160:269::-;375:7:9;;-1:-1:-1;;;;;375:7:9;353:10;:30;345:81;;;;-1:-1:-1;;;;;345:81:9;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;;;;1257:21:19;;1249:58;;;;;-1:-1:-1;;;;;1249:58:19;;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;;;;1326:22:19;;;;;;:13;:22;;;;;;;;1325:23;1317:66;;;;;-1:-1:-1;;;;;1317:66:19;;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;;;;1393:22:19;;;;;:13;:22;;;;;:29;;-1:-1:-1;;1393:29:19;1418:4;1393:29;;;1160:269::o;481:40:1:-;;;;;;;;;;;;;;;;;;;:::o;450:309:9:-;652:7;;-1:-1:-1;;;;;652:7:9;644:30;636:71;;;;;-1:-1:-1;;;;;636:71:9;;;;;;;;;;;;;;;;;;;;;;;;;;;;717:7;:35;;-1:-1:-1;;717:35:9;741:10;717:35;;;450:309::o",
+  "source": "pragma solidity 0.5.10;\nimport \"../module-interface/ModuleInterface.sol\";\nimport \"@gnosis.pm/safe-contracts/contracts/modules/WhitelistModule.sol\";\n\n/// @title Custody Whitelist Module - Implements the Gnosis Whitelist Module and inherits ModuleInterface\n/// @author David Nicholas - <dnicholas@blockchains.com>\n\n//solium-disable-next-line blank-lines\ncontract CustodyWhitelist is WhitelistModule, ModuleInterface {\n    string public constant NAME = \"CustodyWhitelist Module\";\n    string public constant VERSION = \"0.1.0\";\n}\n",
+  "sourcePath": "/Users/heikoburkhardt/Documents/custody/multisig_contracts/contracts/custody-whitelist-module/CustodyWhitelist.sol",
+  "ast": {
+    "absolutePath": "/Users/heikoburkhardt/Documents/custody/multisig_contracts/contracts/custody-whitelist-module/CustodyWhitelist.sol",
+    "exportedSymbols": {
+      "CustodyWhitelist": [
+        71
+      ]
+    },
+    "id": 72,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 58,
+        "literals": [
+          "solidity",
+          "0.5",
+          ".10"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:1"
+      },
+      {
+        "absolutePath": "/Users/heikoburkhardt/Documents/custody/multisig_contracts/contracts/module-interface/ModuleInterface.sol",
+        "file": "../module-interface/ModuleInterface.sol",
+        "id": 59,
+        "nodeType": "ImportDirective",
+        "scope": 72,
+        "sourceUnit": 1142,
+        "src": "24:49:1",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "@gnosis.pm/safe-contracts/contracts/modules/WhitelistModule.sol",
+        "file": "@gnosis.pm/safe-contracts/contracts/modules/WhitelistModule.sol",
+        "id": 60,
+        "nodeType": "ImportDirective",
+        "scope": 72,
+        "sourceUnit": 3645,
+        "src": "74:73:1",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [
+          {
+            "arguments": null,
+            "baseName": {
+              "contractScope": null,
+              "id": 61,
+              "name": "WhitelistModule",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 3644,
+              "src": "381:15:1",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_WhitelistModule_$3644",
+                "typeString": "contract WhitelistModule"
+              }
+            },
+            "id": 62,
+            "nodeType": "InheritanceSpecifier",
+            "src": "381:15:1"
+          },
+          {
+            "arguments": null,
+            "baseName": {
+              "contractScope": null,
+              "id": 63,
+              "name": "ModuleInterface",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 1141,
+              "src": "398:15:1",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_ModuleInterface_$1141",
+                "typeString": "contract ModuleInterface"
+              }
+            },
+            "id": 64,
+            "nodeType": "InheritanceSpecifier",
+            "src": "398:15:1"
+          }
+        ],
+        "contractDependencies": [
+          1141,
+          2364,
+          3240,
+          3282,
+          3644
+        ],
+        "contractKind": "contract",
+        "documentation": "@title Custody Whitelist Module - Implements the Gnosis Whitelist Module and inherits ModuleInterface\n @author David Nicholas - <dnicholas@blockchains.com>",
+        "fullyImplemented": true,
+        "id": 71,
+        "linearizedBaseContracts": [
+          71,
+          1141,
+          3644,
+          2364,
+          3240,
+          3282
+        ],
+        "name": "CustodyWhitelist",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "constant": true,
+            "id": 67,
+            "name": "NAME",
+            "nodeType": "VariableDeclaration",
+            "scope": 71,
+            "src": "420:55:1",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_string_memory",
+              "typeString": "string"
+            },
+            "typeName": {
+              "id": 65,
+              "name": "string",
+              "nodeType": "ElementaryTypeName",
+              "src": "420:6:1",
+              "typeDescriptions": {
+                "typeIdentifier": "t_string_storage_ptr",
+                "typeString": "string"
+              }
+            },
+            "value": {
+              "argumentTypes": null,
+              "hexValue": "437573746f647957686974656c697374204d6f64756c65",
+              "id": 66,
+              "isConstant": false,
+              "isLValue": false,
+              "isPure": true,
+              "kind": "string",
+              "lValueRequested": false,
+              "nodeType": "Literal",
+              "src": "450:25:1",
+              "subdenomination": null,
+              "typeDescriptions": {
+                "typeIdentifier": "t_stringliteral_627f58311d80d22b60e57365bf183ffee1bfd8299ae0ba5b042edd0c152a844f",
+                "typeString": "literal_string \"CustodyWhitelist Module\""
+              },
+              "value": "CustodyWhitelist Module"
+            },
+            "visibility": "public"
+          },
+          {
+            "constant": true,
+            "id": 70,
+            "name": "VERSION",
+            "nodeType": "VariableDeclaration",
+            "scope": 71,
+            "src": "481:40:1",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_string_memory",
+              "typeString": "string"
+            },
+            "typeName": {
+              "id": 68,
+              "name": "string",
+              "nodeType": "ElementaryTypeName",
+              "src": "481:6:1",
+              "typeDescriptions": {
+                "typeIdentifier": "t_string_storage_ptr",
+                "typeString": "string"
+              }
+            },
+            "value": {
+              "argumentTypes": null,
+              "hexValue": "302e312e30",
+              "id": 69,
+              "isConstant": false,
+              "isLValue": false,
+              "isPure": true,
+              "kind": "string",
+              "lValueRequested": false,
+              "nodeType": "Literal",
+              "src": "514:7:1",
+              "subdenomination": null,
+              "typeDescriptions": {
+                "typeIdentifier": "t_stringliteral_aa7cdbe2cce2ec7b606b0e199ddd9b264a6e645e767fb8479a7917dcd1b8693f",
+                "typeString": "literal_string \"0.1.0\""
+              },
+              "value": "0.1.0"
+            },
+            "visibility": "public"
+          }
+        ],
+        "scope": 72,
+        "src": "352:172:1"
+      }
+    ],
+    "src": "0:525:1"
+  },
+  "legacyAST": {
+    "absolutePath": "/Users/heikoburkhardt/Documents/custody/multisig_contracts/contracts/custody-whitelist-module/CustodyWhitelist.sol",
+    "exportedSymbols": {
+      "CustodyWhitelist": [
+        71
+      ]
+    },
+    "id": 72,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 58,
+        "literals": [
+          "solidity",
+          "0.5",
+          ".10"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:1"
+      },
+      {
+        "absolutePath": "/Users/heikoburkhardt/Documents/custody/multisig_contracts/contracts/module-interface/ModuleInterface.sol",
+        "file": "../module-interface/ModuleInterface.sol",
+        "id": 59,
+        "nodeType": "ImportDirective",
+        "scope": 72,
+        "sourceUnit": 1142,
+        "src": "24:49:1",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "@gnosis.pm/safe-contracts/contracts/modules/WhitelistModule.sol",
+        "file": "@gnosis.pm/safe-contracts/contracts/modules/WhitelistModule.sol",
+        "id": 60,
+        "nodeType": "ImportDirective",
+        "scope": 72,
+        "sourceUnit": 3645,
+        "src": "74:73:1",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [
+          {
+            "arguments": null,
+            "baseName": {
+              "contractScope": null,
+              "id": 61,
+              "name": "WhitelistModule",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 3644,
+              "src": "381:15:1",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_WhitelistModule_$3644",
+                "typeString": "contract WhitelistModule"
+              }
+            },
+            "id": 62,
+            "nodeType": "InheritanceSpecifier",
+            "src": "381:15:1"
+          },
+          {
+            "arguments": null,
+            "baseName": {
+              "contractScope": null,
+              "id": 63,
+              "name": "ModuleInterface",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 1141,
+              "src": "398:15:1",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_ModuleInterface_$1141",
+                "typeString": "contract ModuleInterface"
+              }
+            },
+            "id": 64,
+            "nodeType": "InheritanceSpecifier",
+            "src": "398:15:1"
+          }
+        ],
+        "contractDependencies": [
+          1141,
+          2364,
+          3240,
+          3282,
+          3644
+        ],
+        "contractKind": "contract",
+        "documentation": "@title Custody Whitelist Module - Implements the Gnosis Whitelist Module and inherits ModuleInterface\n @author David Nicholas - <dnicholas@blockchains.com>",
+        "fullyImplemented": true,
+        "id": 71,
+        "linearizedBaseContracts": [
+          71,
+          1141,
+          3644,
+          2364,
+          3240,
+          3282
+        ],
+        "name": "CustodyWhitelist",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "constant": true,
+            "id": 67,
+            "name": "NAME",
+            "nodeType": "VariableDeclaration",
+            "scope": 71,
+            "src": "420:55:1",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_string_memory",
+              "typeString": "string"
+            },
+            "typeName": {
+              "id": 65,
+              "name": "string",
+              "nodeType": "ElementaryTypeName",
+              "src": "420:6:1",
+              "typeDescriptions": {
+                "typeIdentifier": "t_string_storage_ptr",
+                "typeString": "string"
+              }
+            },
+            "value": {
+              "argumentTypes": null,
+              "hexValue": "437573746f647957686974656c697374204d6f64756c65",
+              "id": 66,
+              "isConstant": false,
+              "isLValue": false,
+              "isPure": true,
+              "kind": "string",
+              "lValueRequested": false,
+              "nodeType": "Literal",
+              "src": "450:25:1",
+              "subdenomination": null,
+              "typeDescriptions": {
+                "typeIdentifier": "t_stringliteral_627f58311d80d22b60e57365bf183ffee1bfd8299ae0ba5b042edd0c152a844f",
+                "typeString": "literal_string \"CustodyWhitelist Module\""
+              },
+              "value": "CustodyWhitelist Module"
+            },
+            "visibility": "public"
+          },
+          {
+            "constant": true,
+            "id": 70,
+            "name": "VERSION",
+            "nodeType": "VariableDeclaration",
+            "scope": 71,
+            "src": "481:40:1",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_string_memory",
+              "typeString": "string"
+            },
+            "typeName": {
+              "id": 68,
+              "name": "string",
+              "nodeType": "ElementaryTypeName",
+              "src": "481:6:1",
+              "typeDescriptions": {
+                "typeIdentifier": "t_string_storage_ptr",
+                "typeString": "string"
+              }
+            },
+            "value": {
+              "argumentTypes": null,
+              "hexValue": "302e312e30",
+              "id": 69,
+              "isConstant": false,
+              "isLValue": false,
+              "isPure": true,
+              "kind": "string",
+              "lValueRequested": false,
+              "nodeType": "Literal",
+              "src": "514:7:1",
+              "subdenomination": null,
+              "typeDescriptions": {
+                "typeIdentifier": "t_stringliteral_aa7cdbe2cce2ec7b606b0e199ddd9b264a6e645e767fb8479a7917dcd1b8693f",
+                "typeString": "literal_string \"0.1.0\""
+              },
+              "value": "0.1.0"
+            },
+            "visibility": "public"
+          }
+        ],
+        "scope": 72,
+        "src": "352:172:1"
+      }
+    ],
+    "src": "0:525:1"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.5.10+commit.5a6ea5b1.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.0.20",
+  "updatedAt": "2020-01-31T10:58:04.524Z",
+  "devdoc": {
+    "author": "David Nicholas - <dnicholas@blockchains.com>",
+    "methods": {
+      "addToWhitelist(address)": {
+        "details": "Allows to add destination to whitelist. This can only be done via a Safe transaction.",
+        "params": {
+          "account": "Destination address."
+        }
+      },
+      "changeMasterCopy(address)": {
+        "details": "Allows to upgrade the contract. This can only be done via a Safe transaction.",
+        "params": {
+          "_masterCopy": "New contract address."
+        }
+      },
+      "executeWhitelisted(address,uint256,bytes)": {
+        "details": "Returns if Safe transaction is to a whitelisted destination.",
+        "params": {
+          "data": "Not checked.",
+          "to": "Whitelisted destination address.",
+          "value": "Not checked."
+        },
+        "return": "Returns if transaction can be executed."
+      },
+      "removeFromWhitelist(address)": {
+        "details": "Allows to remove destination from whitelist. This can only be done via a Safe transaction.",
+        "params": {
+          "account": "Destination address."
+        }
+      },
+      "setup(address[])": {
+        "details": "Setup function sets initial storage of contract.",
+        "params": {
+          "accounts": "List of whitelisted accounts."
+        }
+      }
+    },
+    "title": "Custody Whitelist Module - Implements the Gnosis Whitelist Module and inherits ModuleInterface"
+  },
+  "userdoc": {
+    "methods": {}
+  }
+}

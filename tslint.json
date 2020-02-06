@@ -1,9 +1,11 @@
 {
   "extends": [
     "tslint:latest",
-    "tslint-microsoft-contrib"
+    "tslint-microsoft-contrib",
+    "tslint-react-hooks"
   ],
   "rules": {
+    "react-hooks-nesting": "error",
     "class-name": true,
     "comment-format": [
       true,
@@ -28,10 +30,8 @@
       "parameter",
       "arrow-parameter",
       "property-declaration",
-      "variable-declaration",
       "member-variable-declaration",
-      "object-destructuring",
-      "array-destructuring"
+      "object-destructuring"
 
 
     ],
