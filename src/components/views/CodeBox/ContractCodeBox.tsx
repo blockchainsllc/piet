@@ -27,7 +27,7 @@ import * as React from 'react';
 import * as Sol from '../../../solidity-handler/SolidityHandler';
 import * as Hljs from 'highlight.js';
 import SyntaxHighlighter from 'react-syntax-highlighter';
-import { docco } from 'react-syntax-highlighter/styles/hljs';
+import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { BlockchainConnection, getFunctionSignature } from '../../../solidity-handler/BlockchainConnector';
 
 export interface ContractCodeBoxProps {
@@ -56,9 +56,7 @@ export class ContractCodeBox extends React.Component<ContractCodeBoxProps, {}> {
     }
 
     render(): JSX.Element {
-        if (!this.props.contract || !this.props.contract.source) {
-            return null;
-        } 
+
             
         return  <div 
                     className={'contractCodeModal modal fade' + (this.props.codeBoxIsShown ? ' show force-show' : '')} 
@@ -67,7 +65,7 @@ export class ContractCodeBox extends React.Component<ContractCodeBoxProps, {}> {
                         <div className='modal-content'>
                             <div className='modal-header'>
                                 <h5 className='modal-title'>
-                                    {this.props.contract.name} 
+                                    {this.props.contract ? this.props.contract.name : 'No Contract' } 
                                 </h5>
                                 <button type='button' onClick={this.hideContractCodeBox} 
                                     className='close' data-dismiss='modal' aria-label='Close'>
@@ -76,10 +74,11 @@ export class ContractCodeBox extends React.Component<ContractCodeBoxProps, {}> {
                             </div>
                             <div className='modal-body code-modal-body '>
                                 <small>
-             
+                                {this.props.contract &&
                                     <SyntaxHighlighter language='javascript' style={docco}>
-                                        {this.props.contract.source}
+                                        {this.props.contract ? this.props.contract.source : ''}
                                     </SyntaxHighlighter>
+                                }
                                     
                                 </small>
                             </div>
