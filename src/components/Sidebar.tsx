@@ -34,6 +34,8 @@ export interface SidebarProps {
     isLoading: boolean;
     addTabEntity: Function;
     blockchainConnection: BlockchainConnection;
+    setShowFirstTab: Function;
+    showFirstTab: boolean;
     
 }
 
@@ -56,9 +58,11 @@ export class Sidebar extends React.Component<SidebarProps, SidebarState> {
         this.showMigrationAssistent = this.showMigrationAssistent.bind(this);
         this.showUICreationView = this.showUICreationView.bind(this);
         this.showConfiguration = this.showConfiguration.bind(this);
-        this.showNodeDiagnostics = this.showNodeDiagnostics.bind(this);
+        this.showTools = this.showTools.bind(this);
         this.showTransactionHistory = this.showTransactionHistory.bind(this);
         this.showDocumentation = this.showDocumentation.bind(this);
+        this.showPatternListView = this.showPatternListView.bind(this);
+        this.toggleShowFirstTab = this.toggleShowFirstTab.bind(this);
 
     }
 
@@ -80,6 +84,10 @@ export class Sidebar extends React.Component<SidebarProps, SidebarState> {
         this.setState({loadContractFilesBoxIsShown: show});
     }
 
+    toggleShowFirstTab(): void {
+        this.props.setShowFirstTab(!this.props.showFirstTab);
+    }
+
     showAbout(): void {
         this.props.addTabEntity({
                 active: true,
@@ -87,9 +95,25 @@ export class Sidebar extends React.Component<SidebarProps, SidebarState> {
                 name: 'About',
                 content: null,
                 icon: 'question-circle',
-                removable: true
+                removable: true,
+                isLoading: true
             }, 
                                 1,
+                                false);
+    }
+
+    showPatternListView(): void {
+        this.props.addTabEntity({
+                active: true,
+                contentType: TabEntityType.PatternListView,
+                name: 'Pattern',
+                content: null,
+                icon: 'chalkboard-teacher',
+                removable: true,
+                isLoading: true
+                
+            }, 
+                                0,
                                 false);
     }
 
@@ -100,7 +124,8 @@ export class Sidebar extends React.Component<SidebarProps, SidebarState> {
             name: 'UI Creation',
             content: null,
             icon: 'columns',
-            removable: true
+            removable: true,
+            isLoading: true
         }, 
                                 1,
                                 false);
@@ -113,20 +138,22 @@ export class Sidebar extends React.Component<SidebarProps, SidebarState> {
                 name: 'Migration Assistent',
                 content: null,
                 icon: 'random',
-                removable: true
+                removable: true,
+                isLoading: true
             }, 
                                 1,
                                 false);
     }
 
-    showNodeDiagnostics(): void {
+    showTools(): void {
         this.props.addTabEntity({
                 active: true,
-                contentType: TabEntityType.NodeDiagnostics,
-                name: 'Node Diagnostics',
+                contentType: TabEntityType.Tools,
+                name: 'Tools',
                 content: null,
-                icon: 'server',
-                removable: true
+                icon: 'tools',
+                removable: true,
+                isLoading: true
             }, 
                                 1,
                                 false);
@@ -139,23 +166,28 @@ export class Sidebar extends React.Component<SidebarProps, SidebarState> {
                 name: 'Transaction History',
                 content: null,
                 icon: 'history',
-                removable: true
+                removable: true,
+                isLoading: true
             }, 
                                 1,
                                 false);
     }
 
     showConfiguration(): void {
-        this.props.addTabEntity({
+        this.props.addTabEntity(
+            {
                 active: true,
                 contentType: TabEntityType.Configuration,
                 name: 'Configuration',
                 content: null,
                 icon: 'network-wired',
-                removable: true
+                removable: true,
+                isLoading: true
             }, 
-                                0,
-                                false);
+            0,
+            false
+        );
+        this.props.setShowFirstTab(true);
     }
 
     showDocumentation(): void {
@@ -165,10 +197,12 @@ export class Sidebar extends React.Component<SidebarProps, SidebarState> {
                 name: 'Documentation',
                 content: null,
                 icon: 'book-open',
-                removable: true
+                removable: true,
+                isLoading: true
             }, 
                                 1,
                                 false);
+        
     }
 
     
@@ -267,11 +301,23 @@ export class Sidebar extends React.Component<SidebarProps, SidebarState> {
                         <div className='row'>
                             <div className='col-sm text-center'>
                             <a 
-                                href='#' className='btn btn-outline-secondary btn-lg' 
-                                onClick={this.showNodeDiagnostics}
-                                title='Node Diagnostics'
+                                href='#' className={'btn btn' + (!this.props.showFirstTab ? '-outline' : '') + '-secondary btn-lg'}
+                                onClick={this.toggleShowFirstTab}
+                                title='Side View'
                             >
-                                    <i className='fas fa-server'></i></a>
+                                    <i className='fas fa-window-maximize fa-rotate-270'></i></a>
+                            </div>
+                        </div>
+                    </div> 
+                    <div className='sidebar-buttons-container'>
+                        <div className='row'>
+                            <div className='col-sm text-center'>
+                            <a 
+                                href='#' className='btn btn-outline-secondary btn-lg' 
+                                onClick={this.showTools}
+                                title='Tools'
+                            >
+                                    <i className='fas fa-tools'></i></a>
                             </div>
                         </div>
                     </div> 
@@ -300,6 +346,18 @@ export class Sidebar extends React.Component<SidebarProps, SidebarState> {
                             </div>
                         </div>
                     </div> 
+                    {/* <div className='sidebar-buttons-container'>
+                        <div className='row'>
+                            <div className='col-sm text-center'>
+                                <a 
+                                    title='Pattern'
+                                    href='#' className='btn btn-outline-secondary btn-lg' 
+                                    onClick={this.showPatternListView}
+                                >
+                                    <i className='fas fa-chalkboard-teacher'></i></a>
+                            </div>
+                        </div>
+                    </div> */}
                     <div className='sidebar-buttons-container'>
                         <div className='row'>
                             <div className='col-sm text-center'>
@@ -311,7 +369,7 @@ export class Sidebar extends React.Component<SidebarProps, SidebarState> {
                                     <i className='fas fa-question-circle'></i></a>
                             </div>
                         </div>
-                    </div>    
+                    </div>        
 
                     <div className='to-bottom'>
                         <div className='sidebar-buttons-container text-center'>
@@ -340,8 +398,8 @@ export class Sidebar extends React.Component<SidebarProps, SidebarState> {
                    
                             
                         </div>
-                        </div>
-                        <div>
+                    </div>
+                    <div>
                             
                         
                     </div>   

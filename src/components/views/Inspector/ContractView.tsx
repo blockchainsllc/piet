@@ -33,6 +33,8 @@ import { ContractFunctionView } from './ContractFunctionView';
 import { TabEntity, TabEntityType } from '../../View';
 import { UICreationHandling } from '../ui-creation/UIStructure';
 import { BlockchainConnection, checkBlockchainConnection } from '../../../solidity-handler/BlockchainConnector';
+import { CompilerMetaDataView } from './CompilerMetaDataView';
+import { toSimpleHex } from 'in3/js/src/util/util';
 interface ContractViewProps {
     selectedContract: Sol.Contract;
     contracts: Sol.Contract[];
@@ -48,6 +50,7 @@ interface ContractViewProps {
     selectedTabTypeForView: TabEntityType[];
     uiCreationHandling: UICreationHandling;
     weiBalance: string;
+    toogleEditContractAddress: Function;
 }
 
 interface ContractViewState {
@@ -66,7 +69,6 @@ export class ContractView extends React.Component<ContractViewProps, ContractVie
     }
 
     onChangeContractAddress(e: any): void {
-
         e.persist();
         this.setState({
             contractAddress: e.target.value
@@ -79,18 +81,6 @@ export class ContractView extends React.Component<ContractViewProps, ContractVie
         const subtitle: string = this.props.selectedContract.kind === 'contract' && this.props.selectedContract.isAbstract ? 
             'abstract contract' : 
             this.props.selectedContract.kind;
-
-        const tabEntity: TabEntity = {
-            active: true,
-            contentType: TabEntityType.Code,
-            name: this.props.selectedContract.name,
-            content: { 
-                source: contract.source,
-                markers: null
-            },
-            icon: 'code',
-            removable: true
-        };
 
         const title: Sol.SolidityAnnotation = this.props.selectedContract.annotations
             .find((annotation: Sol.SolidityAnnotation) => annotation.name === 'title');
@@ -118,7 +108,7 @@ export class ContractView extends React.Component<ContractViewProps, ContractVie
 
                             { !contract.source && <div className='text-muted-light' ><p>
                                     <span className='badge badge-danger'>
-                                        <i className='fas fa-exclamation-circle'></i> No sources found for this Contract.
+                                        <i className='fas fa-exclamation-circle'></i> No sources found for this Contract
                                     </span>
                                 </p>
                                 <p>Child contracts don't show members inhertited from this contract. </p>                              
@@ -166,7 +156,7 @@ export class ContractView extends React.Component<ContractViewProps, ContractVie
                             showInheritedMembers={this.props.showInheritedMembers}
                             getEvents={this.props.getEvents}
                         />
-                        {contract.deployedAt || this.props.editContractAddress ? 
+                        
                             <div>
                                 <h5 id='meta' className='member-headline'><i className='fas fa-info-circle'></i> Instance information</h5>
                                 <div className='list-group'>
@@ -175,29 +165,49 @@ export class ContractView extends React.Component<ContractViewProps, ContractVie
                                     >
                                         <strong>Address</strong>
                                         <div>
-                                            {this.props.editContractAddress ?
+                                            
                                             <div>
-                                                <input
-                                                    placeholder={contract.deployedAt}
-                                                    onChange={(e: any): void => this.onChangeContractAddress(e)}
-                                                    className='form-control form-control-sm input-output' 
-                                                    type='text'
-                                                />
+                                                {this.props.editContractAddress ?
+                                                    <input
+                                               
+                                                        onChange={(e: any): void => this.onChangeContractAddress(e)}
+                                                        className='form-control form-control-sm input-output' 
+                                                        type='text'
+                                                        defaultValue={contract.deployedAt}
+                                                        disabled={!this.props.editContractAddress}
+                                                    /> : <span className='input-output'>{contract.deployedAt}</span>
+                                                }
                                                 <div className='text-right functionOperations'>
-                                                <button 
-                                                    type='button'
-                                                    className='function-operation-button btn btn-outline-primary btn-sm'
-                                                    onClick={(): void => {
-                                                        this.props.changeContractAddress(this.state.contractAddress, contract.name); 
-                                                    }}
-                                                >
+                                                {this.props.editContractAddress ?
+                                                    <button 
+                                                        type='button'
+                                                        className='function-operation-button btn btn-outline-primary btn-sm'
+                                                        onClick={(): void => {
+                                                            this.props.changeContractAddress(this.state.contractAddress, contract.name); 
+                                                        }}
+                                                    >
                                                         Save
-                                                </button>
+                                                    </button> :
+                                                    <button 
+                                                        type='button'
+                                                        className='function-operation-button btn btn-outline-primary btn-sm'
+                                                        onClick={() => {this.props.toogleEditContractAddress()}}
+                                                    >
+                                                        {contract.deployedAt ? 'Change' : 'Set Address'}
+                                                    </button>
+
+                                                }
                                                 </div>
                                             </div>
-                                            : <span className='input-output'>{contract.deployedAt}</span>}
+                                            
                                         </div>
                                     </a>
+                                    
+                                    <CompilerMetaDataView 
+                                        addTabEntity={this.props.addTabEntity}
+                                        contractAddress={this.props.selectedContract.deployedAt} 
+                                        blockchainConnection={this.props.blockchainConnection} 
+                                    />
                                     { this.props.weiBalance &&
                                         <a  href='#' 
                                             className='
@@ -217,8 +227,7 @@ export class ContractView extends React.Component<ContractViewProps, ContractVie
                                     
                                 </div>
                             </div>
-                            : null
-                        }
+                          
                         <div className='text-muted-light normal-line-height'>
                             {notice && <p><br /><i><small>{notice.value}</small></i></p>}
                         </div>

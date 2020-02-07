@@ -254,8 +254,8 @@ const getEvents: (node: any) => ContractEvent[] = (node: any): ContractEvent[] =
         .filter((subNode: any) => subNode.type && subNode.type === 'EventDefinition')
         .map((subNode: any) => ({
             name: subNode.name,
-            params: subNode.parameters.parameters && subNode.parameters.parameters.length > 0 ?
-                getVariable(subNode.parameters.parameters) : []
+            params: subNode.parameters && subNode.parameters.length > 0 ?
+                getVariable(subNode.parameters) : []
         }));
 };
 
@@ -264,7 +264,7 @@ const getModifiers: (node: any) => ContractModifier[] = (node: any): ContractMod
         .filter((subNode: any) => subNode.type && subNode.type === 'ModifierDefinition')
         .map((subNode: any) => ({
             name: subNode.name,
-            params: subNode.parameters.parameters && subNode.parameters.parameters.length > 0 ?
+            params: subNode.parameters && subNode.parameters.length > 0 ?
                 getParameters(subNode.parameters) : []
         }));
 };
@@ -273,9 +273,7 @@ const getFunctions: (node: any, source: string) => ContractFunction[] = (node: a
     return node.subNodes
         .filter((subNode: any) => subNode.type && subNode.type === 'FunctionDefinition')
         .map((subNode: any) => {
-
             const annotations: SolidityAnnotation[] = getAnnotations(source, subNode);
-
             return {
                 name: subNode.name === null && subNode.isConstructor ? 'constructor' : subNode.name ,
                 params: subNode.parameters ? getParameters(subNode.parameters, annotations) : [],
@@ -295,8 +293,7 @@ const getFunctions: (node: any, source: string) => ContractFunction[] = (node: a
 
 const getParameters: (parameterList: any, annotations?: SolidityAnnotation[]) => ContractFunctionParam = 
     (parameterList: any, annotations?: SolidityAnnotation[]): ContractFunctionParam => {
-        return parameterList.parameters
-            .filter((subNode: any) => subNode.type && subNode.type === 'Parameter')
+        return parameterList
             .map((subNode: any) => {
 
                 const foundAnnotation: SolidityAnnotation = annotations ? annotations
@@ -315,36 +312,36 @@ const getParameters: (parameterList: any, annotations?: SolidityAnnotation[]) =>
     };
 
 const getStateVariables: (node: any) => ContractStateVariable[] = (node: any): ContractStateVariable[] => {
-    const varibales: any[] = node.subNodes
+    const variables: any[] = node.subNodes
         .filter((subNode: any) => subNode.type && subNode.variables && subNode.type === 'StateVariableDeclaration')
         .map((subNode: any) => subNode.variables[0]);
 
-    return varibales.map((variable: any) => {
+    return variables.map((variable: any) => {
         
         let params: ContractFunctionParam[] = [];
         let returnParams: ContractFunctionParam[] = [];
 
-        switch (variable.typeName.type) {
-            case 'Mapping':
-                params = [{
-                    name: variable.typeName.name,
-                    solidityType: getType(variable.typeName, []),
-                    isStorage: false,
-                    isIndexed: false,
-                    description: null
-                }];
-                returnParams = [{
-                    name: variable.typeName.name,
-                    solidityType: params[0].solidityType.mapping.value,
-                    isStorage: false,
-                    isIndexed: false,
-                    description: null
-                }];
-                params[0].solidityType = params[0].solidityType.mapping.key;
-                
-                break; 
-            case 'ArrayTypeName':
-                params = [{
+        const handeldNestedType = (
+            typeName: any,
+            svInputs: any[]
+        ): any[] => typeName.type === 'Mapping' ?
+            handeldNestedType(
+                typeName.valueType, 
+                [   
+                    ...svInputs,
+                    {
+                        name: '',
+                        solidityType: getType(typeName.keyType, []),
+                        isStorage: false,
+                        isIndexed: false,
+                        description: null,
+                        lastType: getType(typeName.valueType, [])
+                    }
+                ]
+            ) : typeName.type === 'ArrayTypeName' ?
+            [   
+                ...svInputs,
+                {
                     name: variable.typeName.name,
                     solidityType: {
                         isArray: false,
@@ -354,17 +351,35 @@ const getStateVariables: (node: any) => ContractStateVariable[] = (node: any): C
                     },
                     isStorage: false,
                     isIndexed: false,
-                    description: null
-                }];
+                    description: null,
+                    lastType: getType(typeName.baseTypeName, [])
+                }
+            ] :
+            [ ...svInputs  ];
+            
+        switch (variable.typeName.type) {
+            case 'Mapping':
+                const nestedMappingParams = handeldNestedType(variable.typeName, []);
+                params = nestedMappingParams;
                 returnParams = [{
-                    name: '',
-                    solidityType: getType(variable.typeName, []),
+                    name: variable.typeName.name,
+                    solidityType: nestedMappingParams[nestedMappingParams.length - 1].lastType,
                     isStorage: false,
                     isIndexed: false,
                     description: null
                 }];
-                returnParams[0].solidityType.name = returnParams[0].solidityType.pureName;
-                returnParams[0].solidityType.isArray = false;
+                
+                break; 
+            case 'ArrayTypeName':
+                const nestedArrayParams = handeldNestedType(variable.typeName, []);
+                params = nestedArrayParams;
+                returnParams = [{
+                    name: variable.typeName.name,
+                    solidityType: nestedArrayParams[nestedArrayParams.length - 1].lastType,
+                    isStorage: false,
+                    isIndexed: false,
+                    description: null
+                }];
                 break; 
             default:
                 returnParams = [{
@@ -512,16 +527,26 @@ const getAnnotationValue: (relevantPart: string) => SolidityAnnotation[] = (rele
 };
 
 const getAnnotations: (source: string, node: any) => SolidityAnnotation[] = (source: string, node: any): SolidityAnnotation[] => {
+
     let annotations: SolidityAnnotation[] = [];
+    
     const lines: string[] = source.slice(0, node.range[0]).split(/[\r\n]+/).reverse();
-      
+    
     let i: number = 0;
     let stop: boolean = false;
 
     while (i < lines.length && !stop) {
         const line: string = lines[i].trim();
+
         const atPosition: number = line.search(/@/);
-        stop = !(line.length === 0 || (line.length > 3 && line.slice(0, 3) === '///' && atPosition !== -1));
+        
+        stop = !(line.length === 0 
+            || (line.length > 3 && (line.slice(0, 3) === '///') && atPosition !== -1)
+            || (line.length >= 2 && (line.slice(0, 2) === '/*'))
+            || (line.length >= 2 && (line.slice(0, 2) === '*/'))
+            || (line.length > 1 && (line.slice(0, 1) === '*'))
+        );
+
         const relevantPart: string = line.slice(atPosition + 1);
         
         if (!stop && line.length !== 0) {
@@ -549,9 +574,18 @@ export const parseContent: (fileContents: any) => Contract[] = (fileContents: an
                 break;
 
             case 'json':
-                const jsonContent: any = JSON.parse(fileContent.content);
-                source = jsonContent.source;
-                meta = jsonContent;
+                try {
+                    const jsonContent: any = JSON.parse(fileContent.content);
+                    source = jsonContent.source;
+                    meta = jsonContent;
+                    if (!jsonContent.source) {
+                        throw new Error('Wrong json file format')
+                    }
+                    
+                } catch (e) {
+                    console.log('Couldn\'t read json file');
+                    return contracts;
+                }
                 break;
 
             default:

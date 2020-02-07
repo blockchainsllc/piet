@@ -79,12 +79,10 @@ export class FunctionModal extends React.Component<FunctionModalProps, FunctionM
 
     componentWillReceiveProps(newProps: FunctionModalProps): void {
 
-        
-
         if (!this.props.selectedElement 
             || !newProps.selectedElement 
             || (newProps.selectedElement.contractAddress !== this.props.selectedElement.contractAddress)
-            || !isSameFunction(newProps.selectedElement.abi, this.props.selectedElement.abi, newProps.blockchainConnection.web3)
+            || !isSameFunction(newProps.selectedElement.abi, this.props.selectedElement.abi, newProps.blockchainConnection)
         ) {
             this.setState({
                 parameterMapping: [],

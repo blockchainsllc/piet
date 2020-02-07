@@ -28,7 +28,7 @@ import * as React from 'react';
 import * as Sol from '../solidity-handler/SolidityHandler';
 import { TabList } from './TabList';
 import { InspectorContainerView } from './views/Inspector/InspectorContainerView';
-import { GraphContainerView } from './views/Graph/GraphContainerView';
+import { GraphContainerView, GraphContainerViewProps } from './views/Graph/GraphContainerView';
 import { CodeContainerView } from './views/CodeContainerView';
 import { EventCatcherView } from './views/EventCatcherView';
 import { JsonView } from './views/JsonView';
@@ -40,12 +40,14 @@ import { UICreationView } from './views/ui-creation/UICreationView';
 import { UICreationHandling } from './views/ui-creation/UIStructure';
 import { ConfigurationView } from './views/Configuration/ConfigurationView';
 import { BlockchainConnection } from '../solidity-handler/BlockchainConnector';
-import { NodeDiagnosticsView } from './views/NodeDiagnostic/NodeDiagnostics';
-import { GraphView } from './views/Graph/GraphView';
+import { ToolsView } from './views/tools/ToolsView';
+import { GraphView, GraphViewProps } from './views/Graph/GraphView';
 import { Graph, GraphViewType } from './views/Graph/GraphGenerator';
 import { DocGeneratorView } from './views/documentatin-generator/DocGeneratorView';
 import { generateMarkdownDoc } from '../utils/DocGenerator';
 import { ErrorHandling } from './shared-elements/ErrorInfoBox';
+import PatternView from './views/Pattern/PatternView';
+import PatternListView from './views/Pattern/PatternListView';
 
 export enum TabEntityType {
     Structure,
@@ -58,9 +60,11 @@ export enum TabEntityType {
     MigrationAssistent,
     UICreationView,
     Configuration,
-    NodeDiagnostics, 
+    Tools, 
     TransactionHistory,
-    DocGenerator
+    DocGenerator,
+    PatternView,
+    PatternListView
 }
 
 export interface TabEntity {
@@ -70,6 +74,7 @@ export interface TabEntity {
     content: any;
     icon: string;
     removable: boolean;
+    isLoading: boolean; 
 }
 
 interface ViewProps {
@@ -99,11 +104,14 @@ interface ViewProps {
     setGraph: Function;
     graphViewType: GraphViewType;
     loadedPietFileName: string;
+    setIsLoading: Function;
+    isLoading: boolean;
     
 }
 
 export class View extends React.Component<ViewProps, {}> {
 
+    // tslint:disable-next-line:cyclomatic-complexity
     render(): JSX.Element {
         if (!this.props.tabEntities) {
             return null;
@@ -117,6 +125,20 @@ export class View extends React.Component<ViewProps, {}> {
              this.props.tabEntities[this.props.activeTab[this.props.viewId]].contentType : null;
         let content: JSX.Element;
 
+        const graphContainerViewProps: GraphContainerViewProps = {
+            graphViewType: this.props.graphViewType,
+            removeContractToSelect: this.props.removeContractToSelect,
+            selectedContractName: this.props.selectedContractName,
+            selectedElement: this.props.selectedElement,
+            blockchainConnection: this.props.blockchainConnection,
+            contracts: this.props.contracts,
+            changeSelectedElement: this.props.changeSelectedElement,
+            changeGraphView: this.props.changeGraphView,
+            graph: this.props.graph,
+            setGraph: this.props.setGraph,
+            loadedPietFileName: this.props.loadedPietFileName,
+        };
+
         switch (contentType) {
 
             case TabEntityType.About:
@@ -125,17 +147,8 @@ export class View extends React.Component<ViewProps, {}> {
 
             case TabEntityType.Graph:
                 content =   <GraphContainerView
-                                graphViewType={this.props.graphViewType}
-                                removeContractToSelect={this.props.removeContractToSelect}
-                                selectedContractName={this.props.selectedContractName}
-                                selectedElement={this.props.selectedElement}
-                                blockchainConnection={this.props.blockchainConnection}
-                                contracts={this.props.contracts}
-                                changeSelectedElement={this.props.changeSelectedElement}
-                                changeGraphView={this.props.changeGraphView}
-                                graph={this.props.graph}
-                                setGraph={this.props.setGraph}
-                                loadedPietFileName={this.props.loadedPietFileName}
+                                {...graphContainerViewProps}
+                  
                             />;
                 break;
 
@@ -175,9 +188,9 @@ export class View extends React.Component<ViewProps, {}> {
                             />;
                 break;
 
-            case TabEntityType.NodeDiagnostics:
-                content =   <NodeDiagnosticsView 
-                                key={'NodeDiagnosticsView'}
+            case TabEntityType.Tools:
+                content =   <ToolsView 
+                                key={'ToolsView'}
                                 viewId={this.props.viewId}
                                 tabId={this.props.activeTab[this.props.viewId]}
                                 blockchainConnection={this.props.blockchainConnection}
@@ -191,6 +204,7 @@ export class View extends React.Component<ViewProps, {}> {
                             tabId={this.props.activeTab[this.props.viewId]}
                             content={this.props.tabEntities[this.props.activeTab[this.props.viewId]].content}
                             blockchainConnection={this.props.blockchainConnection}
+                            isLoading={false}
                         />;
             break;
 
@@ -201,6 +215,7 @@ export class View extends React.Component<ViewProps, {}> {
                                 tabId={this.props.activeTab[this.props.viewId]}
                                 content={this.props.blockchainConnection.transactionHistory}
                                 blockchainConnection={this.props.blockchainConnection}
+                                isLoading={false}
                             />;
                 break;
 
@@ -259,10 +274,26 @@ export class View extends React.Component<ViewProps, {}> {
 
             case TabEntityType.DocGenerator:
                 content =   <DocGeneratorView 
-                                key={'UICreationView'}
-                                viewId={this.props.viewId}
-                                tabId={this.props.activeTab[this.props.viewId]}
+                                key={'DocGenerator'}
                                 content={this.props.selectedElement ? generateMarkdownDoc(this.props.selectedElement) : null}
+                            />;
+                break;
+
+            case TabEntityType.PatternView:
+                content =   <PatternView 
+                                key={'PatternView'}
+                                content={this.props.tabEntities[this.props.activeTab[this.props.viewId]].content}
+                                graphContainerViewProps={graphContainerViewProps}
+                                blockchainConnection={this.props.blockchainConnection}
+                                setIsLoading={this.props.setIsLoading}
+                                isLoading={this.props.isLoading}
+                            />;
+                break;
+            
+            case TabEntityType.PatternListView:
+                content =   <PatternListView 
+                                key={'PatternListView'}
+                                addTabEntity={this.props.addTabEntity}
                             />;
                 break;
                                 

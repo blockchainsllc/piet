@@ -47,6 +47,7 @@ interface SelectedViewProps {
     selectedTabTypeForView: TabEntityType[];
     uiCreationHandling: UICreationHandling;
     weiBalance: string;
+    toogleEditContractAddress: Function;
 }
 
 export class SelectedView extends React.Component<SelectedViewProps, {}> {
@@ -62,6 +63,7 @@ export class SelectedView extends React.Component<SelectedViewProps, {}> {
             switch (this.props.selectedElement.elementType) {
                 case Sol.ElementType.Contract:
                     view = <ContractView 
+                                toogleEditContractAddress={this.props.toogleEditContractAddress}
                                 uiCreationHandling={this.props.uiCreationHandling}
                                 selectedTabTypeForView={this.props.selectedTabTypeForView}
                                 toggleInheritance={this.props.toggleInheritance}
