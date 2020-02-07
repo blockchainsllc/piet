@@ -98,7 +98,7 @@ export class About extends React.Component<{}, {}> {
                                         <strong>
                                             <a 
                                                 className='' 
-                                                href='/?container=examples%2Fin3-export1581003982763.piet.json&rpc=https%3A%2F%2Frpc.slock.it%2Fmainnet%2Fparity-pruned-2'
+                                                href='/?container=examples%2Fin3-export1581003982763.piet.json&rpc=https%3A%2F%2Frpc.slock.it%2Fmainnet%2Fparity-pruned'
                                             >
                                                 in3 Contracts
                                             </a>
@@ -107,7 +107,7 @@ export class About extends React.Component<{}, {}> {
                                         <strong>
                                             <a 
                                                 className='' 
-                                                href='/?container=examples%2Fgs111-export1581005493087.piet.json&rpc=https%3A%2F%2Frpc.slock.it%2Fmainnet%2Fparity-pruned-2'
+                                                href='/?container=examples%2Fgs111-export1581005493087.piet.json&rpc=https%3A%2F%2Frpc.slock.it%2Fmainnet%2Fparity-pruned'
                                             >
                                                 GnosisSafe Contracts
                                             </a>
