@@ -3,6 +3,7 @@ image: docker.slock.it/build-images/node:10-alpine
 stages:
   - build
   - package
+  - analysis
   - deploy
   - mirror
 
@@ -35,6 +36,23 @@ docker-package:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
     - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME .
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+
+vulnerabilities:
+  stage: analysis
+  tags:
+    - short-jobs
+  dependencies:
+    - docker-package
+  allow_failure: true
+  image: docker.slock.it/build-images/vulnerability-testing-tools
+  script:
+    - export TRIVY_AUTH_URL=$CI_REGISTRY
+    - export TRIVY_USERNAME=gitlab-ci-token
+    - export TRIVY_PASSWORD=$CI_JOB_TOKEN
+    - trivy -f json -o vulnerability_analysis.json --exit-code 1 $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+  artifacts:
+    paths:
+      - vulnerability_analysis.json
 
 .deploy-tmpl:
   stage: deploy
