@@ -1,7 +1,7 @@
 # Piet
 A tool helping to grasp solidity smart contract architectures.
 
-[Live Demo](https://piet.slock.it/?container=examples%2Fexport1562664060589.piet.json)
+[Live Demo](https://piet.blockchains.com/?container=examples%2Fexport1562664060589.piet.json)
 
 **Warning:** Piet has not yet undergone in-depth testing and may contain serious bugs.
 
