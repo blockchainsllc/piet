@@ -239,8 +239,8 @@ export class Sidebar extends React.Component<SidebarProps, SidebarState> {
         return  <div className='sidebar h-100'>
                     <div className='row'>
                         <div className='col-sm text-center'>
-                            <SVG className={'loader-logo ' + (this.props.isLoading ? 'loader-logo-loading' : '')} 
-                            src='assets/Black_Logo.svg' /> 
+                            <img style={{width: '48px'}} className={'loader-logo ' + (this.props.isLoading ? 'loader-logo-loading' : '')} 
+                            src='assets/logo-icon.png' /> 
                         </div>
                     </div>
                     
