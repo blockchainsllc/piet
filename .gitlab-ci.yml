@@ -59,7 +59,7 @@ vulnerabilities:
   except:
     - branches
   tags:
-    - short-jobs
+    - deployment
   image: docker.slock.it/build-images/deployment
   services:
     - docker:dind
