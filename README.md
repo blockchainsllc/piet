@@ -1,4 +1,4 @@
-# Piet
+# Blockchains Piet
 A tool helping to grasp solidity smart contract architectures.
 
 [Live Demo](https://piet.blockchains.com/?container=examples%2Fexport1562664060589.piet.json)
