@@ -51,7 +51,7 @@ export class About extends React.Component<{}, {}> {
                                 <div className='col-md-2'> </div> 
                                 <div className='col-md-8 '>
                                     <div className='logo-container text-center'>
-                                        <SVG className='logo-svg' src='assets/Logo.svg' /> 
+                                        <img src="assets/logo-icon.png" style={{width: '250px'}}/>
                                     </div>
                                 </div>
                                 <div className='col-md-2'> </div> 
@@ -59,7 +59,7 @@ export class About extends React.Component<{}, {}> {
                             <div className='row'>
                                 <div className='col-md-2'> </div> 
                                 <div className='col-md-8 help-text-container'>
-                                    <h1 className='help-text text-muted'>Piet</h1>
+                                    <h1 className='help-text text-muted'>Blockchains Piet</h1>
                                     <p><small className='help-text text-muted'>
                                         
                                         <span className='badge badge-light'>
@@ -67,7 +67,7 @@ export class About extends React.Component<{}, {}> {
 
                                         </span>
                                         <br />
-                                        Piet has not yet undergone in-depth testing and may contain serious bugs.
+                                        Blockchains Piet has not yet undergone in-depth testing and may contain serious bugs.
                                         <br />
                                         A list of known issues can be found at the&nbsp; 
                                         <strong>
@@ -131,11 +131,11 @@ export class About extends React.Component<{}, {}> {
                                                 &nbsp;-&nbsp;
                                                 <a 
                                                     className='text-muted'
-                                                    href='https://slock.it'
+                                                    href='https://blockchains.com'
                                                     target='_blank'
                                                     rel='noopener noreferrer'
                                                 >
-                                                    Slock.it GmbH
+                                                    Blockchains LLC
                                                 </a>
                                                 
                                             </small>
