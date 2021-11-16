@@ -31,9 +31,6 @@ import { saveAs } from 'file-saver';
 
 interface DocGeneratorViewProps {
     content: string;
-    viewId: number;
-    tabId: number;
-
 }
 
 interface DocGeneratorViewState {
@@ -78,9 +75,9 @@ export class DocGeneratorView extends React.Component<DocGeneratorViewProps, Doc
                             onClick={this.togglePreview}
                             title='Show preview'
                         >
-                            Markdown Code
+                            <i className='fas fa-file-code'></i>
                         </button>
-                        &nbsp;&nbsp;&nbsp;
+                        &nbsp;
                         <button 
                             className={'btn btn-sm btn-outline-info'} 
                             onClick={this.save}
@@ -91,7 +88,7 @@ export class DocGeneratorView extends React.Component<DocGeneratorViewProps, Doc
                         </button>
                     </div>
                     <SplitPane 
-                        className={'scrollable hide-resizer empty-first-pane' + (!this.state.showCode ? ' markdown-preview' : '')}
+                        className={'scrollable hide-resizer empty-first-pane markdown-preview'}
                         split='horizontal'
                         defaultSize={1}
                         allowResize={false}
@@ -99,18 +96,21 @@ export class DocGeneratorView extends React.Component<DocGeneratorViewProps, Doc
                         <div></div>
                         <div className={'container-fluid'}>
                             <div className='row'>
-                                <div className='col-12'>
+                                
                                     {
                                         !this.state.showCode ?
-                                            <ReactMarkdown source={markdown} /> :
-                                     
+                                        <div className='col-12 markdown-rendered' >
+                                            <small><ReactMarkdown  source={markdown} /></small>
+                                        </div> :
+                                        <div className='col-12'>
                                             <pre className='markdown-code'>
                                                 {markdown}
                                             </pre>
+                                        </div>
                                        
                                     }
                                         
-                                </div>
+                                
                             </div>
                         </div>
                     </SplitPane>

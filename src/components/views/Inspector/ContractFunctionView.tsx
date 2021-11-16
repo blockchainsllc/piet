@@ -32,8 +32,9 @@ import { ValueBox } from '../ui-creation/InspectorTools/ValueBox';
 import { ActionTool } from '../ui-creation/InspectorTools/ActionTool';
 import { InputFunctionParams } from '../../shared-elements/InputFunctionParams';
 import { OutputFunctionParams } from '../../shared-elements/OutputFunctionParams';
-import { callFunction, sendFunction, BlockchainConnection, getAccounts } from '../../../solidity-handler/BlockchainConnector';
+import { callFunction, sendFunction, BlockchainConnection, getAccounts, getTx } from '../../../solidity-handler/BlockchainConnector';
 import { FunctionCodeBox, CodeToShow } from '../CodeBox/FunctionCodeBox';
+
 
 interface ContractFunctionViewProps {
     selectedContract: Sol.Contract;
@@ -60,6 +61,7 @@ interface ContractFunctionViewState {
     codeBoxIsShown: boolean;
     selectedFunction: Sol.ContractFunction;
     codeToShow: CodeToShow;
+    tx: any[];
     
 }
 
@@ -78,7 +80,8 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
             selectedFunction: null,
             codeBoxIsShown: false,
             blockchainErrors: [],
-            codeToShow: CodeToShow.Solidity
+            codeToShow: CodeToShow.Solidity,
+            tx: []
         };
 
         this.showResultBox = this.showResultBox.bind(this);
@@ -197,7 +200,14 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
                         <button 
                                 type='button'
                                 className='btn btn-outline-primary btn-sm no-border-radius'
-                                onClick={() => this.send(contractFunction)}
+                                onClick={() => this.send(contractFunction, true)}
+                            >
+                                Get Tx
+                        </button>
+                        <button 
+                                type='button'
+                                className='btn btn-outline-primary btn-sm no-border-radius'
+                                onClick={() => this.send(contractFunction, false)}
                             >
                                 Send
                             </button>
@@ -309,7 +319,7 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
         });
     }
 
-    async send(contractFunction: Sol.ContractFunction): Promise<void> {
+    async send(contractFunction: Sol.ContractFunction, printOnly?: boolean): Promise<void> {
         const functionIndex: number = this.getFunctionIndex(contractFunction);
         const theFunction: Sol.ContractFunction = this.getFunctionForIndex(functionIndex);
         const name: string = contractFunction.name;
@@ -321,46 +331,72 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
         if (accounts.length > 0) {
 
             let error: any = null;
-            let result: any; 
-            try {
-                result = await sendFunction(
-                    contractFunction,
-                    this.props.blockchainConnection,
-                    this.props.selectedContract.deployedAt,
-                    getFunctionAbi(theFunction, this.props.contracts, this.props.selectedContract),
-                    this.state.parameterMapping[functionId],
-                    this.state.valueMapping[functionId]
-                );
-          
-            } catch (e) {
-                error = e;
-            } finally {
-
-            if (typeof result === 'object') {
-                this.props.addTabEntity({
+            let result: any = {txState: 'pending'};
+            this.props.addTabEntity(
+                {
                     active: true,
                     contentType: TabEntityType.Json,
                     removable: true,
                     name: name + ' Tx',
-                    content: result,
-                    icon: 'sign-out-alt'
+                    content: printOnly ? await getTx(
+                            contractFunction,
+                            this.props.blockchainConnection,
+                            this.props.selectedContract.deployedAt,
+                            getFunctionAbi(theFunction, this.props.contracts, this.props.selectedContract),
+                            this.state.parameterMapping[functionId],
+                            this.state.valueMapping[functionId]
+                        ) : 
+                        result,
+                    icon: 'sign-out-alt',
+                    isLoading: true
                 
-                },                      1, true);
+                },                      
+                1, 
+                true
+            );
 
+            if (!printOnly) {
+                try {
+
+                    result = await sendFunction(
+                        contractFunction,
+                        this.props.blockchainConnection,
+                        this.props.selectedContract.deployedAt,
+                        getFunctionAbi(theFunction, this.props.contracts, this.props.selectedContract),
+                        this.state.parameterMapping[functionId],
+                        this.state.valueMapping[functionId]
+                    );
+              
+                } catch (e) {
+                    error = e;
+                } finally {
+                    this.props.addTabEntity(
+                        {
+                            active: true,
+                            contentType: TabEntityType.Json,
+                            removable: true,
+                            name: name + ' Tx',
+                            content: error ? error : result,
+                            icon: 'sign-out-alt',
+                            isLoading: false
+                        
+                        },                      
+                        1, 
+                        true
+                    );
+        
+                    result = result ? typeof result === 'object' ? JSON.stringify(result) : result.toString() : null;
+                    
+                    this.setState((prevState: ContractFunctionViewState) => {
+                        prevState.blockchainErrors[functionIndex] = error ? error.message : null;
+                        return {
+                            // lastResultName: name,
+                            // lastResult: result,
+                            blockchainErrors: prevState.blockchainErrors
+                        };
+                    });
+                }
             }
-
-            result = result ? typeof result === 'object' ? JSON.stringify(result) : result.toString() : null;
-            
-            this.setState((prevState: ContractFunctionViewState) => {
-                prevState.blockchainErrors[functionIndex] = error ? error.message : null;
-                return {
-                    lastResultName: name,
-                    lastResult: result,
-                    blockchainErrors: prevState.blockchainErrors
-                };
-            });
-            }
-
         }
     }
 
@@ -385,6 +421,7 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
                     </div>];
         }
         
+        // tslint:disable-next-line:cyclomatic-complexity
         return functions.map((contractFunction: Sol.ContractFunction, functionIndex: number) => {
 
             const params: JSX.Element[] = [];
@@ -562,7 +599,7 @@ export class ContractFunctionView extends React.Component<ContractFunctionViewPr
                                                 {this.getOperationButton(contract, contractFunction)}
                                            
                                             </div>
-
+                                            {this.state.tx[functionKey] && JSON.stringify(this.state.tx[functionKey])}
                                         </div>
                                     </div>
                                     <div>

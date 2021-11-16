@@ -26,6 +26,7 @@
 import * as Sol from './SolidityHandler';
 import * as Web3 from 'web3';
 import In3Client from 'in3';
+import { DeploymentData } from '../utils/Pattern';
 
 export enum ConnectionType {
     Injected = 'INJECTED',
@@ -43,7 +44,7 @@ type AddTransactionToHistory = (transaction: any) => void;
 export interface BlockchainConnection {
     connectionType: ConnectionType;
     rpcUrl: string;
-    web3: Web3;
+    web3: any;
     selectedAccount: string;
     updateBlockchainConnection: UpdateBlockchainConnection;
     addAccount: AddAccount;
@@ -58,7 +59,7 @@ type CheckBlockchainConnection = (blockchainConnection: BlockchainConnection) =>
 export const checkBlockchainConnection: CheckBlockchainConnection = (blockchainConnection: BlockchainConnection): boolean => {
     return blockchainConnection &&
         blockchainConnection.connectionType !== ConnectionType.None &&
-        blockchainConnection.web3;
+        blockchainConnection.web3 as any;
 };
 
 type GetWeiBalance = (blockchainConnection: BlockchainConnection, address: string) => Promise<string>;
@@ -112,7 +113,7 @@ export const changeBlockchainConfiguration: ChangeBlockchainConfiguration = asyn
 ): Promise<{blockchainConnection: BlockchainConnection; error: any}> => {
 
     try {
-        const getFirstAccount: (web3: Web3) => Promise<string> = async (web3: Web3): Promise<string> =>  {
+        const getFirstAccount: (web3: any) => Promise<string> = async (web3: any): Promise<string> =>  {
             const accounts: string[] = await blockchainConnection.web3.eth.getAccounts();
             if (blockchainConnection.useDefaultAccount) {
                 return null;
@@ -128,7 +129,7 @@ export const changeBlockchainConfiguration: ChangeBlockchainConfiguration = asyn
     
         switch (blockchainConnection.connectionType) {
             case ConnectionType.MainnetIncubed:
-                blockchainConnection.web3 = new Web3(new In3Client({
+                blockchainConnection.web3 = new (Web3 as any)(new In3Client({
                     proof         : 'none',
                     signatureCount: 0,
                     requestCount  : 2,
@@ -139,43 +140,43 @@ export const changeBlockchainConfiguration: ChangeBlockchainConfiguration = asyn
                 blockchainConnection.netVersion = (await getNetVersion(blockchainConnection) as any).result;
                 return {blockchainConnection, error: null};
             case ConnectionType.WebSocketRPC:
-                blockchainConnection.web3 = new Web3(new Web3.providers.WebsocketProvider(blockchainConnection.rpcUrl));
+                blockchainConnection.web3 = new (Web3 as any)(new (Web3 as any).providers.WebsocketProvider(blockchainConnection.rpcUrl));
                 blockchainConnection.selectedAccount = await getFirstAccount(blockchainConnection.web3);
                 blockchainConnection.netVersion = (await getNetVersion(blockchainConnection) as any).result;
                 return {blockchainConnection, error: null};
     
             case ConnectionType.Rpc:
             
-                blockchainConnection.web3 = new Web3(blockchainConnection.rpcUrl);
+                blockchainConnection.web3 = new (Web3 as any)(blockchainConnection.rpcUrl);
                 blockchainConnection.selectedAccount = await getFirstAccount(blockchainConnection.web3);
                 blockchainConnection.netVersion = (await getNetVersion(blockchainConnection) as any).result;
                 return {blockchainConnection, error: null};
     
             case ConnectionType.Injected:
                 if ((window as any).ethereum) {
-                    blockchainConnection.web3 = new Web3((window as any).ethereum);
+                    blockchainConnection.web3 = new (Web3 as any)((window as any).ethereum);
                     await (window as any).ethereum.enable();
                     blockchainConnection.selectedAccount = await getFirstAccount(blockchainConnection.web3);
                 } else if ((window as any).web3) {
-                    blockchainConnection.web3 = new Web3((window as any).web3.currentProvider);
+                    blockchainConnection.web3 = new (Web3 as any)((window as any).web3.currentProvider);
                     blockchainConnection.selectedAccount = await getFirstAccount(blockchainConnection.web3);
                 } else {
                     blockchainConnection.connectionType = ConnectionType.None;
                     blockchainConnection.selectedAccount = null;
-                    blockchainConnection.web3 = new Web3();
+                    blockchainConnection.web3 = new (Web3 as any)();
                 }
                 blockchainConnection.netVersion = (await getNetVersion(blockchainConnection) as any).result;
                 
                 return {blockchainConnection, error: null};
             case ConnectionType.None:
             default:
-                blockchainConnection.web3 = new Web3();
+                blockchainConnection.web3 = new (Web3 as any)();
                 blockchainConnection.connectionType = ConnectionType.None;
                 blockchainConnection.netVersion = null;
                 return {blockchainConnection, error: null};
         }
     } catch (e) {
-        blockchainConnection.web3 = new Web3();
+        blockchainConnection.web3 = new (Web3 as any)();
         blockchainConnection.connectionType = ConnectionType.None;
         return {blockchainConnection, error: e};
     }
@@ -189,11 +190,11 @@ export const getFunctionSignature: GetFunctionSignature = (blockchainConnection:
 
 type Utf8ToHex = (blockchainConnection: BlockchainConnection, input: string) => string;
 export const utf8ToHex: Utf8ToHex = (blockchainConnection: BlockchainConnection, input: string): string => {
-    return blockchainConnection.web3.utf8ToHex(input);
+    return blockchainConnection.web3.utils.utf8ToHex(input);
 };
 
-type GetAccounts = (blockchainConnection: BlockchainConnection) => any[]; 
-export const getAccounts: GetAccounts = (blockchainConnection: BlockchainConnection): any[] => {
+type GetAccounts = (blockchainConnection: BlockchainConnection) => Promise<string[]>; 
+export const getAccounts: GetAccounts = (blockchainConnection: BlockchainConnection): Promise<string[]> => {
     return blockchainConnection.web3.eth.getAccounts();
 };
 
@@ -210,7 +211,7 @@ export const getDefaultBlockchainConnection: GetDefaultBlockchainConnection = (
     return {
         rpcUrl: null,
         connectionType: ConnectionType.None,
-        web3: new Web3(),
+        web3: new (Web3 as any)(),
         updateBlockchainConnection,
         selectedAccount: null,
         addAccount,
@@ -236,18 +237,18 @@ export const initBlockchainConfiguration: InitBlockchainConfiguration = async (
     selectAccount: SelectAccount,
     addTransactionToHistory: AddTransactionToHistory
 ): Promise<BlockchainConnection> => {
-    let web3: Web3 = new Web3();
+    let web3: any = new (Web3 as any)();
     let connectionType: ConnectionType = ConnectionType.None;
 
     if (rpcUrl) {
-        web3 = new Web3(rpcUrl);
+        web3 = new (Web3 as any)(rpcUrl);
         connectionType = ConnectionType.Rpc;
     } else if ((window as any).ethereum) {
-        web3 = new Web3((window as any).ethereum);
+        web3 = new (Web3 as any)((window as any).ethereum);
         await (window as any).ethereum.enable();
         connectionType = ConnectionType.Injected;
     } else if ((window as any).web3) {
-        web3 = new Web3(web3.currentProvider);
+        web3 = new (Web3 as any)(web3.currentProvider);
         connectionType = ConnectionType.Injected;
     } 
     
@@ -320,7 +321,9 @@ export const callFunction: CallFunction =  async (
         const name: string = contractFunction.name;
         const contract: any = new blockchainConnection.web3.eth.Contract(abi, contractAddress);
         const changedParamMapping: any[] = !parameterMapping ? [] : parameterMapping.map((param: any, index: number) => 
-            contractFunction.params[index].solidityType.isArray ? JSON.parse(param) : param
+            contractFunction.params[index] ? 
+                contractFunction.params[index].solidityType.isArray ? JSON.parse(param) : param :
+                param
         );
 
         const transportObject: any = blockchainConnection.selectedAccount ? { from: blockchainConnection.selectedAccount} : {};
@@ -361,6 +364,7 @@ export const callFunction: CallFunction =  async (
             }
         
         } catch (e) {
+            console.log(e)
             return Array(contractFunction.returnParams.length).fill(e.message);
         }    
 };
@@ -373,6 +377,44 @@ type SendFunction = (
     parameterMapping: any[],
     value: string
 ) => Promise<any>;
+
+export const getTx: SendFunction =  async (
+    contractFunction: Sol.ContractFunction,
+    blockchainConnection: BlockchainConnection,
+    contractAddress: string,
+    abi: any,
+    parameterMapping: any[],
+    value: string
+): Promise<any> => {
+
+    const name: string = contractFunction.name;
+    const contract: any = new blockchainConnection.web3.eth.Contract(abi, contractAddress);
+    
+    const changedParamMapping: any[] = !parameterMapping ? [] : parameterMapping.map((param: any, index: number) => 
+        contractFunction.params[index].solidityType.isArray || contractFunction.params[index].solidityType.userDefined ? 
+            JSON.parse(param) : param
+    );
+
+    const ethAccount: string = blockchainConnection.selectedAccount ? 
+        blockchainConnection.selectedAccount : 
+        (await blockchainConnection.web3.eth.getAccounts())[0];
+
+    let gas: number;
+    try {
+        gas = await contract.methods[name](...changedParamMapping).estimateGas({from: ethAccount });
+    } catch (e) {
+        gas = null;
+    }
+
+    return {
+        from: ethAccount,
+        gas: gas  ? Math.floor(gas * 1.5) : gas,
+        data: await contract.methods[name](...changedParamMapping).encodeABI(),
+        nonce: await blockchainConnection.web3.eth.getTransactionCount(ethAccount),
+        value
+    };
+
+};
 
 export const sendFunction: SendFunction =  async (
     contractFunction: Sol.ContractFunction,
@@ -413,5 +455,40 @@ export const sendFunction: SendFunction =  async (
     });
 
     return result;
-   
+};
+
+type Deploy = (
+    deploymentData: DeploymentData,
+    blockchainConnection: BlockchainConnection
+) => Promise<any>;
+
+export const deployContract: Deploy =  async (
+    deploymentData: DeploymentData,
+    blockchainConnection: BlockchainConnection
+): Promise<any> => {
+
+    let result: any;
+
+    const ethAccount: string = blockchainConnection.selectedAccount ? 
+        blockchainConnection.selectedAccount : 
+        (await blockchainConnection.web3.eth.getAccounts())[0];
+
+    try {
+        result = await blockchainConnection.web3.eth.sendTransaction({
+            gas: deploymentData.gasLimit,
+            data: deploymentData.data,
+            from: ethAccount
+        });
+    } catch (e) {
+        result = e;
+    }
+    
+    blockchainConnection.addTransactionToHistory({
+            result,
+            time: (new Date()).toTimeString(),
+            date: (new Date()).toDateString()
+
+    });
+
+    return result;
 };

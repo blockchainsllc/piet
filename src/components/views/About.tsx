@@ -51,7 +51,7 @@ export class About extends React.Component<{}, {}> {
                                 <div className='col-md-2'> </div> 
                                 <div className='col-md-8 '>
                                     <div className='logo-container text-center'>
-                                        <SVG className='logo-svg' src='assets/Logo.svg' /> 
+                                        <img src="assets/logo-icon.png" style={{width: '250px'}}/>
                                     </div>
                                 </div>
                                 <div className='col-md-2'> </div> 
@@ -59,7 +59,7 @@ export class About extends React.Component<{}, {}> {
                             <div className='row'>
                                 <div className='col-md-2'> </div> 
                                 <div className='col-md-8 help-text-container'>
-                                    <h1 className='help-text text-muted'>Piet</h1>
+                                    <h1 className='help-text text-muted'>Blockchains Piet</h1>
                                     <p><small className='help-text text-muted'>
                                         
                                         <span className='badge badge-light'>
@@ -67,7 +67,7 @@ export class About extends React.Component<{}, {}> {
 
                                         </span>
                                         <br />
-                                        Piet has not yet undergone in-depth testing and may contain serious bugs.
+                                        Blockchains Piet has not yet undergone in-depth testing and may contain serious bugs.
                                         <br />
                                         A list of known issues can be found at the&nbsp; 
                                         <strong>
@@ -90,16 +90,29 @@ export class About extends React.Component<{}, {}> {
                                      
                                         Click <strong>"Load"</strong> and select solidity files, truffle build files or a piet file.
                                         <br />
-                                        You can also load the&nbsp;
+                                        <br />
+                                        You can also load the following examples:
+
+                                        <br />
+                    
                                         <strong>
                                             <a 
-                                                className='text-muted' 
-                                                href='/?container=examples%2Fexport1562664060589.piet.json'
+                                                className='' 
+                                                href='/?container=examples%2Fin3-export1581003982763.piet.json&rpc=https%3A%2F%2Frpc.slock.it%2Fmainnet%2Fparity-pruned'
                                             >
-                                                example
+                                                in3 Contracts
                                             </a>
                                         </strong>
-                                        .
+                                        <br />
+                                        <strong>
+                                            <a 
+                                                className='' 
+                                                href='/?container=examples%2Fgs111-export1581005493087.piet.json&rpc=https%3A%2F%2Frpc.slock.it%2Fmainnet%2Fparity-pruned'
+                                            >
+                                                GnosisSafe Contracts
+                                            </a>
+                                        </strong>
+                                        
                                     </small></p>
                                     <br />
 
@@ -118,11 +131,11 @@ export class About extends React.Component<{}, {}> {
                                                 &nbsp;-&nbsp;
                                                 <a 
                                                     className='text-muted'
-                                                    href='https://slock.it'
+                                                    href='https://blockchains.com'
                                                     target='_blank'
                                                     rel='noopener noreferrer'
                                                 >
-                                                    Slock.it GmbH
+                                                    Blockchains LLC
                                                 </a>
                                                 
                                             </small>

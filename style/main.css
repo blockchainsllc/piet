@@ -13,6 +13,7 @@
     --link-color: #ffffff;
     --muted-text-color: #adadad;
     --error-red: #dc3545;
+    --view-background: #212529:
 
 }
 
@@ -30,6 +31,10 @@
 
 .conf-container {
     margin-top: 1rem;
+}
+
+.tools-search {
+    margin-bottom: 1rem;
 }
 
 .conf-select {
@@ -50,7 +55,9 @@
     border-color: var(--selected-background-color);
 }
 
-
+.rpc-method-select-category {
+    margin-bottom: 1rem;
+}
 
 .navbar-pane {
     width: 100%;
@@ -479,6 +486,31 @@ body {
   border-color: transparent;
 }
 
+.markdown-rendered code {
+    color: var(--text-highlight-color);
+    font-family: monospace;
+    font-size: 1rem;
+    background-color: #36372f; 
+}
+
+.markdown-rendered pre {
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    background-color: #36372f; 
+}
+
+.markdown-rendered h1 {
+   
+    border-bottom: 1px solid #666666;
+}
+
+.markdown-rendered h2 {
+    font-size: 1.5rem;
+    border-bottom: 1px solid #666666;
+}
+
 .no-radius {
     border-top-left-radius: 0rem !important;
     border-top-right-radius: 0rem !important;
@@ -500,7 +532,8 @@ body {
 }
 
 .markdown-preview {
-    background-color: var(--main-background-color)
+    background-color: var(--view-background);
+    color: var(--text-highlight-color);
 }
 
 .modifier-badge {

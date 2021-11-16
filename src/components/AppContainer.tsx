@@ -28,7 +28,6 @@ import * as Sol from '../solidity-handler/SolidityHandler';
 import * as queryString from 'query-string';
 import { Sidebar } from './Sidebar';
 import { View, TabEntity, TabEntityType } from './View';
-import * as $ from 'jquery';
 import SplitPane from 'react-split-pane';
 import { getContracts, getPietContainer } from '../utils/GitHub';
 import { withRouter } from 'react-router-dom';
@@ -55,6 +54,7 @@ interface AppContainerState {
     graphToLoad: Graph;
     graphViewType: GraphViewType;
     loadedPietFileName: string;
+    showFirstTab: boolean;
 }
 
 class AppContainer extends React.Component<{}, {}> {
@@ -87,6 +87,7 @@ class AppContainer extends React.Component<{}, {}> {
         this.setGraph = this.setGraph.bind(this);
         this.loadFromConatinerFile = this.loadFromConatinerFile.bind(this);
         this.removeError = this.removeError.bind(this);
+        this.setShowFirstTab = this.setShowFirstTab.bind(this);
 
         this.state = {
             contracts: [],
@@ -122,9 +123,14 @@ class AppContainer extends React.Component<{}, {}> {
             loadedPietFileName: null,
             graph: null,
             graphToLoad: null,
-            graphViewType: GraphViewType.Inheritance
+            graphViewType: GraphViewType.Inheritance,
+            showFirstTab: true
         };
 
+    }
+
+    setShowFirstTab(show: boolean): void {
+        this.setState({showFirstTab: show});
     }
 
     setGraph(graph: Graph): void {
@@ -390,8 +396,6 @@ class AppContainer extends React.Component<{}, {}> {
         } else {
             try {
                 const contracts: Sol.Contract[] = Sol.parseContent(files);
-            
-            
                 const params: any = queryString.parse((this.props as any).location.search);
                 const contractName: string = params.contract ? params.contract.toString() : null;
                 const selectedContract: Sol.Contract = contracts.find((contract: Sol.Contract) => contract.name === contractName);
@@ -441,7 +445,7 @@ class AppContainer extends React.Component<{}, {}> {
    
         } else {
  
-            try {
+            // try {
                 
                 this.setState({selectedElement: null});
                 this.setIsLoading(true);
@@ -456,9 +460,9 @@ class AppContainer extends React.Component<{}, {}> {
                 this.setIsLoading(false);
                 this.removeTabEntity('About');    
                 this.changeActiveTab(0, 1);
-            }  catch (e) {
-                this.addError(e, 'Loading file');
-            }
+            // }  catch (e) {
+            //     this.addError(e, 'Loading file');
+            // }
 
         }
     
@@ -529,34 +533,43 @@ class AppContainer extends React.Component<{}, {}> {
 
     getEvents(contract: Sol.Contract, event: Sol.ContractEvent, params: Sol.ContractFunctionParam[]): void {
 
-        this.addTabEntity({
-            active: true,
-            contentType: TabEntityType.EventCatcher,
-            name: event.name,
-            content: {
-                contract: contract,
-                event: event,
-                params: params
+        this.addTabEntity(
+            {
+                active: true,
+                contentType: TabEntityType.EventCatcher,
+                name: event.name,
+                content: {
+                    contract: contract,
+                    event: event,
+                    params: params
+                },
+                icon: 'bell',
+                removable: true,
+                isLoading: false
+            
             },
-            icon: 'bell',
-            removable: true
-           
-        },                1, true);
+            1,
+            true
+        );
     }
 
     markCode(start: number, end: number, contract: Sol.Contract): void {
-        this.addTabEntity({
-            active: true,
-            contentType: TabEntityType.Code,
-            name: contract.name,
-            content: { 
-                source: contract.source,
-                marker: null
+        this.addTabEntity(
+            {
+                active: true,
+                contentType: TabEntityType.Code,
+                name: contract.name,
+                content: { 
+                    source: contract.source,
+                    marker: null
+                },
+                icon: 'code',
+                removable: true,
+                isLoading: false
             },
-            icon: 'code',
-            removable: true
-           
-        },                1, false);
+            1,
+            false
+        );
 
         const startLine: number = contract.source.substring(0, start).split('\n').length - 1;
         const endLine: number = startLine + contract.source.substring(start, end).split('\n').length;
@@ -587,7 +600,8 @@ class AppContainer extends React.Component<{}, {}> {
                 name: 'Inspector',
                 content: null,
                 icon: 'stethoscope',
-                removable: false
+                removable: false,
+                isLoading: false
             };
 
             const fileTab: TabEntity = {
@@ -596,7 +610,8 @@ class AppContainer extends React.Component<{}, {}> {
                 name: 'Files',
                 content: this.state.contracts,
                 icon: 'copy',
-                removable: false
+                removable: false,
+                isLoading: false
             };
 
             const graphTab: TabEntity = {
@@ -604,8 +619,9 @@ class AppContainer extends React.Component<{}, {}> {
                 contentType: TabEntityType.Graph,
                 name: 'Graph',
                 content: null,
-                icon: 'map',
-                removable: false
+                icon: 'sitemap',
+                removable: false,
+                isLoading: false
             };
 
             const aboutTab: TabEntity = {
@@ -614,7 +630,8 @@ class AppContainer extends React.Component<{}, {}> {
                 name: 'About',
                 content: null,
                 icon: 'question-circle',
-                removable: true
+                removable: true,
+                isLoading: false
             };
 
             this.setState((prevState: AppContainerState) => {
@@ -632,13 +649,14 @@ class AppContainer extends React.Component<{}, {}> {
     }
 
     changeSelectedElement(selectedElement: Sol.NodeElement): void {
-        this.changeActiveTab(0, 1);
-        this.changeActiveTab(1, 0);
-
-        this.setState({
-            selectedElement: selectedElement,
-            contractToSelect: selectedElement.name
-        });
+        
+        this.setState(
+            {
+                selectedElement: selectedElement,
+                contractToSelect: selectedElement.name
+            },
+            () => this.changeActiveTab(0, 1)
+        );
     }
 
     render(): JSX.Element {
@@ -674,7 +692,7 @@ class AppContainer extends React.Component<{}, {}> {
         }
 
         return  <div>
-                    <SplitPane split='vertical' minSize={400} defaultSize={550} >
+                    <SplitPane split='vertical' minSize={this.state.showFirstTab ? 400 : 0} defaultSize={this.state.showFirstTab ? 550 : 70} allowResize={this.state.showFirstTab} >
                     
                         <SplitPane split='vertical'  defaultSize={70} allowResize={false} >
                                 
@@ -684,39 +702,47 @@ class AppContainer extends React.Component<{}, {}> {
                                     submitFiles={this.updateContractNames} 
                                     changeActiveTab={this.changeActiveTab}
                                     blockchainConnection={this.state.blockchainConnection}
+                                    setShowFirstTab={this.setShowFirstTab}
+                                    showFirstTab={this.state.showFirstTab}
                                 />
-                                <View
-                                    loadedPietFileName={this.state.loadedPietFileName}
-                                    setGraph={this.setGraph}
-                                    graph={this.state.graph}
-                                    changeGraphView={this.changeGraphView}
-                                    uiCreationHandling={uiCreationHandling}
-                                    selectedTabTypeForView={selectedTabTypeForView}
-                                    globalErrorHandling={this.state.globalErrorHandling}
-                                    removeContractToSelect={this.removeContractToSelect}
-                                    selectedContractName={this.state.contractToSelect}
-                                    removeTabEntity={this.removeTabEntity}
-                                    loading={this.state.isLaoding}
-                                    viewId={0}
-                                    markCode={this.markCode}  
-                                    activeTab={this.state.activeTab}
-                                    tabEntities={this.state.tabEntities[0]}
-                                    addTabEntity={this.addTabEntity}
-                                    selectedElement={this.state.selectedElement}
-                                    blockchainConnection={this.state.blockchainConnection} 
-                                    changeContractAddress={this.changeContractAddress}
-                                    changeSelectedElement={this.changeSelectedElement}
-                                    contracts={this.state.contracts}
-                                    changeActiveTab={this.changeActiveTab}
-                                    getEvents={this.getEvents}
-                                    contentChange={this.contentChange}
-                                    submitFiles={this.updateContractNames}
-                                    graphViewType={this.state.graphViewType}
-                                />
+                                {this.state.showFirstTab && 
+                                    <View
+                                        isLoading={this.state.isLaoding}
+                                        setIsLoading={this.setIsLoading}
+                                        loadedPietFileName={this.state.loadedPietFileName}
+                                        setGraph={this.setGraph}
+                                        graph={this.state.graph}
+                                        changeGraphView={this.changeGraphView}
+                                        uiCreationHandling={uiCreationHandling}
+                                        selectedTabTypeForView={selectedTabTypeForView}
+                                        globalErrorHandling={this.state.globalErrorHandling}
+                                        removeContractToSelect={this.removeContractToSelect}
+                                        selectedContractName={this.state.contractToSelect}
+                                        removeTabEntity={this.removeTabEntity}
+                                        loading={this.state.isLaoding}
+                                        viewId={0}
+                                        markCode={this.markCode}  
+                                        activeTab={this.state.activeTab}
+                                        tabEntities={this.state.tabEntities[0]}
+                                        addTabEntity={this.addTabEntity}
+                                        selectedElement={this.state.selectedElement}
+                                        blockchainConnection={this.state.blockchainConnection} 
+                                        changeContractAddress={this.changeContractAddress}
+                                        changeSelectedElement={this.changeSelectedElement}
+                                        contracts={this.state.contracts}
+                                        changeActiveTab={this.changeActiveTab}
+                                        getEvents={this.getEvents}
+                                        contentChange={this.contentChange}
+                                        submitFiles={this.updateContractNames}
+                                        graphViewType={this.state.graphViewType}
+                                    />
+                                }
                                     
                         </SplitPane>
                     
                             <View
+                                isLoading={this.state.isLaoding}
+                                setIsLoading={this.setIsLoading}
                                 loadedPietFileName={this.state.loadedPietFileName}
                                 graphViewType={this.state.graphViewType}
                                 setGraph={this.setGraph}
